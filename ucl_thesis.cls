@@ -528,7 +528,7 @@
     \else%
         \clearpage%
     \fi
-    \thispagestyle{empty}%
+    \thispagestyle{plain}%
     \global \@topnum \z@%
     \@afterindentfalse%
     \secdef \@chapter \@schapter%

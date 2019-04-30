@@ -84,12 +84,8 @@
 \makenomenclature %comment out if you don't want nomenclature
 
 \begin{document}
-\pagestyle{fancy}  % Finally, use the "fancy" page style to implement the FancyHdr headers
-\fancypagestyle{plain}{
-    \fancyhead{}
-    \fancyhead[R]{\nouppercase{\textbf{\rightmark}}}
-    \fancyfoot[R]{\bfseries \thepage }
-}
+%% Setup our fancyheaders
+\pagestyle{fancy}
 \fancyhead{} % clear all header fields
 \renewcommand{\chaptermark}[1]{%
   \markboth{\chaptername\ \thechapter}{\textbf{#1}}
@@ -104,6 +100,12 @@
 \fancyfoot[R]{\bfseries \thepage }
 \renewcommand{\footrulewidth}{0.4pt}
 \fancyfoot[R]{\bfseries \thepage }
+\fancypagestyle{plain}{
+    \fancyhead{}
+    \fancyfoot[R]{\bfseries \thepage }
+    \renewcommand{\headrulewidth}{0pt}
+}
+%%
 %\nobibliography*
 % ^-- This is a dumb trick that works with the bibentry package to let
 %  you put bibliography entries whereever you like.
@@ -119,8 +121,9 @@
 
 % At last, content! Remember filenames are case-sensitive and 
 %  *must not* include spaces.
-
+\pagestyle{plain}
 \include{preamble/FrontMatter}
+\pagestyle{fancy}
 \include{Text_Files/Introduction}
 \include{Text_Files/Chapter2}
 \include{Text_Files/Chapter3}
