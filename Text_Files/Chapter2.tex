@@ -1,7 +1,66 @@
 % !TEX root = ../Main.tex
 
-\chapter{My First Content Chapter}
-\label{chapterlabel2}
+\chapter[Methods for Simulating Stabilizer Circuits]{Methods for Simulating Stabilizer\\ Circuits}
+\label{chap:stabilizers}
 
-% This just dumps some pseudolatin in so you can see some text in place.
-\blindmathpaper
+\section{Introduction}\label{sec:stabilizer-intro}
+% Stabilizer circuits are an intersting class of circuits
+% Capture many seemingly quantum features
+% Recap definition
+% Some of this is probably meant for intro instead
+In the previous chapter (INSERT REFERENCE), we briefly introduced the notion of stabilizer circuits as a class of efficiently simulable quantum computations. In this chapter, we revisit stabilizer circuits in detail, with a focus on different classical data structures for encoding stabilizer states and the corresponding algorithms for simulations.\par
+Several informal definitions of stabilizer circuits have been used in the quantum computing literature~\cite{Gottesman1998,Aaronson2004a,Nest2008,Seddon2019}. However, what each definition has in common is that the operations $\mathcal{E}$ acting on an abelian subgroup $\mathcal{S} \subseteq \mathcal{P}_{n}$ generate a new subgroup $\mathcal{S'}\subseteq \mathcal{P}_{n}$. These groups $\mathcal{S}$ are also called a stabilizer groups.\par
+In this thesis, we focus exclusively on stabilizer circuits acting on pure states $\ket{\phi}$ called stabilizer states. These can be entirely characterized by their associated stabilizer group as
+\begin{equation}
+    s\ket{\phi}=\ket{\phi}\;\forall s\in\mathcal{S}
+\end{equation}
+For an $n$-qubit state, the group $\mathcal{S}$ has $2^{n}$ elements~\cite{Gottesman1998}. As $\mathcal{S}$ is also abelian, this means it can be described by a generating set with $n$ elements,
+\begin{equation}
+    \mathcal{S} = \langle g_{1}, g_{2},\dots,g_{n}\rangle \; : g_{i}\in\mathcal{S},
+\end{equation}
+which are commonly referred to as the `stabilizers' of the state $\ket{\phi}$. We also note that this definition allows us to write
+\begin{equation}
+    \ketbra{\phi} = \frac{1}{2^{n}}\sum_{s\in\mathcal{S}} s = \frac{1}{2^{n}}\prod_{i=1}^{n}\left(\mathbb{I}+g_{i}\right)
+\end{equation}
+Given that these circuits map stabilizer states to other stabilizer states, this means they must be built up of unitary operations $U$ which map Pauli operators to other Pauli operators under conjugation. This set is commonly denoted as $\mathcal{C}_{2}$, or the `second level of the Clifford hierarchy' 
+\begin{align}
+    \mathcal{C}_{2} &\equiv \{U\,:\,UPU^{\dagger}\in\mathcal{P}_{n}\;\forall P\in\mathcal{P}_{n}\} \label{eq:c2}\\
+    \mathcal{C}_{j} &\equiv \{U\,:\,UPU^{\dagger}\in\mathcal{C}_{j-1}\;\forall P\in\mathcal{P}_{n}\} \label{eq:cj}
+\end{align}
+where in Eq.~\ref{eq:cj} we have also introduced the (recursive) definition for level $j$ of the Clifford hierarchy. From this definition
+\begin{equation}
+    V\mathcal{S}V^{\dagger}=\langle Vg_{i}V^{\dagger}\rangle = \langle g_{i}' \rangle = \mathcal{S}'
+\end{equation}
+%TODO: Do we need to explain measurement or just cite it? Maybe this comes up later in the implementation...
+We also allow stabilizer circuits to contain measurements in the Pauli basis~\cite{Gottesman1998}. 
+\subsection{Simulating stabilizer circuits}
+% Classical simulabiltiy follows from gate updates and encoding
+% Introduce tableaux, and classical encoding
+From the above definitions, we can see that simulating a stabilizer circuit on $n$ qubits corresponds to updating the $n$ stabilizer generators for each unitary and measurement we apply. As the number of generators grows linearly in the number of qubits, if these group updates can be computed in time $O\left(\poly (n)\right)$ then it follows the circuits can be efficiently simulated clasically.\par
+The first proof of this was given by Gottesman in \cite{Gottesman1998}, by showing through examples that stabilizer updates can be quickly computed for the CNOT, H and S gates, and for single qubit Pauli measurements. This is significant as for $n$ qubits
+\begin{equation}
+    \mathcal{C}_{2} = \langle CNOT_{i,j},\, H_{i},\, S_{i}\,:i,j\in \mathbb{Z}_{n}\rangle.
+\end{equation}
+This result is typically reffered to as the `Gottesman-Knill' theorem.\par
+A more formal proof follows from the work of Dehaene \& de-Moor, who showed that the action of Clifford unitaries on Pauli operators corresponds to multiplication of $n\times n$ symplectic binary matrices with $n$-bit binary vectors~\cite{Dehaene2003}. These dimension of these elements also grows just linearly in the number of qubits, and as general matrix multiplication requires time $O(n^{2.37})$ it follows that we can compute these actions in $O(n^{3.73})$ as we have $n$ distinct generators.\par
+This work was then extended by Aaronson \& Gottesman, who introduced an efficient data structure for stabilizer groups, and algorithms for their updates under Clifford gates and Pauli measurement~\cite{Aaronson2004a}. Importantly, this method avoids the need for matrix multiplications, and showed that stabilizer circuits can be simulated in time $O(n^{3})$.\par
+Since 2004, there have been several papers looking at different data structures and algorithms for simulating stabilizer circuits of the type we consider here. For example, a method based on encoding stabilizer states as graphs~\cite{Anders2006}, refinements of the Aaronson \& Gottesman encoding~\cite{Garcia2012}, and an encoding using affine spaces and phase polynomials~\cite{Nest2008,Bravyi2016b}.\\
+In the rest of this chapter, we will examine several of these methods for simulating stabilizer circuits, including two novel data structures developed in collaboration with Sergey Bravyi~\cite{Bravyi2018}. We will discuss their algorithmic complexity, and implementation in software. We will also present data benchmarking the performance of our novel methods with two existing pieces of stabilizer circuit simulation software.
+% Quote the Parity-L complexity result
+% Canonical circuit picture too
+
+
+%% Results - algorithms
+% Introduce affine spaces, citing van Den Nest, bravyi gosset
+% Also introduce DCH picture here
+% Smaller footprint, easy gates, still easy measurements
+
+% CH: Tableaux-like data structure
+% Still picks up easy gates
+
+%% Results - implementation
+% Example of encoding a quadratic form and affine space
+% Timings vs MATLAB
+%% CH and DCH Core
+%% CH and DCH extensions (Paulis, generalized inner product)
+%% Benchmarking results
