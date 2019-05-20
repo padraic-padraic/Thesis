@@ -799,10 +799,10 @@ FUNCTION {format.vol.num.pages}
     {
       "volume" bibinfo.check
       %% IF YOU WANT THE arxivId NUMBER TO SHOW UP LIKE THIS: ArXiv e-prints 1501.1234 (2015)
-      arxivId empty$
-        { }
-        { "\href{http://arxiv.org/abs/" arxivId * "}{" * swap$ * arxivId * "}" * }
-      if$
+      %%arxivId empty$
+        %%{ }
+        %%{ "\href{http://arxiv.org/abs/" arxivId * "}{" * swap$ * arxivId * "}" * }
+      %%if$
     }
   if$
   bolden
