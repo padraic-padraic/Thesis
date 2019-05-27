@@ -45,7 +45,7 @@ This result is typically referred to as the `Gottesman-Knill' theorem.\par
 A more formal proof follows from the work of Dehaene \& de-Moor, who showed that the action of Clifford unitaries on Pauli operators corresponds to multiplication of $(2n+1)\times (2n+1)$ symplectic binary matrices with $(2n+1)$-bit binary vectors~\cite{Dehaene2003}. The dimension of these elements also grows just linearly in the number of qubits, and as matrix multiplication requires time $O(n^{2.37})$ it follows that we can update the stabilizers in $O(mn^{2.73})$ for $m$ Clifford gates.\par
 This work was then extended by Aaronson \& Gottesman, who introduced an efficient data structure for stabilizer groups, and algorithms for their updates under Clifford gates and Pauli measurement~\cite{Aaronson2004}. This method avoids the need for matrix multiplications, instead providing direct update rules allowing stabilizer circuits to be simulated in $O(n^{2})$.\par
 Since 2004, there have been several papers looking at different data structures and algorithms for simulating stabilizer circuits of the type we consider here. For example, a method based on encoding stabilizer states as graphs~\cite{Anders2006}, refinements of the Aaronson \& Gottesman encoding~\cite{Garcia2012}, and an encoding using affine spaces and phase polynomials~\cite{VandenNest2008,Bravyi2016}.\\
-In the rest of this chapter, we will examine several of these methods for simulating stabilizer circuits, including two novel data structures developed in collaboration with Sergey Bravyi~\cite{Bravyi2018}. We will discuss their algorithmic complexity, and implementation in software. We will also present data benchmarking the performance of our novel methods against existing stabilizer circuit simulation software~\cite{Aaronson2004,Anders2006}.
+In the rest of this section, we will discuss different aspects of simulating stabilizer circuits, focusing on updating stabilizer states under gates and measurements, computing stabilizer inner products, and the connections between stabilizer circuits and states.
 % \clearpage
 \subsection{Tableau Encodings of Stabilizer States}\label{sec:sympencoding}
 The method in \cite{Aaronson2004} is based on a classical data structure they call the `stabilizer tableau', a collection of Pauli matrices that define the stabilizer group, encoded using the binary symplectic representation of \cite{Dehaene2003}
@@ -130,8 +130,15 @@ There are multiple possible choices of generators for each stabilizer group/stat
 \begin{align}
     \mathcal{S} = \{II, XX, -YY, ZZ\} = \langle XX,-YY\rangle = \langle XX, ZZ\rangle = \langle -YY,ZZ\rangle.
 \end{align}
-In simulation, tableau are fixed by choice of a convention. For example, it is possible to arrive at a `canonical' set of stabilizer generators using an algorithm which strongly resembles Gaussian elimination~\cite{Garcia2012}. This method rearranges the stabilizer rows of the tableau by multiplying and swapping generators, such that the overall stabilizer group is left unchanged. Computing this canonical form requires  time $O(n^{3})$~\cite{Garcia2012}.\par
-These tableau can then be updated using the same methods as in \cite{Aaronson2004}, though this will in general not preserve the canonical form. Each Clifford gate will change one or two columns of the tableau, and thus an additional $O(n)$ row multiplications are required to restore it to canonical form, taking total time $O(n^{2})$~\cite{Garcia2015}.\par
+In simulation, tableau are fixed by choice of a convention. For example, it is possible to arrive at a `canonical' set of stabilizer generators using an algorithm which strongly resembles Gaussian elimination~\cite{Garcia2012}. This method rearranges the stabilizer rows of the tableau by multiplying and swapping generators, such that the overall stabilizer group is left unchanged. Computing this canonical form requires  time $O(n^{3})$~\cite{Garcia2012}.
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.45\linewidth]{stbmtx_inv.jpg}
+    \caption{Representation of the canonical or `row-reduced' set of stabilizer generators. Figure taken from~\cite{Garcia2012}.}
+\label{fig:canoncialtableau}
+\end{figure}
+These tableau can then be updated using the same methods as in \cite{Aaronson2004}, though this will in general not preserve the canonical form. Each Clifford gate will change one or two columns of the tableau, and thus an additional $O(n)$ row multiplications are required to restore it to canonical form, taking total time $O(n^{2})$ per gate~\cite{Garcia2015}.
+Importantly this canonical tableau can also be used to compute deterministic measurement outcomes in time $O(n)$, and so this method can simulate measurement outcomes more efficiently at the cost of more expensive gate updates~\cite{Garcia2015}.\par
 In contrast, Aaronson \& Gottesman fix the stabilizer tableau through an initial state, $\ket{0}^{\otimes n}$. The full tableau for this state looks like the identity matrix, with an additional zero-column for the phases. The tableau of a given state $\ket{\phi}$ is then built-up gate by gate using a stabilizer circuit $V:\ket{\phi}=V\ket{0^{\otimes n}}.$
 \subsection{Connecting Stabilizer States and Circuits}
 % Connection between clifford circuits and states
@@ -140,7 +147,7 @@ In \cite{Aaronson2004}, the authors derive examples of these `canonical circuits
 \begin{equation}
     \ket{\phi} = V\ket{0} = H\;C\;S\;C\;S\;C \;H \; S \;C \;S \ket{0^{\otimes n}}\label{eq:chpcirc}
 \end{equation}
-where each letter denotes a layer made up of only Hadamard (H), CNOT (C) or S gates. The proof is based on  a sequence of operations reducing an arbitrary tableau to the identity matrix, each step of which corresponds to applying layers of a given Clifford gate~\cite{Aaronson2004}.\par
+where each letter denotes a layer made up of only Hadamard (H), CNOT (C) or S gates. The proof is based on  a sequence of operations reducing an arbitrary tableau to the identity matrix, each step of which corresponds to applying layers of a given Clifford gate~\cite{Aaronson2004}. As a corollary, the total number of gates in the canonical circuit for an $n$-qubit stabilizer state scales as $O(n\log (n))$~\cite{Aaronson2004}, based on previous work on synthesising $CNOT$ circuits with the $O(n\log (n))$ gates~\cite{Patel2003}, and that each $H$ and $P$ layer can act on at most $n$-qubits.\par
 A slightly simpler canonical form was derived in 2008, which allows a stabilizer circuit to be written as
 \begin{equation}
     \ket{\phi} = S\;CZ\;X\;C\;H \ket{0^{\otimes n}} \label{eq:affinecirc}
@@ -149,15 +156,18 @@ where the CZ and X layers are made up of Controlled-Z gates and Pauli X gates, r
 \begin{equation}
     \ket{\phi} = \frac{1}{\sqrt{2^{k}}}\sum_{x\in\mathcal{K}} i^{f(x)}\ket{x}.\label{eq:affineform}
 \end{equation}
-In this equation, $\mathcal{K}\subseteq\mathbb{Z}_{2}^{n}$ is an affine subspace of dimension $k$, and $f(x)$ is a binary  function order $\text{mod}\,4$. Thus, a stabilizer state is always a uniform superposition of computational basis strings, with individual phases $\pm \mathi,\,\pm 1$.
-The affine space $\mathcal{K}$ has the form
+In this equation, $\mathcal{K}\subseteq\mathbb{Z}_{2}^{n}$ is an affine subspace of dimension $k$, and $f(x)$ is a binary  function evaluated $\text{mod}\,4$. Thus, a stabilizer state is always a uniform superposition of computational basis strings, with individual phases $\pm \mathi,\,\pm 1$. The affine space $\mathcal{K}$ has the form
 \begin{equation}
     \mathcal{K}=\{Gu + h\}\label{eq:affinespace}
 \end{equation}
-for $k$-bit inary vectors $u$, an $n\times k$ binary matrix G, and an $n$-bit binary `shift-vector' $h$.\\
-Van den Nest notes that this can be directly translated into a stabilizer circuit; we begin by applying $H$ to the first $k$ qubits to initialize the state $\sum_{u}\ket{u}\otimes\ket{0^{\otimes n-k}}$, applying CNOTs to prepare $\sum_{u}\ket{Gu}$, and finally Pauli Xs to preapre $\sum_{u}\ket{Gu\oplus h}$~\cite{VandenNest2008}.\\
-The phases can be further decomposed into two linear and quadratic binary functions $l,q\,:\mathbb{Z}_{2}^{n}\rightarrow\mathhbb{Z}_{2}$, such that $i^{q(x)}=i^{l(x)}(-1)^{q(x)}$. The linear terms correpsond to single qubit phase gates, which can be generated by the S gate, and the quadratic terms to two-qubit phase gates, generated by the CZ~\cite{VandenNest2008}.\par
-While Van den Nest showed that these simpler canonical circuits exist, an algorithm to compute them was only introduced in 2012~\cite{Garcia2012}. This method allowed such a circuit to be read off from the `canonical' set of stabilizer generators.
+for $k$-bit binary vectors $u$, an $n\times k$ binary matrix G, and an $n$-bit binary `shift-vector' $h$.\\
+Van den Nest notes that this representation can be directly translated into a stabilizer circuit; we begin by applying $H$ to the first $k$ qubits to initialize the state $\sum_{u}\ket{u}\otimes\ket{0^{\otimes n-k}}$. We then apply CNOTs to prepare $\sum_{u}\ket{Gu}$, and finally Pauli Xs to preapre $\sum_{u}\ket{Gu\oplus h}$~\cite{VandenNest2008}.\\
+The phases can be further decomposed into two linear and quadratic binary functions $l,q\,:\mathbb{Z}_{2}^{n}\rightarrow\mathbb{Z}_{2}$, such that $i^{q(x)}=i^{l(x)}(-1)^{q(x)}$. The linear terms correpsond to single qubit phase gates, which can be generated by the S gate, and the quadratic terms to two-qubit phase gates, generated by the CZ~\cite{VandenNest2008}. Thus,
+\begin{equation}
+\ket{\phi}=\sum_{x\in\mathcal{K}}i^{l(x)}(-1)^{q(x)}\ket{x} = S\;CZ\;X\;C\;H\;\ket{0}
+\label{eq:expandedaffinecirc}
+\end{equation}
+While \cite{VandenNest2008} showed that these simpler canonical circuits exist, an algorithm to compute them first introduced in 2012~\cite{Garcia2012}. This method allowed such a circuit to be read off from the `canonical' set of stabilizer generators introduced in Section~\ref{sec:sympencoding}. 
 \subsection{Computing Inner Products}\label{sec:innerproduct}
 %% Outline inner product complexity as it comes up a lot later, cite BG for affine space, mention CHP/Canonical
 The final task we might consider in simulating stabilizer circuits is the problem of computing probability amplitudes $P(x)=\left\vert \braket{x}{\phi}\right\vert^{2}$. As computational states are also stabilizer states, this corresponds more broadly to computing inner products between stabilizer states.\\
@@ -165,12 +175,110 @@ From the affine space form in Eq.~\ref{eq:affinespace}, we can see that
 \begin{equation}
 \braket{\varphi}{\phi} = \frac{1}{\sqrt{2^{k+k'}}}\sum_{x\in\mathcal{K}\cap\mathcal{K'}} i^{f(x)-f'(x)}\label{eq:affine_ip}
 \end{equation}
-and the problem of computing the inner product corresponds to computing an `exponential sum' of phases~\cite{Bravyi2016}.
-
+and the problem of computing the inner product corresponds to computing the magnitude of an `exponential sum' of phase differences $(\pm\mathi,\;\pm 1)$ for each string $x$ in the intersection of the two affine spaces~\cite{Bravyi2016}. From inspection, we can see that
+\begin{equation}\vert \sum_{x} i^{f(x)-f'(x)}\vert = \begin{cases}
+0 \\
+2^{s/2} : s\in\{0,1,\dots,n\}
+\end{cases}
+\end{equation}
+This sum can be solved in $O(n^{3})$ time, using an algorithm developed by Sergey Bravyi~\cite{Bravyi2016,Bravyi2018,Bravyi2017}. An algorithm for computing this intersection was also described in~\cite{Bravyi2016}, which we discuss further in Section~\ref{sec:stabilizer_simulators}.\par
+Alternatively, the inner product can also be computed using the stabilizer generators directly. Consider two states $\ket{\phi},\ket{\varphi}$ with respective generators $G_{i},H_{i}$. If $\exists i,j\,:G_{i}=-H_{j}$, the states are orthogonal and the inner product is $0$. Otherwise, the inner product is given by $2^{-s}$, where $s$ the number of generators $G_{i}\notin \{H_{i}\}$.\\
+While there are multiple choices of stabilizer generators, we note that inner products are invariant under unitary operations $U$ as
+\begin{equation}
+\braket{\varphi}{\phi} = \matrixel{\varphi}{U^{\dagger}U}{\phi}.
+\end{equation}
+Thus, given the canonical circuit $V\; : \ket{\varphi}=V\ket{0^{\otimes n}}$
+\begin{equation}
+\braket{\varphi}{\phi} = \matrixel{\varphi}{V^{\dagger}V}{\phi} = \matrixel{0^{\otimes n}}{V}{\phi}.
+\end{equation}
+%Gaussian elimination
+Each stabilizer $G_{i}'$ of $\ket{0^{\otimes n}}$ has a single Pauli $Z$ operator acting on qubit $i$. By simplifying the stabilizer $H_{i}'$ of $V\ket{\phi}$ using Gaussian elimination, then we have
+\begin{equation}
+\left\vert \matrixel{0^{\otimes n}}{V}{\phi}\right\vert = \begin{cases}
+ 0 & \exists H_{i}' = \bigotimes_{i}Z_{i}\\
+ 2^{-s} & \exists H_{i}' : \acomm{H_{i}'}{G_{i}'} = 0
+\end{cases}
+\end{equation}
+where $s$ is the number of stabilizers that anticommute with the corresponding stabilizer $G_{i}'$~\cite{Aaronson2004}. The second case arises as if $\acomm{H_{i}'}{G_{i}'} = 0$, then $H_{i}'$ acts as either Pauli $X$ or $Y$ on qubit $i$. Thus, the qubit is in state $\ket{\pm 1}$ or $\ket{\pm\mathi}$, and $\braket{0}{\pm i,1}=\frac{1}{\sqrt{2}}$. Because this method involves computing the canonical circuit and then applying gaussian elimination, it runs in time $O(n^{3})$.\par
+The first implementation of this algorithm was given in~\cite{Garcia2012}, where the authors first use their canonical form to construct a `basis circuit' $B : \ket{\varphi}=B\ket{b}$ for some computational state $\ket{b}$, and then compute $\matrixel{b}{B}{\phi}$ using the same method outlined above~\cite{Garcia2012}.
 \section{Results}
-
+The main result of this chapter is to introduce two new classical representations of stabilizer states developed in collaboration with Sergey Bravyi~\cite{Bravyi2018}. We will discuss their algorithmic complexity, and implementation in software. We will also discuss the implementation of a classical datastructure based on affine spaces, introduced in~\cite{Bravyi2016}.\par
+Finally, we  present data evaluating the performance of all three methods. For the affine space representation, we benchmark against existing implementations in MATLAB~\cite{Bravyi2016}. For the two novel representations, we present data comparing their performance to two pieces of existing stabilizer circuit simulation software~\cite{Aaronson2004,Anders2006}.
 \subsection{Novel Representations of Stabilizer States}
+Existing classical simulators have two important limitations. One is that they focus only on implementations of single qubit Pauli measurements made in the $Z$ basis. Multi-qubit measurements, or measurements in different bases, need to be built up in sequence, or involve applying additional basis changes gates like $H$ and $S$, respectively.\\
+These simulators also do not track global phase information. For the case of simulating individual stabilizer circuits, this is sufficient as global phase does not affect measurement outcomes. However, if we wish to extend our methods to simulating superpositions of stabilizer states, then phase differences between terms in the decomposition must be recorded~\cite{Garcia2015}.\par
+Here, we present two data structures, which we call the `DCH' and `CH' forms.
+\begin{defn}
+DCH Representation:\\
+Any stabilizer state $\ket{\phi}$ can be written as
+\begin{equation}\ket{\phi} = \mathi^{e}U_{D} U_{CNOT} U_{H} \ket{s}
+\label{eq:dch}
+\end{equation}
+\label{def:dch}
+where $U_{D}$ is a diagonal Clifford unitary such that
+\begin{equation}
+U_{D}\ket{x} = i^{f(x)}\ket{x},
+\end{equation}
+$U_{CNOT}$ is a layer of $CNOT$ gates, and $U_{H}$ is a layer of Hadamard gates, acting on a computational state $\ket{s}$, and with global phase factor $e\in\mathbb{Z}_{4}$.
+\end{defn}
+Any diagonal Clifford matrix of the form $U_{D}$ is described by its `weighted polynomial' $f(x)$, evaluated $\text{mod}\; 4$, which can be expanded into linear and quadratic terms as
+\begin{equation}
+    f(x) = \sum_{i}a_{i}x_{i} + 2\sum_{j,k}x_{j}x_{k}\;\text{mod}\;4 = L(x) + 2Q(x)
+\end{equation}
+where the coefficients $a_{i}\in\mathbb{X}_{4}$~\cite{VandenNest2008,Campbell2016}. This was also the expansion used in the definition of the affine space representation in Eq.~\ref{eq:expandedaffinecirc}.\\
+We observe that the linear terms can be entirely generated by the $S$, $Z$ and $S^{\dagger}$ gates acting on single qubits, and the quadratic terms by $CZ$ gates acting on pairs of qubits~\cite{Campbell2016}. Thus, any unitary $U_{D}$ can be built up of these gates. As a corollary, we note that these `DCH' circuits can be obtained from the 7-stage circuits given in Eq.~\ref{eq:affinecirc}, by commuting the $X$ layer through to the beginning of the circuit and acting it on the $\ket{0^{\otimes n}}$ initial state.~\cite{VandenNest2008}.\par
+%% Outline classical encoding here
+The computational string $s$ can be encoded as an $n$-bit binary vector. This is also true of the Hadamard layer, which can be expanded in terms of a binary vector $h$ as
+\begin{equation}
+U_{H} = \bigotimes_{i=1}^{n} H^{h_{i}}.
+\label{eq:binaryhad}
+\end{equation}
+A $CNOT$ gate applied to qubits $i,j$ transforms the computational basis states as
+\begin{equation}
+CNOT_{i,j}\ket{x} = CNOT_{i,j}\bigotimes_{k=1}^{n}\ket{x_{k}} = \bigotimes_{k=1}^{n}\ket{x_{k}\oplus\delta_{k,j}x_{i}}
+\end{equation}
+i.e.~it adds the value of bit $i$ to bit $j$, modulo $2$. Thus, we can encode the action of $U_{CNOT}$ as an $n\times n$ binary matrix $G$ such that
+\begin{equation}
+U_{CNOT}\ket{x} = \ket{Gx}.
+\end{equation}
+A trivial circuit $U_{CNOT}=I$ is encoded as the identity matrix, and the entry $G_{j,i}$ is non-zero iff we apply $CNOT_{i,j}$.\\
+Finally, we need to encode the action of $U_{D}$. The phases resulting from the single qubit diagonal Cliffords can be stored as a vector $D$ of integers $\text{mod}\;4$. Each value can be stored using 2 bits. Finally, each gate $CZ_{i,j}$ between qubits $i$ and $j$ contributes a factor of $2$ to the overall phase when $x_{i}=x_{j}=1$. Thus, we can encode the quadratic part of the weighted polynomial using an $n\times n$ binary matrix $M$ where $M_{i,j}=M_{j,i}=1$ if we apply $CZ_{i,j}$, and zero otherwise. This allows us to write
+\begin{equation}
+U_{D}\ket{x} = i^{f(x)}\ket{x} = i^{Dx + xMx^{T}}\ket{x}.
+\end{equation}
+This encoding is based on the classical representation of quadratic forms outlined in Appendix~A of \cite{Bravyi2016}.\\
+Finally, we need to consider the global phase factor. This is also an integer modulo $4$, and can be stored using just two bits. Overall, then, the DCH representation has a spatial complexity $O(n^{2})$, requiring roughly $2n^{2}+4n+2$ bits.
+\begin{defn}
+CH Representation:\\
+Any stabilizer state $\ket{\phi}$ can be written as
+\begin{equation}
+\ket{\phi} = \mathi^{e} U_{C}U_{H}\ket{s}
+\label{eq:ch}
+\end{equation}
+where $U_{C}$ is a Clifford operator such that
+\begin{equation}
+U_{C}\ket{0^{\otimes n}} = \ket{0^{\otimes n}},
+\end{equation}
+$U_{H}$ is a layer of $H$ gates, $\ket{s}$ is a computational basis state and $e\in\mathbb{Z}_{4}$ is a global phase factor.
+\label{def:ch}
+\end{defn}
+%%Outline classical encoding here
+The CH representation is based on a notion of a `control-type' Clifford operator, which stabilizes the all zero computational basis state. Examples of control-type Clifford gates include the $S$, $CZ$ and $CNOT$ gates. A control type operator $U_{C}$ can be obtained from the DCH form, for example, by concatenating $U_{D}$ and $U_{CNOT}$ layers. Thus, we can see that any stabilizer state can be generated by a $CH$-type circuit.\par
+Similarly to above, we encode the initial computational basis state $s$ and the Hadamard layer $U_{H}$ as $n$-bit binary vectors. The control-type layer we then encode using a stabilizer tableau, made up of $2n$ Pauli operators
+$U_{C}^{-1}X_{i}U_{C}$ and $U_{C}^{-1}Z_{i}U_{C}$. This tableau can also be thought of as a CHP-type tableau for the state $U_{C}\ket{0^{\otimes n}}$, where the Pauli X entries are the destabilizers and the Pauli Z entries are the stabilizers.\\
+Each Pauli would require $2n+1$ bits to encode. However, from the definition of the control-type operators, $U_{C}^{-1}Z_{i}U_{C}$ will never result in a Pauli $X$ or $Y$ operator, as otherwise $U_{C}\ket{0^{\otimes n}}\neq\ket{0^{\otimes n}}$. Thus, we can ignore the $n$ `x-bits' of each of the Pauli $Z$ rows.\\
+Again, we also require two further bits to encode the global phase, and overall, the $CH$ form  has a spatial complexiy $O(n^{2})$, requiring $3n^{2} + 5n+2$ bits of memory.
+\subsubsection*{Gate updates}
+\subsubsection*{Hadamard and Pauli Measurements}
+\subsubsection*{Computational Amplitudes and Sampling}
+\subsection{Implementations in Software}\label{sec:stabilizer_simulators}
 
-\subsection{Implementations in Software}
+\subsubsection*{Efficient Binary Operations}\label{sec:binary_ops}
 
-\subsection{Performance Analysis}
+\subsubsection*{The Affine Space Simulator}\label{sec:affine_space_sim}
+
+\subsubsection*{Phase Sensitive Simulators}\label{sec:ps_sim}
+
+\subsection{Performance Benchmarks}
+
+\section{Discussion}
