@@ -10,3 +10,4 @@
 *.nlo
 *.out
 *.toc
+.DS_Store
