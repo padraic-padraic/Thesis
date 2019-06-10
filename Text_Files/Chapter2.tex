@@ -571,10 +571,66 @@ Overall, then, the complexity of applying Proposition~\ref{prop:pseudocz} to the
 \subsubsection*{Sampling Pauli Measurements with Proposition~\ref{prop:pseudocz}}
 % s, t and decidability!
 % If random, pick a coin, apply +- P!
+Proposition~\ref{prop:pseudocz} can also be extended to apply to sampling measurements of arbitrary Pauli operators. Measuring a Pauli operator $P$ is closely related to applying a projector $\Pi_{\pm P}=\frac{1}{\sqrt{2}}\left(I\ \pm P\right)$. As mentioned previously, there are three possible outcomes for a Pauli measurement
+\[
+\begin{array}{r c l}
+\Pi_{+P}\ket{\phi} = \ket{\phi} & P\ket{\phi} = \ket{\phi} & \text{Deterministic Outcome}\;+1\\
+\Pi_{+P}\ket{\phi} = 0 & P\ket{\phi} = -\ket{\phi} & \text{Determinitic Outcome}\; -1\\
+\Pi{+P}\ket{\phi} = \ket{\phi}+\ket{\varphi} & P\ket{\phi}=\ket{\varphi} & \text{Random Outome} \\
+\end{array}
+\]
+In terms of measuring an operator $P$, then we can begin by commuting the projector $I+P$ through the Clifford circuit as described in the previous sections. Dropping the normalisation, we have
+\begin{align*}
+\left(I+P\right)V\ket{s} &= V\left(I+V^{\dagger}PV\right)\ket{s} \\
+& = V\left(\ket{s}+P'\ket{s}\right) = V\left(\ket{s}+i^{\beta}\ket{s'}\right)
+\end{align*}
+which is the equivalent to the statement of Proposition~\ref{prop:pseudocz}, with $t=s$ and $u=s'$.\par
+If $s=s'$, then the measurement outcome is deterministic. As we have used the projector $\Pi_{+P}$, the measurement outcome is $+1$ unless $\beta=2$, in which case the outcome is $-1$. Otherwise, if $s\neq s'$, the measurement outcome is random and equiprobable. We can sample the $\pm 1$ outcome using random number generation techniques, and then apply the corresponding projector $\left(I\pm P\right)$. As computing $P'$ takes in general $O(n^{2})$ time, deciding on the measurement outcome also takes $O(n^{2})$ time. However, compare to other stabilizer simulators, we note that this algorithm works for arbitrary Pauli operators $P$ as opposed to just single-qubit Pauli $Z$ measurements.
 \subsubsection*{Computational Amplitudes and Sampling Output Strings}
 % Commute the X through, update, compute 0 amplitude
 % Easy as really! Especially as DC/C layers do _nothing_ to the all 0 state.
+Commuting Pauli operators through the layers of control type operators can also be used to compute the probability of a given computational basis state. Recall that a control-type Clifford circuit $U_{C}$ is defined such that $U_{C}\ket{0^{\otimes n}}=\ket{0^{\otimes n}}$. Recall also that for the DCH representation, $U_{D}$ and $U_{CNOT}$ are also a control-type operators. Thus,
+\begin{align*}
+\braket{0^{\otimes n}}{\phi} &= w^{e}\matrixel{0^{\otimes n}}{U_{C}U_{H}}{s} \nonumber \\
+&= w^{e}\left(\bra{0^{\otimes n}}U_{C}\right)U_{H}\ket{s} \nonumber \\
+&= w^{e}\matrixel{0^{\otimes n}}{U_{H}}{s}.
+\end{align*}
+This trick, using the definition of a control-type operator to simplify the inner product, can be extended to any comptuational basis state. Writing $\ket{t}=X(t)\ket{0^{\otimes n}}$, we can then commute the $X$ operators past the control-type layer(s) to obtain
+\begin{align}
+\matrixel{t}{U_{C}U_{H}}{s} &= \matrixel{0^{\otimes n}}{P'U_{H}}{s} \nonumber \\
+&= \matrixel{0^{\otimes n}}{i^{\mu}Z(z')X(x')\,U_{H}}{s} = \matrixel{x'}{U_{H}}{s}
+\label{eq:arbitray_computational}
+\end{align}
+where we have used the `ZX' convention in the definition of the Pauli operator. If instead we use the `XZ' convention, then we pick up an additional phase factor of $-1^{x'\cdot z'}$.\par
+The action of the Hadamard layer on a computational basis state can be expanded out as
+\begin{equation}
+U_{H}\ket{s}=2^{-\left\vert v\right\vert/2}-\left(-1\right)^{s\cdot v}\sum_{x\leq v}(-1)^{s\cdot x}\ket{s + x\pmod{2}}
+\label{eq:hadamard_action}
+\end{equation}
+where $x\leq v$ denotes the binary strings $x:x_{i}=v_{i}\iff v_{i}=0$ and $\left\vert v\right\vert$ is the Hamming weight of the string $v$. Thus, we have overall that
+\begin{equation}
+\matrixel{t}{\phi} = 2^{-\left\vert{v}\right\vert /2}i^{\mu}\prod_{j:v_{j}=1}(-1)^{x'_{j}s_{j}}\prod_{j:v_{j}=0}\braket{x'_{j}}{s},
+\end{equation}
+which equals $0$ if any $u_{j}\neq s_{j}$ for $v_{j}=0$, and is propostional to $2^{-\left\vert v\right\vert/2}$ otherwise. As this requires commuting a Pauli operator through the C/DC layer(s), computing these amplitudes takes time $O(n^{2}).$\par
+This result can also be extened to sample strings from the probability distriution $P(x)=\left\vert\matrixel{t}{V}{s}\right\vert^{2}$, where $V_{C}$ is a Clifford circuit such that $V_{C}=U_{C}U_{H}\equiv U_{D}U_{CNOT}U_{H}$. From the above, we know that any string with a non-zero amplitude occurs with equal probability. This, it is sufficient to start with a binary string
+\[w:w_{j}=\begin{cases}s_{j} & v_{j}=0 \\ 0 & \text{otherwise}\end{cases}\]
+and then pick each of the remaining $\left\vert v\right\vert$ bits at random with equal probability.
 \subsubsection*{Computing Inner Products}
+%%DCH: Combines previosuly shown ingredients.
+%% Combine the D layers, commute the C past and then combine that
+%% Then, discuss either null space or Hadamard commuting strategies
+%% O(n^3) complexity, from computing the state to then do amplitude
+%% Or computing null space to sum over
+
+%%CH: Different tehnique
+%% Tableau can be combined using lieft multiplication
+%% Need to find inverse of a given tableau
+%% Do as a Lemma!
+%% Again, can use 'null space' or Hadamard commutation
+%% Same complexity
+
+%% Special case for both methods, 'equatorial' stabilizer states => Introduce in Chapter 5 instead!!
+
 \subsection{Implementations in Software}\label{sec:stabilizer_simulators}
 
 \subsubsection*{Efficient Binary Operations}\label{sec:binary_ops}
