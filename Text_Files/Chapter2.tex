@@ -537,14 +537,20 @@ U_{C}^{\dagger}Z(z)U_{C} & \prod_{i:z_{i}=1}U_{C}^{\dagger}Z_{i}U_{C}
 \end{array}
 \]
 We can thus build up $P'$ term by term as
-\begin{equation}
-U_{C}^{\dagger}PU_{C} = \prod_{j=1}^{n}x_{j}\left(\mathi^{\gamma_{j}}X(\text{row}_{j}(M))Z(\text{row}_{j}(F))\right)\prod_{j=1}^{n}z_{i}\left(Z(\text{row}_{j}(G))\right)
-\end{equation}
-Multiplying Pauli operators in the sympelctic form takes time $O(n)$, and in the $XZ$ convention is given by
-\[
-P_{1}P_{2}= i^{a}X(x)Z(z)\,i^{a'}X(x')Z(z')=i^{a+a'+2(z\cdot x')} X(x+x')Z(z+z').
-\] 
-As there are up to $2n$ such multiplactions, overall this update requires time $O(n^{2})$ to compute. We can the use the same update rule as for the DCH form to commute the Pauli operator past the $U_{H}$ layer.\par
+\begin{align}
+U_{C}^{\dagger}PU_{C} &= \prod_{j=1}^{n}x_{j}\left(\mathi^{\gamma_{j}}X(\text{row}_{j}(F))Z(\text{row}_{j}(M))\right)\prod_{j=1}^{n}z_{i}\left(Z(\text{row}_{j}(G))\right) \nonumber \\
+&= \mathi^{\sum_{j=1}^{n} x_{j}\gamma_{j} + 2\sum_{j=1}^{n}\sum_{k>j}x_{j}x_{k}\left( \text{row}_{j}(F)\cdot\text{row}_{j}(M) \right)}X(xF)Z(xM+zG) \nonumber \\
+&= \mathi^{xJx^{T}}X(xF)Z(xM+zG).
+\label{eq:tableau_update_pauli}
+\end{align}
+The extra factor of $2$ in the phase arises from having to commute the Pauli $Z$ terms in $U_{C}^{\dagger}X_{j}U_{C}$ past the following Pauli $X$ terms. We can encode these commutation relations as a binary matrix
+\[MF^{T} : \left[MF^{T}\right]_{i,j} = \text{row}_{i}(M)\cdot \text{row}_{j}(F),\]
+which is additionally symmetric as 
+\[\comm{U_{C}^{\dagger}X_{j}U_{C}}{U_{C}^{\dagger}X_{k}U_{C}} = \comm{X_{j}}{X_{k}} = 0.\]
+Similiar to the way we encode the phase polynomial in the DCH form, we can then simplify the overall phase calculation as
+\[aJa^{T} : \left[J\right]_{i,j} = \begin{cases} \gamma_{i} & i=j \\ MF^{T}_{i,j} & i\neq j \end{cases}\]
+where we pick up the correct factor of $2$ from the symmetric nature of $MF^{T}$.
+Computing each of the matrix-vector multiplications to commute past $U_{C} $takes $O(n^{2})$ time. We can then use the same update rule as for the DCH form to commute the Pauli operator past the $U_{H}$ layer.\par
 Finally, to finish applying Proposition~\ref{prop:pseudocz}, we need to update the tableau of $U_{C}$ to $U_{C}W_{C}$. We have
 \[\left(U_{C}W_{C}\right)^{\dagger}X_{i},Z_{i}\left(U_{C}W_{C}\right) = W_{C}^{\dagger}\left(U_{C}^{\dagger}X_{i},Z_{i}U_{C}\right)W_{C}\]
 an thus we need to update the Paulis in the tableau by conjugtion with $CNOT$, $CZ$ and $S$ gates. These rules for updating $U_{C}$ by right-multiplication with a control type unitary are the same as for the CHP tableau, with some additional corrections for phase.
@@ -567,7 +573,7 @@ CNOT_{q,p} & \left\{
 \text{col}_{q}(M) & \gets & \text{col}_{q}(M) + \text{col}_{p}(M)\\
 \end{array}\right.
 \end{align}
-Overall, then, the complexity of applying Proposition~\ref{prop:pseudocz} to the CH form is $O(n^{2})$.
+There are $O(n)$ row and column updates to perform, and thus this final step runs in time $O(n^{2})$. Overall, then, the complexity of applying Proposition~\ref{prop:pseudocz} to the CH form is $O(n^{2})$, arising from computing $U_{C}^{\dagger}PU_{C}$ and then updating the tableau under $W_{C}$.
 \subsubsection*{Sampling Pauli Measurements with Proposition~\ref{prop:pseudocz}}
 % s, t and decidability!
 % If random, pick a coin, apply +- P!
@@ -595,7 +601,7 @@ Commuting Pauli operators through the layers of control type operators can also 
 &= w^{e}\left(\bra{0^{\otimes n}}U_{C}\right)U_{H}\ket{s} \nonumber \\
 &= w^{e}\matrixel{0^{\otimes n}}{U_{H}}{s}.
 \end{align*}
-This trick, using the definition of a control-type operator to simplify the inner product, can be extended to any comptuational basis state. Writing $\ket{t}=X(t)\ket{0^{\otimes n}}$, we can then commute the $X$ operators past the control-type layer(s) to obtain
+This trick, using the definition of a control-type operator to simplify the inner product, can be extended to any comptuational basis state. Writing $\ket{t}=X(t)\ket{0^{\otimes n}}$, we can then commute the $X$ operators past the control-type layer (s) to obtain
 \begin{align}
 \matrixel{t}{U_{C}U_{H}}{s} &= \matrixel{0^{\otimes n}}{P'U_{H}}{s} \nonumber \\
 &= \matrixel{0^{\otimes n}}{i^{\mu}Z(z')X(x')\,U_{H}}{s} = \matrixel{x'}{U_{H}}{s}
@@ -604,40 +610,162 @@ This trick, using the definition of a control-type operator to simplify the inne
 where we have used the `ZX' convention in the definition of the Pauli operator. If instead we use the `XZ' convention, then we pick up an additional phase factor of $-1^{x'\cdot z'}$.\par
 The action of the Hadamard layer on a computational basis state can be expanded out as
 \begin{equation}
-U_{H}\ket{s}=2^{-\left\vert v\right\vert/2}-\left(-1\right)^{s\cdot v}\sum_{x\leq v}(-1)^{s\cdot x}\ket{s + x\pmod{2}}
+U_{H}\ket{s}=2^{-\left\vert v\right\vert/2}\left(-1\right)^{s\cdot v}\sum_{x\leq v}(-1)^{s\cdot x}\ket{s \oplus x}
 \label{eq:hadamard_action}
 \end{equation}
 where $x\leq v$ denotes the binary strings $x:x_{i}=v_{i}\iff v_{i}=0$ and $\left\vert v\right\vert$ is the Hamming weight of the string $v$. Thus, we have overall that
 \begin{equation}
 \matrixel{t}{\phi} = 2^{-\left\vert{v}\right\vert /2}i^{\mu}\prod_{j:v_{j}=1}(-1)^{x'_{j}s_{j}}\prod_{j:v_{j}=0}\braket{x'_{j}}{s},
 \end{equation}
-which equals $0$ if any $u_{j}\neq s_{j}$ for $v_{j}=0$, and is propostional to $2^{-\left\vert v\right\vert/2}$ otherwise. As this requires commuting a Pauli operator through the C/DC layer(s), computing these amplitudes takes time $O(n^{2}).$\par
+which equals $0$ if any $u_{j}\neq s_{j}$ for $v_{j}=0$, and is propostional to $2^{-\left\vert v\right\vert/2}$ otherwise. As this requires commuting a Pauli operator through the C/DC layer (s), computing these amplitudes takes time $O(n^{2})$.\par
 This result can also be extened to sample strings from the probability distriution $P(x)=\left\vert\matrixel{t}{V}{s}\right\vert^{2}$, where $V_{C}$ is a Clifford circuit such that $V_{C}=U_{C}U_{H}\equiv U_{D}U_{CNOT}U_{H}$. From the above, we know that any string with a non-zero amplitude occurs with equal probability. This, it is sufficient to start with a binary string
 \[w:w_{j}=\begin{cases}s_{j} & v_{j}=0 \\ 0 & \text{otherwise}\end{cases}\]
 and then pick each of the remaining $\left\vert v\right\vert$ bits at random with equal probability.
 \subsubsection*{Computing Inner Products}
+The computational basis are a special case of stabilizer state inner products. Here, we present a general method for computing inner products $\braket{\varphi}{\phi}$ using the DCH and CH forms. Both methods proceed by combining the two control-type layers, and then breaking down the computation into a sum of different computational basis state amplitudes
+\begin{align*}
+\braket{\varphi}{\phi} &= \matrixel{t}{V_{H}V_{C}^{\dagger}U_{C}U_{H}}{s} \\
+&= \matrixel{t}{V_{H}}{\Phi} : \ket{\Phi} = V_{C}^{\dagger} \ket{\phi}.
+\end{align*}
 %%DCH: Combines previosuly shown ingredients.
 %% Combine the D layers, commute the C past and then combine that
 %% Then, discuss either null space or Hadamard commuting strategies
 %% O(n^3) complexity, from computing the state to then do amplitude
 %% Or computing null space to sum over
-
-%%CH: Different tehnique
-%% Tableau can be combined using lieft multiplication
-%% Need to find inverse of a given tableau
-%% Do as a Lemma!
-%% Again, can use 'null space' or Hadamard commutation
-%% Same complexity
-
-%% Special case for both methods, 'equatorial' stabilizer states => Introduce in Chapter 5 instead!!
-
+\begin{prop}
+Given a stabilizer inner product of the form
+\[\matrixel{t}{V_{H}}{\Phi}\]
+where $\ket{\Phi}$ is encoded in DCH or CH form, we can compute the inner product by computing the computational state ampliude $\braket{t}{\Phi'}$ where $\ket{\Phi'}=V_{H}\ket{\Phi}$, in time $O(n^{3})$.\label{prop:stab_inner_prod}
+\end{prop}
+\begin{proof}[Proof of Proposition~\ref{prop:stab_inner_prod}a]
+In both the DCH and CH form, we can simulate the action of a single Hadamard gate in time $O(n^{2})$. The Hadamard circuit $V_{H}$ contains at most $n$ Hadamard gates, and so we can compute $V_{H}\ket{\Phi}$ in time $O(n^{3})$. The amplitude then reduces to computing the amplitude $\braket{t}{\Phi'}$, which takes time $O(n^{2})$. The overall worst-case complexity is thus $O(n^{3})$.
+\end{proof}
+In the following sections, we will show how to compute $\ket{\Phi}$ from the DCH/CH data of $\ket{\varphi}$ and $\ket{\phi}$.\par
+\large{\itshape{The DCH Case}}\\
+In this representation, we need to compute $U_{D}'U_{CNOT}'=V_{CNOT}^{\dagger}V_{D}^{\dagger}U_{D}U_{CNOT}$. We begin by combining the two phase layers, noting that
+\[U_{D}^{\dagger}\ket{x} = \mathi^{-\,xBx^{t}}\ket{x}\]
+and thus given the two phase matrices $A,B$, the phase matrix encoding the combined circuit is
+\[V_{D}^{\dagger}U_{D}\ket{x}=\mathi^{x \left(A-B\right)x^{T}}\ket{x}\]
+where, as per the definition, the subtraction is $\bmod{2}$ on the off-diagonal entries and $\bmod{4}$ on the diagonal entries.\par
+We then need to commute $V_{CNOT}^{\dagger}$ past the new $U_{D}'$ layer, and combine it with $U_{CNOT}$. As this circuit is an inverse, it is characterised by the binary matrix $Q^{-1}$, and its inverse is $Q$. Thus
+\begin{equation}
+\begin{array}{rcl}
+B' & \gets & Q^{-1}B'Q \\
+W & \gets & WQ^{-1}\\
+W^{-1} & \gets & QW^{-1} \\
+\end{array}
+\end{equation}
+Altogether then, the updated DCH information of $\ket{\Phi}$ can be computed in time $O(n^{2})$.\par
+% Alternatively, we can relate the inner product calculation to the problem of computing exponential sums. Considering the action of the DCH layers of $\ket{\Phi}$, we can expand it in the computational basis as
+% \[
+% U_{D}'U_{CNOT}'U_{H}\ket{s} = 2^{-\vert v\vert/2}\sum_{x<v} \mathi^{xWBW^{T}x^{T}+ 2\left(s\cdot v + s\cdot x\right)}\ket{xW},
+% \]
+% and we can expand the action of the Hadamard circuit $V_{H}$ using Eq.~\ref{eq:hadamard_action}. This lets us write the exponential sum as
+% \[
+% \braket{\varphi}{\phi} = 2^{-\left(\vert v\vert+\vert c\vert\right)/2}\left(-1\right)^{2\left(s'\cdot c + s\cdot v\right)}\sum_{\left(x<v\right),\,\left(y<c\right)}\mathi^{xWBW^{T}x^{T}+2\left(y\cdot c + x\cdot v\right)}\braket{y}{xW}
+% \]
+% where $c$ is the binary string encoding the action of $V_{H}$. The strings that contribute to this sum can be split into four cases, depending on the action of the two Hadamard layers.
+% \begin{equation}
+% \begin{array}{rcl}
+% v_{j}=c_{j} = 0 & \implies & x_{j}=s_{j},\;y_{j}=t_{j}\\
+% v_{j}=0,\,c_{j}=1 & \implies & [xW]_{j}=y_{j}=t_{j}\\
+% v_{j}=1,\,c_{j}=0 & \implies & x_{j}=s_{j},\;y_{j}=[sW]_{j}\\
+% v_{j}=c_{j}=1 & \implies & [xW]_{j}=y_{j}=\{0,1\}\\
+% \end{array}
+% \end{equation}
+% If there are any bits $j:t_{j}\neq[sW]_{j}$, then the inner product is zero. Otherwise, the strings $x$ that contribute to the inner product have their bits where $(v_{j}\vee c_{j})=0$ fixed, and these bits contribute a global phase to the amplitude. Writing $s(ab)$ to denote the substring of bits $s_{j}$ where the corresponding bit $v_{j}=a$ and $c_{j}=b$, and similarly $B(ab,cd)$ to denote a sub-matrix with rows $i$ and columns $j:\,v_{i}=a\,c_{i}=v,\;\,v_{j}=c,\,c_{j}=d$, we can write
+% \begin{equation}
+% \braket{\varphi}{\phi} = \mathi^{p}\sum_{x\in\mathbb{Z}_{2}^{\vert v\wedge c\vert}}\mathi^{xB'(11,11)x^{T}+}
+% \end{equation}
+\large{\itshape{The CH Case}}\\
+Given two tableau describing control-type unitaries $V_C{}$ and $U_{C}$, we can combine them using Eq.~\ref{eq:tableau_update_pauli}, as 
+\begin{align*}
+\left(V_{C}U_{C}\right)^{\dagger} X_{j}V_{C}U_{C} &= U_{C}^{\dagger}\left(V_{C}^{\dagger} X_{j} V_{C}\right)U_{C}\\
+&=\mathi^{\gamma'_{j}}U_{C}^{\dagger}P U_{C}\\
+&= \mathi^{\gamma'_{j}+\text{row}_{j}(F')J\text{row}_{j}(F')^{T}}X(\text{row}_{j}(F')F)Z(\text{row}_{j}(M')M),
+\end{align*}
+and similarly for the $Z_{j}$ entries. Combining two tableau in this way will require time $O(n^{3})$, as there are $2n$ entries and each update takes time $O(n^{2})$. However, to compute the tableau of $\ket{\Phi}$, we will require the following Lemma:
+\begin{lem}\label{lem:inverse_tableau}
+Given the tableau of a control type operator $U_{C}$, specified by the binary matrices $F$, $M$ and $G$, then the inverse tableau has matrices $G'$, $F'$ and $M'$ such that
+\begin{equation}
+\begin{array}{rcl}
+G' & \equiv & G^{-1}\\
+F' & \equiv & G^{T} \\
+M' & \equiv & M^{T}.\\
+\end{array}
+\end{equation}
+\end{lem}
+\begin{proof}[Proof of Lemma~\ref{lem:inverse_tableau}]
+The entries of the tableau for $U_{C}^{\dagger}$ have the property
+\[
+U_{C}\left(U_{C}^{\dagger}X_{j},Z_{j}U_{C}\right)U_{C}^{\dagger} = U_{C}^{\dagger}\left(U_{C}X_{j},Z_{j}U_{C}^{\dagger}\right)U_{C}=X_{j},Z_{j}
+\]
+Consider first the Pauli $Z$ terms. Using Eq.~\ref{eq:tableau_update_pauli}, can see that
+\[U_{C}\left(U_{C}^{\dagger}Z_{j}U_{C}\right)U_{C}^{\dagger} = Z(\text{row}_{j}(G)G') = Z_{j}\]
+for all $j\in\{1,2,\dots,n\}$. Expanding out this requirement, we can see that $\text{row}_{j}(G)\cdot \text{col}_{k}(G') = \delta_{jk}\forall\;j,k$. If we change the order of the multiplications, we obtain the additional constraint $\text{row}_{j}(G')\cdot \text{col}_{k}(G)=\delta_{jk}$. We thus require that
+\begin{equation}
+GG'=G'G=I
+\label{eq:G_result}
+\end{equation}
+and thus, $G'=G^{-1}$.\par
+A feature of CHP tableaux is that the $j$th stabilizer and destabilizer anticommute. Here, similarly
+\[U_{C}^{\dagger}X_{j}U_{C}\,U_{C}^{\dagger}Z_{k}U_{C}=\left(-1\right)^{\delta_{jk}}U_{C}^{\dagger}Z_{k}U_{C}\,U_{C}^{\dagger}X_{j}U_{C}\]
+where the extra phase arises from the commutation relations of Pauli operators. In terms of the entries of the tableau, this tells us that
+\[\text{row}_{j}(F)\cdot\text{row}_{k}(G)=\delta_{jk}\forall\,j,k\implies FG^{T}=I.\]
+This also holds for the tableau of $U_{C}^{\dagger}$. From this, we can concldue that $F=\left(G^{-1}\right)^{T}$, and similarly $F'=G^{T}$.\par
+Finally, consider the $X_{j}$ entries. Again applying Eq.~\ref{eq:tableau_update_pauli}, we have
+\[U_{C}\left(U_{C}^{\dagger}X_{j}U_{C}\right)U_{C}^{\dagger}= X(\text{row}_{j}(F)F')Z(\text{row}_{j}(F)M' + \text{row}_{j}(M)G') = X_{j}.\]
+As the Pauli $Z$ terms cancel, we have
+\begin{align*}
+\text{row}_{j}(F)\cdot\text{col}_{k}(M')+\text{row}_{j}(M)\cdot\text{col}_{k}(G')&=0\;\forall j,k\\
+\implies \text{row}_{j}(F)\cdot\text{col}_{k}(M') &= \text{row}_{j}(M)\cdot\text{col}_{k}(G')\;\forall j,k.
+\end{align*}
+Using $F^{T}=(G^{-1})$, and Eq.~\ref{eq:G_result}, we thus have
+\begin{equation}
+\text{row}_{j}(F)\cdot\text{col}_{k}(M')=\text{row}_{j}(M)\cdot\text{row}_{k}(F)\;\forall j,k\implies M_{j,k}=M'_{k,j}
+\end{equation}
+completing the proof.
+\end{proof}
+\large{\itshape{Specialization for `Equatorial' Stabilizer States}}\par
+A specialisation exists for computing the inner product when the state $\ket{\varphi}$ is of the form
+\[\ket{\varphi} = \sum_{x\in\mathbb{Z}_{2}^{n}}i^{xAx^{T}}\ket{x}\]
+a superposition of all $2^{n}$ computational basis states with relative phases. We call these `equatorial' stabilizer states, as they are like $n$-qubit generalisations of single qubit states $\ket{0}+\mathe^{i\theta}\ket{1}$ which lie on the equator of the Bloch sphere.
+\begin{cla}
+If $\ket{\varphi}$ is an equatorial state, we can write the inner product as
+\begin{equation}
+\braket{\phi}{\varphi} = 2^{-(n+\vert v\vert)/2}\mathi^{sKs^{T}+2s\cdot v}\sum_{x\in\mathbb{Z}_{2}^{\vert v\vert}}\mathi^{xK(1,1)x^{T}+2x[s+sK](1)^{T}}
+\end{equation}\label{claim:exp_sum_ip}
+where $s(1)$ denotes the elements of a vector $s_{j}: v_{j}=1$, and $K(1,1)$ is the submatrix with rows $i$ and columns $j$ such that $v_{i},v_{j}=1$. 
+\end{cla}
+\begin{proof}[Proof of Claim~\ref{claim:exp_sum_ip}]
+Let us assume that, given a control-type unitary $U_{C}\equiv U_{D}U_{CNOT}$, we can write $U_{C}^{\dagger}\ket{\varphi}=\sum_{x\in\mathbb{Z}_{2}^{n}}i^{xKx^{T}}\ket{x}$ for an appropriate phase matrix $K$. We will show in the following section how to construct this matrix $K$ given the CH and DCH representation of a state $\ket{\phi}$. Given this form then, we have
+\begin{align*}
+\braket{\varphi}{\phi} &= \left(\braket{\phi}{\varphi}\right)^{*} \\ 
+&= 2^{-n/2}\left(\sum_{x\in\mathbb{Z}_{2}^{n}}\mathi^{xKx^{T}} \matrixel{s}{U_{H}}{x} \right)^{*}\\
+\end{align*}
+Using Eq.~\ref{eq:hadamard_action} to expand out the left hand side of this expression, we obtain a sum over terms
+\[\sum_{x\in\mathbb{Z}_{2}^{n}}\mathi^{xKx^{T}} \matrixel{s}{U_{H}}{x} = 2^{-\vert v\vert/2}(-1)^{s\cdot v}\sum_{y<v}(-1)^{s\cdot y}\sum_{x\in\mathbb{Z}_{2}^{n}}\mathi^{xKx^{T}}\braket{s\oplus y}{x}\]
+From the orthogonality of computational basis states, we can set $x=s\oplus y$ and drop all other terms in the sum. Doing so changes the phase calculation to
+\[(s\oplus y)K(s\oplus y)^{T}=sKs^{T}+yKy^{T}+yKs^{T}+sKy^{T} = sKs^{T}+yKy^{T}+2yKs^{T} \]
+where the final equality follows from the symmetric nature of $K$. From the the definition of $y\leq v$, $y_{j}=0\iff v_{j}=0$. Thus, we can take the global phase of $sKs^{T}$ out and reduce the sum to the sum over strings $y\in\mathbb{Z}_{2}^{\vert v\vert}$, as in Claim~\ref{claim:exp_sum_ip}.\par
+To complete the proof, we need to show how to obtain $K$ in both cases. In the DCH form, we have
+\[\braket{\phi}{\varphi}=\matrixel{s}{U_{H}U_{CNOT}^{-1}U_{D}^{-1}}{\varphi}.\]
+Using the definition of an equatorial stabilizer state, we can write $\ket{\varphi}=V_{D}\ket{+^{\otimes n}}$, and simply compute $\ket{\varphi'}=U_{D}^{-1}V_{D}\ket{+^{\otimes n}}$ by combining the two phase layers to obtain a new phase matrix $(A-B)$.\par
+Another feature of the state $\ket{+^{\otimes n}}$ is that it is invariant under $CNOT$ circuits, as it is a superposition of all computational basis states and subsequently invariant under their permutation. Applying Lemma~\ref{lem:dc_conjugtation}, we can commute the circuit $U_{CNOT}^{-1}$ past $U_{D}'=U_{D}^{-1}V_{D}$ and eliminate it. This gives a new phase matrix $K=G(A-B)G^{T}$.\par
+In the CH case, using Eq.~\ref{eq:tableau_update_pauli}, we can write
+\[U_{C}^{-1}\ket{x}=U_{C}^{-1}X(x)U_{C}\ket{0^{\otimes n}}=\mathi^{xJx^{T}}\ket{xF}\]
+Applying this to $\ket{\varphi}$ thus gives
+\[U_{C}^{-1}\sum_{x\in\mathbb{Z}_{2}^{n}}\mathi^{xAx^{T}}\ket{x}=\sum_{x\in\mathbb{Z}_{2}^{n}}\mathi^{x(A+J)x^{T}}\ket{xF}.\]
+Using $FG^{T}=I$, as introduced in the previous section, and setting $x=yG^{T}$, we have
+\[\sum_{y\in\mathbb{Z}_{2}^{n}}\mathi^{yG^{T}(A+J)Gy^{T}}\ket{y}=\sum_{y\in\mathbb{Z}_{2}^{n}}\mathi^{yKy^{T}}\ket{y}\]
+as required where $K=G^{T}(A+J)G$.
+\end{proof}
+Once the calculaton is in this form, we can compute the inner product in time $O(\vert v\vert^{3})$ using the algorithm for exponential sums developed by Sergey Brayyi~\cite{Bravyi2018}. Computing the phase matrix $K$ takes time $O(n^{2})$ in both cases, and thus as $\vert v\vert\leq n$ we have a general performance $O(n^{3})$.
 \subsection{Implementations in Software}\label{sec:stabilizer_simulators}
 
 \subsubsection*{Efficient Binary Operations}\label{sec:binary_ops}
 
-\subsubsection*{The Affine Space Simulator}\label{sec:affine_space_sim}
-
-\subsubsection*{Phase Sensitive Simulators}\label{sec:ps_sim}
+\subsubsection*{Case Study: Affine Space Simulation}\label{sec:afine_space_sim}
 
 \subsection{Performance Benchmarks}
 

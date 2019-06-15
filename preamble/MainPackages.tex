@@ -145,6 +145,8 @@
 % Math e an i
 \newcommand{\mathe}{\ensuremath{\mathrm{e}}}
 \newcommand{\mathi}{\ensuremath{\mathrm{i}}}
+\newenvironment{benumerate}{\begin{enumerate}[label=\textbf{\arabic*})]}{\end{enumerate}}
+\newenvironment{anumerate}{\begin{enumerate}[label=\textbf{\alph*}.]}{\end{enumerate}}
 \usepackage{textgreek}
 \usepackage{mathtools}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -251,7 +253,7 @@
 \chaptertitlename\ \thechapter}{15pt}{%
 \huge
 }
-\titleformat{\subsubsection}{\normalfont\large\itshape}{\thesubsubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\itshape\bfseries}{\thesubsubsection}{1em}{}
 \titlespacing{\chapter}{0pt}{*-3}{*1}
 \titlespacing{\subsection}{0pt}{*0.75}{*0.25}
 \titlespacing{\subsubsection}{0pt}{*0.5}{*0.1}
