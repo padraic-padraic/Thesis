@@ -1,0 +1,131 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+%
+\begin{tikzpicture}[scale=\tikzscale]
+
+\begin{axis}[%
+width=6.028in,
+height=1.99in,
+at={(1.011in,3.406in)},
+scale only axis,
+xmin=0,
+xmax=70,
+ymin=0,
+ymax=0.00015909,
+ylabel style={font=\color{white!15!black}},
+ylabel={Average Runtime (s)},
+axis background/.style={fill=white},
+legend style={legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [color=red]
+  table[row sep=crcr]{%
+2	2.5926e-05\\
+5	5.0013e-05\\
+8	6.4585e-05\\
+10	6.8944e-05\\
+12	7.2533e-05\\
+15	7.5721e-05\\
+18	8.2104e-05\\
+20	8.3476e-05\\
+22	8.5327e-05\\
+25	9.0192e-05\\
+28	9.3834e-05\\
+30	9.6946e-05\\
+32	0.00010005\\
+35	0.00010454\\
+38	0.00010903\\
+40	0.00011256\\
+42	0.00011546\\
+45	0.00012216\\
+48	0.0001268\\
+50	0.0001322\\
+52	0.00013545\\
+55	0.00014171\\
+58	0.00014882\\
+60	0.00015538\\
+62	0.00015909\\
+};
+\addlegendentry{MATLAB Times}
+
+\addplot [color=blue]
+  table[row sep=crcr]{%
+2	1.5123e-05\\
+5	1.6819e-05\\
+8	1.8712e-05\\
+10	2.0068e-05\\
+12	2.1762e-05\\
+15	2.433e-05\\
+18	2.7736e-05\\
+20	2.978e-05\\
+22	3.2178e-05\\
+25	3.6266e-05\\
+28	4.0495e-05\\
+30	4.3668e-05\\
+32	4.6966e-05\\
+35	5.2876e-05\\
+38	5.8782e-05\\
+40	6.2934e-05\\
+42	6.6936e-05\\
+45	7.3777e-05\\
+48	8.2887e-05\\
+50	8.809e-05\\
+52	9.3789e-05\\
+55	0.00010065\\
+58	0.00010962\\
+60	0.00011817\\
+62	0.00012186\\
+};
+\addlegendentry{C++ Times}
+
+\end{axis}
+
+\begin{axis}[%
+width=6.028in,
+height=1.99in,
+at={(1.011in,0.642in)},
+scale only axis,
+xmin=0,
+xmax=70,
+xlabel style={font=\color{white!15!black}},
+xlabel={N Qubits},
+ymin=1,
+ymax=3.5,
+ylabel style={font=\color{white!15!black}},
+ylabel={Speedup},
+axis background/.style={fill=white}
+]
+\addplot [color=mycolor1, dashed, forget plot]
+  table[row sep=crcr]{%
+2	1.71434239238246\\
+5	2.97360128426185\\
+8	3.4515284309534\\
+10	3.43551923460235\\
+12	3.33301167172135\\
+15	3.11224825318537\\
+18	2.96019613498702\\
+20	2.80308932169241\\
+22	2.65171856547952\\
+25	2.48695748083605\\
+28	2.31717495987159\\
+30	2.22006961619493\\
+32	2.13026444662096\\
+35	1.97707844768893\\
+38	1.85481950256881\\
+40	1.78854037563161\\
+42	1.72493127763834\\
+45	1.65580058825921\\
+48	1.5297935743844\\
+50	1.50073788171189\\
+52	1.44419921312734\\
+55	1.40794833581719\\
+58	1.35759897828863\\
+60	1.31488533468731\\
+62	1.3055145248646\\
+};
+\end{axis}
+\end{tikzpicture}%

@@ -2,4 +2,72 @@
 
 \chapter[Simulating Quantum Circuits with Stabilizer Rank]{Simulating Quantum Circuits with the\\ Stabilizer Rank Method}
 \label{chap:simulator}
-
+% Look at combining the previous two chapters
+% Build stabilizer decompositions, then simulate circuits efficiently for each term
+% Here, present methods for operating on the decompositions, for practical simulation
+\section{Introduction}
+% Can build simulators based on stabilizer decompositions
+% Need routines for maintaining the decomposition and then combining output efficiently
+% E.g. Stabilizer Frames method but, as discussed, leads to typcally larger decomposition
+% BSS/BG => Technqiues for computing output variables with stabilizer decompositions
+% Cf. Other classical simulators e.g. Tensor Networks & Rollright, current SotA
+% Mention connection to Quantum Development Tools => Circ, Qiskit, used in prototyping and verification
+\section{Results}
+% Begin by discussing the simulator
+\subsection{Methods for Manipulating Stabilizer Decompositions}
+\subsubsection*{Building Decompositions}
+\subsubsection*{Output Variables}
+% Implement an optimised version of Norm Estimation
+% Compute Individual Ampluitudes approximately
+% Can be extended to a Monte Carlo Method
+\subsubsection*{Implementation and Parallelization}
+% Extend the simulators of Chapter 2 w/ wrapper
+% Swappable CH/DCH methids
+% Building Decompositions and Sampling Outputs is intrinsically trivially parallelizable
+% Locally parallised w/ OpenMP
+% Distributable w/ MPI
+% Requires some synchronisation, especially for sampling
+\par
+\large{\itshape{Integration with \texttt{Qiskit-Aer}}}
+% Also possible to integrate this runner w/ Qiskit Aer
+% Circuits parsed by qiskit, build decomposition and then do measurements w/ MC
+% Includes support for Noise sampling w/ naive method
+% Offers improvements over builtin statevector method
+\par
+\subsection{Simulations of Quantum Circuits}
+% Results of simulations performed with this method
+\subsubsection*{Hidden Shift Circuits}
+% Used to verify the Simulator
+% Test both RandomCode and SoC Methods
+% Validate results through comparison to existing MATLAB code
+\subsubsection*{QAOA}
+% Simulation of an algorithm w/ many Z rotations
+% Significant Advantage over old methods w/ synthesis
+% Verifiable w/ MC method
+% Solvable in minutes w/ Parallelization
+\subsubsection*{Random Circuit Models}
+% Introduce cicuit model, supremacy test
+% Clear signature of 'quantumness' in XE
+% Look at dimensionality effects
+% Look at CZ Schedule effects
+\section{Discussion}
+% Significant Advantages over BG16, and other `general purpise' simulators
+% Further optimization needed to compete w/ methods like ollright
+\subsection{Simulating NISQ Circuits}
+% Good use case
+% Circuits typically limited in depth and n/ qubits
+% Increasing noise w/ depth => trade off in accuracy
+% Potential to probe e.g. families of ansatz states in VQE and other variational methods
+\subsection{Simulating Random Circuits}
+% Current approach uses naive T expansion
+% Circuits have lots of structure that could be used
+% E.g clifford recompilation, just lots of Pauli blocks, find `contractive' clifford expansions
+% ALternatively, look at local rearrangements of T gates
+% Reducing T count and increased resources could lead to good results!
+\subsection{Incorporating Noise}
+% Noise typically makes classical simulation easier
+% Above certain noise thresholds mixed state computation is efficiently classically simulable
+% Noise has no clear model in this simulator
+% Could imagine sampling noise w/ clifford gates and measurement => Will in general decrease rank but hard to estiamte actual effect on runtime
+% Consider 'Mixed State Extension' => Better asymptotic behaviour than robustness
+% Unclear how to construct in practice...
