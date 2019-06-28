@@ -8,7 +8,7 @@
 % Capture many seemingly quantum features
 % Recap definition
 % Some of this is probably meant for intro instead
-In the previous chapter (INSERT REFERENCE), we briefly introduced the notion of stabilizer circuits as a class of efficiently simulable quantum computations. In this chapter, we revisit stabilizer circuits in detail, with a focus on different classical data structures for encoding stabilizer states and the corresponding algorithms for simulations.\par
+In the previous chapter (INSERT SECTION REFERENCE LATER), we briefly introduced the notion of stabilizer circuits as a class of efficiently simulable quantum computations. In this chapter, we revisit stabilizer circuits in detail, with a focus on different classical data structures for encoding stabilizer states and the corresponding algorithms for simulations.\par
 Several informal definitions of stabilizer circuits have been used in the quantum computing literature~\cite{Gottesman1998b,Aaronson2004,VandenNest2008,Seddon2019}. However, what each definition has in common is that the operations $\mathcal{E}$ acting on an abelian subgroup $\mathcal{S} \subseteq \mathcal{P}_{n}$ generate a new subgroup $\mathcal{S'}\subseteq \mathcal{P}_{n}$. These groups $\mathcal{S}$ are also called a stabilizer groups.\par
 In this thesis, we focus exclusively on stabilizer circuits acting on pure states $\ket{\phi}$ called stabilizer states. These can be entirely characterized by their associated stabilizer group as
 \begin{equation}
@@ -209,6 +209,7 @@ Finally, we  present data evaluating the performance of all three methods. For t
 Existing classical simulators have two important limitations. One is that they focus only on implementations of single qubit Pauli measurements made in the $Z$ basis. Multi-qubit measurements, or measurements in different bases, need to be built up in sequence, or involve applying additional basis changes gates like $H$ and $S$, respectively.\par
 These simulators also do not track global phase information. For the case of simulating individual stabilizer circuits, this is sufficient as global phase does not affect measurement outcomes. However, if we wish to extend our methods to simulating superpositions of stabilizer states, then phase differences between terms in the decomposition must also be recorded~\cite{Garcia2015}.\par
 Here, we present two data structures, which we call the `DCH' and `CH' forms.
+\clearpage
 \begin{defn}
 DCH Representation:\\
 Any stabilizer state $\ket{\phi}$ can be written as
@@ -637,10 +638,10 @@ Given a stabilizer inner product of the form
 \[\matrixel{t}{V_{H}}{\Phi}\]
 where $\ket{\Phi}$ is encoded in DCH or CH form, we can compute the inner product by computing the computational state ampliude $\braket{t}{\Phi'}$ where $\ket{\Phi'}=V_{H}\ket{\Phi}$, in time $O(n^{3})$.\label{prop:stab_inner_prod}
 \end{prop}
-\begin{proof}[Proof of Proposition~\ref{prop:stab_inner_prod}a]
+\begin{proof}[Proof of Proposition~\ref{prop:stab_inner_prod}]
 In both the DCH and CH form, we can simulate the action of a single Hadamard gate in time $O(n^{2})$. The Hadamard circuit $V_{H}$ contains at most $n$ Hadamard gates, and so we can compute $V_{H}\ket{\Phi}$ in time $O(n^{3})$. The amplitude then reduces to computing the amplitude $\braket{t}{\Phi'}$, which takes time $O(n^{2})$. The overall worst-case complexity is thus $O(n^{3})$.
 \end{proof}
-In the following sections, we will show how to compute $\ket{\Phi}$ from the DCH/CH data of $\ket{\varphi}$ and $\ket{\phi}$.\par
+This method bares a strong resemblence to the `basis circuit' method described in~\cite{Garcia2012}, with the advantage that the `basis circuit' is explicity stored in the DCH and CH datastructures, rather than needing to be computed froma  tableau. In the following sections, we will show how to compute $\ket{\Phi}$ from the DCH/CH data of $\ket{\varphi}$ and $\ket{\phi}$.\par
 \large{\itshape{The DCH Case}}\\
 In this representation, we need to compute $U_{D}'U_{CNOT}'=V_{CNOT}^{\dagger}V_{D}^{\dagger}U_{D}U_{CNOT}$. We begin by combining the two phase layers, noting that
 \[U_{D}^{\dagger}\ket{x} = \mathi^{-\,xBx^{t}}\ket{x}\]
@@ -981,56 +982,56 @@ Here we present results comparing the performance of different operations betwee
 \caption{Average runtime of single qubit measurements in the $X$ and $Z$ basis, as a funciton of the number of qubits and the
 length of the preceeding stabilizer circuit, for $4$ stabilizer simulators.}
 \label{fig:single_measurements}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$Z$ measurement, $\beta=0.5$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-Z-0.5}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$X$ measurement, $\beta=0.5$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-X-0.5}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$Z$ measurement, $\beta=0.8$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-Z-0.8}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$X$ measurement, $\beta=0.8$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-X-0.8}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$Z$ measurement, $\beta=1.2$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-Z-1.2}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$X$ measurement, $\beta=1.2$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-X-1.2}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$Z$ measurement, $\beta=1.6$}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/measure-Z-1.6}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\begin{subfigure}[t]{0.45\textwidth}
+\begin{subfigure}[t]{0.42\textwidth}
     \centering
     \caption{$X$ measurement, $\beta=1.6$}
     \begin{scaletikzpicturetowidth}{\textwidth}
@@ -1039,7 +1040,7 @@ length of the preceeding stabilizer circuit, for $4$ stabilizer simulators.}
 \end{subfigure}
 \end{figure}
 We also present data for routines specific to the DCH and CH routines. In particular, we present data demonstrating the runtime of arbitrary $n$-qubit Pauli measurements, and for the specialised `equatorial' inner product defined in Claim~\ref{claim:exp_sum_ip}. We also consider the effect of weight on the complexity of Pauli measurements.
-\begin{figure}[H]
+\begin{figure}[p]
 \centering
 \begin{subfigure}[t]{0.48\textwidth}
 \centering
@@ -1060,7 +1061,7 @@ We also present data for routines specific to the DCH and CH routines. In partic
 \caption{Average runtime of two routines specific to the DHC and CH routines, as a function of the number of qubits. Solid lines are for $\beta=0.5$, and dash lines for $\beta=1.6$. A slight dependence on circuit length is observed.}
 \label{fig:other_routines}
 \end{figure}
-\begin{figure}[b]
+\begin{figure}[p]
 \caption{Average runtime of Pauli measurements for the CH and DCH simulators. A solid line represnets a single Pauli $Z$ measurement. The dashed lines repesenent $n$-qubit Pauli $Z$ measurements, and the dotted line random $n$-qubit Paulis.}
 \centering
 \begin{scaletikzpicturetowidth}{0.75\textwidth}
@@ -1088,14 +1089,14 @@ The effect of these optimizations becomes apparent when we try to extend a bitpa
 It would also be possible to further optimize the implementation developed here with the addition of SIMD operations. Instead of looping over each integer variable used to encode large bitpacked vectors, the variables could instead be loaded into SIMD registers. THis would significantly optimize the computations up to $512$ qubits, as 512 bits is the largest register currently supported~\cite{SIMD}. An SIMD implementation is outside the scope of this thesis, but would be a significant performance upgrade to the CH and DCH simulators.
 \subsection*{CH and DCH Performance}
 Comparisons between the DCH and CH forms and previous stabilizer simulators are shown in Figures~\ref{fig:single_qubit_clifford_timings},~\ref{fig:entangling_gates} and~\ref{fig:single_measurements}. Broadly, we see that the DCH and CH representations are competetive with previous techniques, in spite of tracking additional phase information and offering additional `functionality'.\par
-Specifically, for single qubit Clifford gates, we see that the Graph Sim method has the best overall performance. Because applying a single qubit operator in this picutre only requires updating `local' information, it can be implemented using a lookup table and thus has constant complexity. This is a significant advantage over the other methods. The DCH also benefits from a constant time complexity for all phase gates, which additionally includes the `CZ' gate.\par
-The CH representation is broadly competitive in terms of single qubit gate performance, inspite of the theoretical $O(n^{2})$ complexity of the Hadamard operation. However, the DCH representation shows a significantly increased overhead in simulating Hadamard gates. This suggests the simulator is a poor choice for circuits involving many basis changes.\par
+Specifically, for single qubit Clifford gates, we see that the Graph Sim method has the best overall performance. Because applying a single qubit operator in this picutre only requires updating `local' information, it can be implemented using a lookup table and thus has constant complexity. This is a significant advantage over the other methods.\par
+However, as mentioned in Table~\ref{tab:comparison}, the graph based datastructure employed by Anders \& Breigel has a runtime that scales as the maximum degree $d$ of the graph for entangling gates, as they alter this underlying graph. This effect becomes clear with increasing $\beta$, where the complexity of graph and subsequently the runtime of entangling gates significantly increases. At the largest tested value, $61$ qubits, the runtime of an entangling gate grew from $\approx 3\mathrm{x}10^{-7}$ at $\beta=0.5$, to $\approx 1\mathrm{x}1-^{-5}$ at $\beta=1.6$. In contrast, we note that the CHP, CH and DCH methods also show no apparent dependence on $\beta$. This would be expected from the update algorithms, which rely on binary operations that are independent of the sparsity of the data structures.\par
+The DCH also benefits from a constant time complexity for all phase gates, leading to its improved performance for the `CZ' gate. The CH representation has no constant time operations, but is broadly competitive in terms of single qubit gate performance. Thois is especially true in the case of the Hadamard cade, inspite of the theoretical $O(n^{2})$ complexity of thisoperation. However, the DCH representation shows a significantly increased overhead in simulating Hadamard gates. This suggests the simulator is a poor choice for circuits involving many basis changes.\par
 The origin of this increased overhead can potentially be explained by comparing the performance of Pauli measurements, where the CH simulator also out-performs the DCH method. This suggests that the additional overhead is incurred when commuting Pauli operators through the cicuit layers. We might also expect that applying the circuit correction of Proposition~\ref{prop:pseudocz} is slower for the DCH form, as it involves explicit matrix operations. In contrast, the CH form here requires only column updates, which take a single time-step as we store binary matrices ias bitpacked column matrices.\par
 The effect of commuting Paulis can be clarified by also considering Figure~\ref{fig:measurement_comparison}. We see that the CH method has a significant advantage for both single and $n$ qubit $Z$-rotations, but that the DCH method shows slightly better performance for arbitrary Pauli operators. This likely follows from the need to compute a transpose of the $F$ and $M$ matrices, whereas the DCH method is optimized to avoid then need for transposition.\par
 Transposition is also likely the cause of the increased overhead incurred by the CH representation in computing the equatorial inner products, and in computing computational state amplitudes, shown in Figure~\ref{fig:other_routines}. Importantly, as discussed before, transposed matrices are stored `lazily', computed only when required and then cached until outdated. Thus, in computing multiple anplitudes or inner products as is likely in a practical simulation, this performance gap between the two representations would likely decrease.\par
-An interesting feature of computing computational basis state amplitudes and equatorial inner produts is that they do not show only a small dependence on the length of the preceeding stabilizer circuit. This is in contrast to the results of~\cite{Garcia2012}, which observed a transition from quadratic to cubic scaling in the number of qubits when computing stabilizer inner products, even for computational state amplitudes. This would be expected from the implementation of both routines, making use of intrinsic functions. These allow us to avoid inspecting matrices and vectors elementwise, instead operating on rows and columns at a time, and thus makes us less sensitive to the sparsity of the DCH/CH encoding.\par Unfortunately, we were unable to directly compare the runtimes with that of~\cite{Garcia2012}, as the code for the method is not publically available.
-% Measurement comparsion
-% Highlight effect of bitpacking w/ CHP bump
-% Entangling gates???
-% Relative insensitivity of CH/DCH to beta (mention again)
-% Desire to implement arbitrary IP: generally not pblically available!
+An interesting feature of computing computational basis state amplitudes and equatorial inner produts is that they do not show only a small dependence on the length of the preceeding stabilizer circuit. This is in contrast to the results of~\cite{Garcia2012}, which observed a transition from quadratic to cubic scaling in the number of qubits when computing stabilizer inner products, even for computational state amplitudes. This would be expected from the implementation of both routines, making use of intrinsic functions. These allow us to avoid inspecting matrices and vectors elementwise, instead operating on rows and columns at a time, and thus makes us less sensitive to the sparsity of the DCH/CH encoding.\par 
+Finally, if we consider simulating of Pauli measurements, we again observe that as implemented the DCH and CH forms have little apparent dependence on the sparisty of the underlying datastructures. At low values of $\beta$, each method shows a similar performance for Pauli $X$ and $Z$ measurements, with a slight advantage for the CH and GraphSim methods when simulating $X$ measurements. However, as previously mentioned, Pauli measurements in the CHP method have a scaling that increases with the number of non-zero entries in the tableau. The measurement routine of the GraphSim method, like the entangling gates, also depends on the maximal degree of the underlying graph. Thus, both routines see a significant increase in runtime as $\beta$ increases. The GraphSim method in particular sees an almost $100$ times increase in runtime between the smallest and largest values of $\beta$ at $n=60$.\par
+Again, likely as a result of the bitpacked implementation, the DCH and CH methods are mostly unaffected by increasing $\beta$, with their runtime growing by a factor of $1.33-2$ between the extremeal values. This small shift can be attributed to an increase in the number of non-zero entries, and thus the number of operations required in commuting a Pauli through the circuit and applying Proposition~\ref{prop:pseudocz}.\par
+If we were to extend the CH and DCH methods above $64$ qubits, we might expect this effect to become slightly more pronounced, as we would also incur the overhead of checking multiple binary variables. This effect can in fact be observed in the CHP data, which employs a version of bitpacking based on $32$-bit integers. Above $32$ qubits, we see a sharp jump in the runtime, which arises from the need to employ two integers for each bitpacked variable.
+In conclusion then, we have developed two novel stabilizer simulators which are performant, and offer improved `functionality' over previous methods. To further develop these tools, it would be important to extend them beyond the current $64$ qubit limit, and to finish the implementation of arbitrary stabilizer inner products. With the addition of these routines, this software would form a very versatile toolset for simulating different aspects of stabilizer circuits.
