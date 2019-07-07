@@ -1,5 +1,86 @@
 % !TEX root = ../Main.tex
 
-\chapter{Stabilizer decompositions of Gates and Unitaries}
+\chapter{Stabilizer Decompositions of Quantum Circuits}
 \label{chap:stabrank}
 
+\section{Introduction}
+%Connect back to `resource theory' ideas
+%Expand circuit/circuit state in terms of a free resource, here stabilizers
+In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this chapter, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
+This model forms the basis for the definition of Stabilizer Rank, a quantity which tries to relate the computational power of non-stabilizer states to the task of classical simulation.
+\subsection{Pauli Based Computations}
+A Pauli Based Computation (PBC) is a measurement-based model of quantum computing, whereby a computation is realised by applying a sequence of Pauli measurements to a set of non-stabilizer magic states, and post-processing of the measurement outcomes. In general, this sequence will be `adaptive', and the choice of measurement operator will depend on the outcome of previous measurements.\par
+It is well known that quantum circuits built out of Clifford gates and the $T$ gate are universal for quantum computation~\cite{Bravyi2005}. Thus, any arbitrary computation $U$ acting on a computational input state can be expressed as a circuit with $m$ Clifford operations and $t$ $T$ gates.\par
+\begin{figure}[t]
+\centering
+\centerline{
+\begin{subfigure}[t]{0.45\textwidth}
+\centering
+$
+\Qcircuit @C=1em @R=.7em {
+    \lstick{\ket{0}} & \gate{H} & \ctrl{1} & \gate{T} & \qw & \measureD{Z}\\
+    \lstick{\ket{0}} & \qw & \targ & \gate{T} & \gate{S} & \measureD{Z}\\
+}
+$
+\end{subfigure}
+\begin{subfigure}[t]{0.55\textwidth}
+\centering
+$
+\Qcircuit @C=.3em @R=.7em {
+\lstick{\ket{0}} & \gate{H} & \ctrl{1} & \targ     & \qw       & \meter & \cctrl{2} \\
+\lstick{\ket{0}} & \qw      & \targ    & \qw       & \targ     & \meter & \cw       & \cctrl{2} \\
+\lstick{\ket{T}} & \qw      & \qw      & \ctrl{-2} & \qw       & \qw    & \gate{SX} & \qw       & \qw      & \measureD{Z}\\
+\lstick{\ket{T}} & \qw      & \qw      & \qw       & \ctrl{-2} & \qw    & \qw       & \gate{SX} & \gate{S} & \measureD{Z}\\
+}
+$
+\end{subfigure}
+}
+\caption{Figure illustrating two equivalent forms of a small circuit built form the Clifford + $T$ gate set. The lower circuit is obtained from the former by replacing each $T$ gate with a teleportation or `state-injection' gadget that consumes one $\ket{T}$ magic state, and performs a $T$ gate (up to a measurement controlled correction operation)~\cite{Gottesman1999}.}
+\end{figure}
+By replacing each $T$ gate in a Clifford+$T$ circuit with a state-injection gadget~\cite{Bravyi2005}, we instead end up with a circuit built exclusively from Clifford gates and Pauli measurements, acting on $n$ qubits in a computational basis state, and $t$ qubits in a non-stabilizer state. Once in this form, we can convert the circuit to a PBC~\cite{Bravyi2015,Yoganathan2019}.\par
+In the following discussion, we assume that the only intermediate measurements in the circuit arise from the state-injection gadgets. Circuits with clasically controlled gates condition on intermediate measurements are called `adaptive'. We note that the PBC construction works for both adaptive and non-adaptive circuits, so this assumption can be made without loss of generality~\cite{Bravyi2015,Yoganathan2019}.\par
+Once in this form, we can commute every Clifford operator through the circuit and past the final Pauli measurement layer. As we do,  each measurement operator $P\rightarrow P'$ under conjugation, and the Clifford gate can then be discarded as it happens after the measurement layer and thus has no effect on the outcome. These updates can be efficiently computed using the methods discussed in Chapter~\ref{chap:stabilizers}. The result is some new sequence of Pauli measurements $P_{1},\dots,P_{r}$, acting on $n+t$ qubits.\par
+It is then possible to show that these measurements can be rearranged such that all measurements commute, and  act non-trivially on only the $t$ magic states. The key technique is a lemma showing that if any pair $P_{j},P_{k}$ anticommute, they can be updated by sampling a measurement outcome $\lambda_{k}=\pm1$ uniformly at random, replacing the $P_{j}$ with a Clifford operator $V_{j,k}=\frac{\lambda_{j}P_{j}+\lambda_{k}P_{k}}{\sqrt{2}}$, where $\lambda_{j}$ was the outcome of measuring $P_{j}$. This Clifford can then be commuted through the rest of the measurement layer~\cite{Yoganathan2019}.\par
+Now consider prepending the circuit with Pauli $Z$ measurements on the $n$ computational qubits. By definition, these measurements are deterministic and do not change alter the computation. Application of the above Lemma ensures that these computational measurements all commute with the final measurement operators $P_{i}$, and thus that the $P_{i}$ act trivially on the $n$ computational qubits~\cite{Bravyi2015}.\par
+Overall then, the PBC model allows us to realise quantum computation using only a supply of non-stabilizer resource states, Pauli measurements, and probabilistic classical computation, used to compute and update the Pauli measurement sequence~\cite{Yoganathan2019}. The classical component of the computation is efficient, that is to say the measurement sequence can be computed with a runtime that scales polynomially in the number of qubits.\par
+A PBC $\mathcal{C}$, obtained from some Clifford + $T$ circuit $U$, can be said to efficiently simulate the original circuit, in both the weak~\cite{Yoganathan2019} and strong sense~\cite{Bravyi2015}. Strong simulation follows from the result that an adaptive circuit with postselection has a corresponding PBC with postselected Pauli measurements~\cite{Yoganathan2019}. In particular, we can fix both the measurement outcomes of the circuit, and the measurement-controlled correction operations introduced by state-injection. The result is a non-adaptive circuit, which is translated to a non-adaptive PBC with a fixed Pauli projector $\Pi_{x,s}$~\cite{Yoganathan2019}, where $x$ and $s$ are the postselected binary bits corresponding to the measurement outcome and the state-injection gadgets, respectively~\cite{Bravyi2015,Bravyi2016}. The corresponding probability amplitude is thus given by
+\begin{equation}
+\matrixel{x}{U}{0^{\otimes n}}\equiv 2^{t}\matrixel{T^{\otimes t}}{\Pi_{x,s}}{T^{\otimes t}}
+\label{eq:pbc_strongsim}
+\end{equation}
+where we reweight the probability to account for the fact that each of the $2^{t}$ different outcomes on the state-injection gadgets is equiprobable.\par
+Weak simulation does not necessarily require postselection. Indeed, given a method to sample from the measurement operators of the PBC, this also corresponds to a sample of the output distribution of the original circuit~\cite{Yoganathan2019}. An explicit method was outlined in~\cite{Bravyi2015}, based on computing individual measurement probabilities and using them to sample marginals. In particular, consider sampling the $j$th bit of an output string $x$, given outcomes for bits $x_{1},x_{2},\dots x_{j-1}$. We can sample $x_{j}$ but computing two probability terms, as~\cite{Bravyi2016}
+\begin{equation}
+    P(x_{j}\vert x_{1},x_{2},\cdots x_{j-1}) = \frac{P(x_{1},\dots x_{j})}{P(x_{1},\dots x{j-1})} \equiv \frac{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\dots x_{j}}}{T^{\otimes t}}}{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\cdots x-{j-1}}}{T^{\otimes t}}}.
+\label{eq:pbc_sampling}
+\end{equation}
+Fixing $x_{j}=0$, and computing the conditional probability, we can thus sample the $j$th bit by generating uniform random numbers. If $r\leq P(0\vert x_{1},x_{2},\cdots x_{j-1})$, we return $0$, else we return $1$.
+\subsection{Stabilizer State Decompositions}
+% Here we just focus on that rank, consider simulation in the next chapter
+% Compare w/ stabilizer frames, previous attempts to do this...
+% CF Gottesman Knill and pauli operator basis
+% Moving to relax the exact requirement
+% Construction based on Random codes
+% Further Quadratic Saving
+\section{Results}
+% Here, we look to extend the work of Bravy, Smith, Smolin and Gosset to consider the stabilizer rank of more general classes of states
+\subsection{Exact Stabilizer Rank}
+\subsubsection*{Computation Searches for Decompositions}
+\par
+\large{\itshape{Generating Stabilizer States}}\par
+\subsubsection*{Decompositions of Magic States}
+\subsubsection*{Decompositions of Arbitrary States}
+\subsection{Approximate Stabilizer Rank}
+\subsubsection*{Clifford Magic States}
+\subsubsection*{Stabilizer Fidelity}
+\par
+\large{\itshape{Equatorial States}}
+\subsubsection*{Sparsification}
+\section{Discussion}
+% Stabilizer Rank has proven difficult to study
+% Lower bounds are not forthcoming
+% Whole theory of `extent' is just an upper bound
+% Quote BSS, mention equatorial one
+% Complexity theoretic bounds are loose
+% Also, mention possible connection to probability content
+% `MinSmoothEntropy' => Connected to Hakop's work

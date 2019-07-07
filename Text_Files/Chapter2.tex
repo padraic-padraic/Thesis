@@ -112,17 +112,17 @@ and the phase as
 Similar update rules exist for the CNOT and S gates, which together generate the $n$ qubit Clifford group. As there are $O(n)$ operators in the tableau, and each update is constant time, gate updates overall take $O\left(2n\right)$~\cite{Aaronson2004}. This is in contrast to the $O(n^{2.37})$ complexity of~\cite{Dehaene2003}
 \subsubsection*{Simulating Measurements}
 The addition of the destabilizer information is  used to speed up the simulation of Pauli measurements on Stabilizer states. Measuring some operator $P$ on a stabilizer state will always produce either a deterministic outcome, or an equiprobable random outcome~\cite{Gottesman1998b}.\par
-If the outcome is deterministic, then $\pm P$ is in the stabilizer group, and the outcome is $+1$ or $-1$ respectively. Using the stabilizer genereators, this allows us to write 
+If the outcome is deterministic, then $\pm P$ is in the stabilizer group, and the outcome is $+1$ or $-1$ respectively. Using the stabilizer generators, this allows us to write 
 \begin{equation}
     \comm{P}{S_{i}}=0\;\forall S_{i}\in\mathcal{S} \implies \prod_{i}c_{i}S_{i} = \pm P. \label{eq:det_requirement}
 \end{equation}
 for binary coefficients $c_{i}$.\par
-Checking if the outcome is deterministic takes $O(n^{2})$ time in general, using the symplectic inner product to check the commutation relations~\cite{Dehaene2003}. However, checking which measurement outcome occurs involves computing the coefficients $c_{i}$. In the symplectic form, thiscan be rewritten as
+Checking if the outcome is deterministic takes $O(n^{2})$ time in general, using the symplectic inner product to check the commutation relations~\cite{Dehaene2003}. However, checking which measurement outcome occurs involves computing the coefficients $c_{i}$. In the symplectic form, this can be rewritten as
 \[
     Ac=P
 \]
 where $c$ is a binary vector, $A$ is a matrix with each stabilizer as a column vector, $P$ is the operator to measure, and we have dropped the phase. Solving this would require inverting the matrix $A$, and take time $O(n^{3})$.\par
-Aaronson \& Gottesman show that for single qubit mesurements, including destabilizer information instead allows us to compute the $c_{i}$ and the resulting measurement outcome in $O(n^{2})$. As this is a single qubit measurement, they also show that the commutivity relation requries checking only individual bits of the stabilizer vectors, also reducing that step to $O(n)$ time.\par
+Aaronson \& Gottesman show that for single qubit measurements, including destabilizer information instead allows us to compute the $c_{i}$ and the resulting measurement outcome in $O(n^{2})$. As this is a single qubit measurement, they also show that the commutivity relation requires checking only individual bits of the stabilizer vectors, also reducing that step to $O(n)$ time.\par
 For random measurements, from Eq.~\ref{eq:det_requirement}, $\exists S_{i}:\acomm{S_{i}}{P}=0$, and it suffices to replace this stabilizer with $P$, and update the other elements of the group as $S_{j}'=PS_{j}$ iff $\acomm{S_{j}}{P}=0$~\cite{Gottesman1998b,Aaronson2004}.
 \subsubsection*{`Canonical' Tableaux}
 % A&G fix tableaux through initial state
@@ -142,7 +142,7 @@ Importantly this canonical tableau can also be used to compute deterministic mea
 In contrast, Aaronson \& Gottesman fix the stabilizer tableau through an initial state, $\ket{0}^{\otimes n}$. The full tableau for this state looks like the identity matrix, with an additional zero-column for the phases. The tableau of a given state $\ket{\phi}$ is then built-up gate by gate using a stabilizer circuit $V:\ket{\phi}=V\ket{0^{\otimes n}}.$
 \subsection{Connecting Stabilizer States and Circuits}
 % Connection between clifford circuits and states
-The convetion for `CHP' stabilizer tableaux mentioned above, and the definition of stabilizer circuits given in Section~\ref{sec:stabilizer-intro}, show that stabilizer states can also be defined by a stabilizer circuit and an initial state.\par
+The convention for `CHP' stabilizer tableaux mentioned above, and the definition of stabilizer circuits given in Section~\ref{sec:stabilizer-intro}, show that stabilizer states can also be defined by a stabilizer circuit and an initial state.\par
 In \cite{Aaronson2004}, the authors derive examples of these `canonical circuits', and show that its possible for any stabilizer state to be synthesised by a unique circuit acting on the $\ket{0^{\otimes n}}$ state
 \begin{equation}
     \ket{\phi} = V\ket{0} = H\;C\;S\;C\;S\;C \;H \; S \;C \;S \ket{0^{\otimes n}}\label{eq:chpcirc}
@@ -161,8 +161,8 @@ In this equation, $\mathcal{K}\subseteq\mathbb{Z}_{2}^{n}$ is an affine subspace
     \mathcal{K}=\{Gu + h\}
 \]
 for $k$-bit binary vectors $u$, an $n\times k$ binary matrix G, and an $n$-bit binary `shift-vector' $h$.\par
-Van den Nest notes that this representation can be directly translated into a stabilizer circuit; we begin by applying $H$ to the first $k$ qubits to initialize the state $\sum_{u}\ket{u}\otimes\ket{0^{\otimes n-k}}$. We then apply CNOTs to prepare $\sum_{u}\ket{Gu}$, and finally Pauli Xs to preapre $\sum_{u}\ket{Gu\oplus h}$~\cite{VandenNest2008}.\par
-The phases can be further decomposed into two linear and quadratic binary functions $l,q\,:\mathbb{Z}_{2}^{n}\rightarrow\mathbb{Z}_{2}$, such that $i^{q(x)}=i^{l(x)}(-1)^{q(x)}$. The linear terms correpsond to single qubit phase gates, which can be generated by the S gate, and the quadratic terms to two-qubit phase gates, generated by the CZ~\cite{VandenNest2008}. Thus,
+Van den Nest notes that this representation can be directly translated into a stabilizer circuit; we begin by applying $H$ to the first $k$ qubits to initialize the state $\sum_{u}\ket{u}\otimes\ket{0^{\otimes n-k}}$. We then apply CNOTs to prepare $\sum_{u}\ket{Gu}$, and finally Pauli Xs to prepare $\sum_{u}\ket{Gu\oplus h}$~\cite{VandenNest2008}.\par
+The phases can be further decomposed into two linear and quadratic binary functions $l,q\,:\mathbb{Z}_{2}^{n}\rightarrow\mathbb{Z}_{2}$, such that $i^{q(x)}=i^{l(x)}(-1)^{q(x)}$. The linear terms correspond to single qubit phase gates, which can be generated by the S gate, and the quadratic terms to two-qubit phase gates, generated by the CZ~\cite{VandenNest2008}. Thus,
 \begin{equation}
 \ket{\phi}=\sum_{x\in\mathcal{K}}i^{l(x)}(-1)^{q(x)}\ket{x} = S\;CZ\;X\;C\;H\;\ket{0}
 \label{eq:expandedaffinecirc}
@@ -200,10 +200,10 @@ Each stabilizer $G_{i}'$ of $\ket{0^{\otimes n}}$ has a single Pauli $Z$ operato
  2^{-s} & \exists H_{i}' : \acomm{H_{i}'}{G_{i}'} = 0
 \end{cases}
 \end{equation}
-where $s$ is the number of stabilizers that anticommute with the corresponding stabilizer $G_{i}'$~\cite{Aaronson2004}. The second case arises as if $\acomm{H_{i}'}{G_{i}'} = 0$, then $H_{i}'$ acts as either Pauli $X$ or $Y$ on qubit $i$. Thus, the qubit is in state $\ket{\pm 1}$ or $\ket{\pm\mathi}$, and $\braket{0}{\pm i,1}=\frac{1}{\sqrt{2}}$. Because this method involves computing the canonical circuit and then applying gaussian elimination, it runs in time $O(n^{3})$.\par
+where $s$ is the number of stabilizers that anticommute with the corresponding stabilizer $G_{i}'$~\cite{Aaronson2004}. The second case arises as if $\acomm{H_{i}'}{G_{i}'} = 0$, then $H_{i}'$ acts as either Pauli $X$ or $Y$ on qubit $i$. Thus, the qubit is in state $\ket{\pm 1}$ or $\ket{\pm\mathi}$, and $\braket{0}{\pm i,1}=\frac{1}{\sqrt{2}}$. Because this method involves computing the canonical circuit and then applying Gaussian elimination, it runs in time $O(n^{3})$.\par
 The first implementation of this algorithm was given in~\cite{Garcia2012}, where the authors first use their canonical form to construct a `basis circuit' $B : \ket{\varphi}=B\ket{b}$ for some computational state $\ket{b}$, and then compute $\matrixel{b}{B}{\phi}$ using the same method outlined above~\cite{Garcia2012}.
 \section{Results}
-The main result of this chapter is to introduce two new classical representations of stabilizer states developed in collaboration with Sergey Bravyi~\cite{Bravyi2018}. We will discuss their algorithmic complexity, and implementation in software. We will also briefly discuss the implementation of a classical datastructure based on affine spaces, introduced in~\cite{Bravyi2016}.\par
+The main result of this chapter is to introduce two new classical representations of stabilizer states developed in collaboration with Sergey Bravyi~\cite{Bravyi2018}. We will discuss their algorithmic complexity, and implementation in software. We will also briefly discuss the implementation of a classical data-structure based on affine spaces, introduced in~\cite{Bravyi2016}.\par
 Finally, we  present data evaluating the performance of all three methods. For the affine space representation, we benchmark against existing implementations in MATLAB~\cite{Bravyi2016}. For the two novel representations, we present data comparing their performance to two pieces of existing stabilizer circuit simulation software~\cite{Aaronson2004,Anders2006}.
 \subsection{Novel Representations of Stabilizer States}
 Existing classical simulators have two important limitations. One is that they focus only on implementations of single qubit Pauli measurements made in the $Z$ basis. Multi-qubit measurements, or measurements in different bases, need to be built up in sequence, or involve applying additional basis changes gates like $H$ and $S$, respectively.\par
@@ -243,14 +243,14 @@ i.e.~it adds the value of bit $c$ to bit $t$, modulo $2$. Thus, we can encode th
 CNOT_{c,t}\ket{x} = \ket{xE}\;:\; E_{i,j}=\begin{cases} 1 & i=j\\ 1 & i=c, j=t \\ 0 & otherwise \end{cases}
 \label{eq:cnot_matrix}
 \end{equation}
-We can then build up $U_{CNOT}$ from successicve CNOT gates as
+We can then build up $U_{CNOT}$ from successive CNOT gates as
 \begin{equation}
 U_{CNOT}\ket{x} = \ket{x E_{1}E{2}E_{3}\dots E_{m}} \equiv \ket{xW} \label{eq:cnot_matrices}
 \end{equation}
 where $W=E_{1}E_{2}\cdots E_{n}$ is the matrix representing the full circuit, obtained by successive right multiplication of the matrices encoding a single CNOT.\par
 Finally, we need to encode the action of $U_{D}$. The phase resulting from a single qubit diagonal Clifford is conditional on the qubits being in the $\ket{1}$ state. Thus, we can write the linear part of the weighted polynomial as $Lx^{T}$ for some row-vector $L$ of integers $\bmod\;4$, which we call the linear phase vector. Each value in $L$ can be stored using just 2 bits.\par 
 Each gate $CZ_{i,j}$ between qubits $i$ and $j$ also contributes a factor of $2$ to the overall phase, conditioned on the $i$th and $j$th qubits being in the $\ket{1}$ state. For a given computational string $x$, the overall phase from the $CZ$ gates is thus $2\sum_{i,j : CZ_{i,j}} x_{i}x_{j}$.\par
-We can encode the action of the $CZ$ gates using an $n\times n$ symmetic binary matrix $Q$ where $Q_{i,j}=Q_{j,i}=1$ if we apply $CZ_{i,j}$, and zero otherwise, which we call the quadratic phase matrix. We can then compute the phase from the $CZ$ gates as
+We can encode the action of the $CZ$ gates using an $n\times n$ symmetric binary matrix $Q$ where $Q_{i,j}=Q_{j,i}=1$ if we apply $CZ_{i,j}$, and zero otherwise, which we call the quadratic phase matrix. We can then compute the phase from the $CZ$ gates as
 \begin{align}
 xMx^{t} &= \sum_{p} x_{p} \left(Qx^{T}\right) \nonumber \\
 &= \sum_{p}x_{p}\left(\sum_{q}Q_{p,q} x_{q}\right) \nonumber \\
@@ -282,7 +282,7 @@ $U_{H}$ is a layer of $H$ gates, $\ket{s}$ is a computational basis state, and w
 The CH representation is based on a notion of a `control-type' Clifford operator, which stabilizes the all zero computational basis state. Examples of control-type Clifford gates include the $S$, $CZ$ and $CNOT$ gates. A control type operator $U_{C}$ can be obtained from the DCH form, for example, by concatenating $U_{D}$ and $U_{CNOT}$ layers. Thus, we can see that any stabilizer state can be generated by a $CH$-type circuit.\par
 Similarly to above, we encode the initial computational basis state $s$ and the Hadamard layer $U_{H}$ as $n$-bit binary row-vectors. The control-type layer we then encode using a stabilizer tableau, made up of $2n$ Pauli operators
 $U_{C}^{\dagger}X_{i}U_{C}$ and $U_{C}^{\dagger}Z_{i}U_{C}$. This tableau resembles a CHP-type tableau for the state $U_{C}\ket{0^{\otimes n}}$, where the Pauli X entries are the destabilizers and the Pauli Z entries are the stabilizers. Alternatively, we can see this as characterising the operator $U_{C}$ by its action on the generators of the Pauli group.\par
-Using a normal CHP-tableau, each Pauli would require $2n+1$ bits to encode. However, from the definition of the control-type operators, $U_{C}^{\dagger}Z_{i}U_{C}$ will never result in a Pauli $X$ or $Y$ operator, as otherwise $U_{C}\ket{0^{\otimes n}}\neq\ket{0^{\otimes n}}$. Thus, we can ignore the $n$ `x-bits' and phasebits of each of the Pauli $Z$ rows. Specifically, we write
+Using a normal CHP-tableau, each Pauli would require $2n+1$ bits to encode. However, from the definition of the control-type operators, $U_{C}^{\dagger}Z_{i}U_{C}$ will never result in a Pauli $X$ or $Y$ operator, as otherwise $U_{C}\ket{0^{\otimes n}}\neq\ket{0^{\otimes n}}$. Thus, we can ignore the $n$ `x-bits' and phase-bits of each of the Pauli $Z$ rows. Specifically, we write
 \begin{align}
 U_{C}^{\dagger}Z_{j}U_{C} &= \bigotimes_{k=1}^{n} Z^{G_{j,k}} \\
 U_{C}^{\dagger}X_{j}U_{C} &= i^{\gamma_{j}}\bigotimes_{k=1}^{n}X^{F_{j,k}}Z^{M_{j,k}}
@@ -290,9 +290,9 @@ U_{C}^{\dagger}X_{j}U_{C} &= i^{\gamma_{j}}\bigotimes_{k=1}^{n}X^{F_{j,k}}Z^{M_{
 for binary matrices $G, F, M$, and a phase vector $\gamma\,:\,\gamma_{i}\in\mathbb{Z}_{4}$, as $Y=-\mathi XZ$. Note that this differs from the CHP method, where the string $11$ encodes Pauli $Y$ directly, without tracking a separate complex phase.\par
 Finally, we again require three further bits to encode the global phase, and the $CH$ representation is thus given by the tuple $(e, s, h, G, M, F)$. Overall, the $CH$ form  also has spatial complexity $\theta(n^{2})$.  In order to optimize some subroutines, we additionally store copies of $M^{T}$ and $F^{T}$, and again include the variables $p$ and $\epsilon$,  requiring a total of $5n^{2}+4n+36$ bits of memory.
 \subsection{Simulating circuits with the DCH and CH Representations}
-In this section, we will outline how to update the DCH and CH representations under different stabilizer circuit operations, and how to compute the inner product. For both methods, gate updates can be split into two types: control-type operators, and Hadamard gates. The technique for treating the Hadamard also shares some aspects with applying Pauli projectors to the states, and deciding measurement outcomes. Some of the techniques employed will be common to both representations, differing only in their implementation on the underlying datastrucutre.
+In this section, we will outline how to update the DCH and CH representations under different stabilizer circuit operations, and how to compute the inner product. For both methods, gate updates can be split into two types: control-type operators, and Hadamard gates. The technique for treating the Hadamard also shares some aspects with applying Pauli projectors to the states, and deciding measurement outcomes. Some of the techniques employed will be common to both representations, differing only in their implementation on the underlying data-strucutre.
 \subsubsection*{Gate updates: The DCH Representation}
-In the DCH picture, the complexity of a gate depends on whether it is a $CNOT$, or a diagonal Clifford operator $S$, $Z$, $S^{\dagger}$ or $CZ$. Diagonal gates can be simulated in constant time $O(1)$ by simply updating the linear or quadratic part of the diagonal layer. Single qubit gates applyed to qubit $i$ update the $i$th element of the linear phase vector $D$, as they contribute only to the linear part of the weighted polynomial. Thus, we have
+In the DCH picture, the complexity of a gate depends on whether it is a $CNOT$, or a diagonal Clifford operator $S$, $Z$, $S^{\dagger}$ or $CZ$. Diagonal gates can be simulated in constant time $O(1)$ by simply updating the linear or quadratic part of the diagonal layer. Single qubit gates applied to qubit $i$ update the $i$th element of the linear phase vector $D$, as they contribute only to the linear part of the weighted polynomial. Thus, we have
 \begin{align}
 S_{i}\ket{\phi} &\implies B_{i,i}\leftarrow B_{i,i} + 1\;\bmod\,4 \\
 Z_{i}\ket{\phi} = S^{2}\ket{\phi} &\implies B_{i,i}\leftarrow B_{i,i} +2\;\bmod\,4 \\
@@ -361,9 +361,9 @@ CNOT_{c,t}\ket{\phi} \implies & \mathrm{row}_{c}(B) \gets \mathrm{row}_{c}(B)+\m
 \end{align}
 These updates take $O(n)$ time, as we update a constant number of rows and columns.\par
 %%Move to CH form, try not to just copy the paper....
-\subsubsection*{Gate Updates: The CH Representaiton}
-For the CH representation, whenver we apply a new control-type operator $C$ we need to update the stabilizer tableau by conjugating each element $U_{C}^{\dagger}X_{i},\,Z_{i}U_{C}$ with the matrix $C$. This can be implemented using the usual rules for updating Pauli operators under Clifford operations, with the additional note that we have to adjust the updates to correctly track the phases of the Pauli $X$ terms, and that we are conjugating as $U_{C}^{-1}PU_{C}$, rather than $U_{C}PU_{C}^{-1}$. \par
-The control-type circuit is built out of individal operations $U_{C}=C_{m}C_{m-1}\dots C_{1}$. We we update $U_{C}$ with some new operator $C_{m+1}$, change the tableau as
+\subsubsection*{Gate Updates: The CH Representation}
+For the CH representation, whenever we apply a new control-type operator $C$ we need to update the stabilizer tableau by conjugating each element $U_{C}^{\dagger}X_{i},\,Z_{i}U_{C}$ with the matrix $C$. This can be implemented using the usual rules for updating Pauli operators under Clifford operations, with the additional note that we have to adjust the updates to correctly track the phases of the Pauli $X$ terms, and that we are conjugating as $U_{C}^{-1}PU_{C}$, rather than $U_{C}PU_{C}^{-1}$. \par
+The control-type circuit is built out of individual operations $U_{C}=C_{m}C_{m-1}\dots C_{1}$. We we update $U_{C}$ with some new operator $C_{m+1}$, change the tableau as
 \begin{equation}
 \left(C_{m+1}U_{C}\right)^{\dagger} P C_{m+1}U_{C} = U_{C}^{\dagger} \left(C_{m+1}^{\dagger}PC_{m+1}\right)U_{C}.
 \end{equation}
@@ -421,13 +421,13 @@ U_{C}^{\dagger}CNOT_{q,p}X_{q}CNOT_{q,p}U_{C} &= U_{C}^{\dagger}X_{q}X_{p}U_{C} 
 and we pick up an extra phase of $-1$ each time $M_{q,i}=F_{p,i}=1$ as $ZX=-XZ$. All of these updates take time $O(n)$, as we are updating the $n$-element rows of $n\times n$ matrices.
 \subsubsection*{Hadamard gates and Pauli Measurements}
 Simulating Hadamard gates and arbitrary Pauli measurements is done using an algorithm with the same general structure in the DCH and CH representation. These routines employ an algorithm developed by Sergey Bravyi for application to the CH method,  which can also be applied to the DCH case.\par
-Hadamard gates and Pauli projectors can both be written as $\frac{1}{\sqrt{2}}\left(P_{1}+P_{2}\right)$ for some Pauli operators $P_{1},P_{2}$. In the Hadamard case, we have $P_{1}=X_{i},P_{2}=Z_{i}$, and in the projector case $P_{1}=I,P_{2}=P$. Given this structure, we then commute these operators through to the comutational basis state
+Hadamard gates and Pauli projectors can both be written as $\frac{1}{\sqrt{2}}\left(P_{1}+P_{2}\right)$ for some Pauli operators $P_{1},P_{2}$. In the Hadamard case, we have $P_{1}=X_{i},P_{2}=Z_{i}$, and in the projector case $P_{1}=I,P_{2}=P$. Given this structure, we then commute these operators through to the computational basis state
 \begin{align*}
 \epsilon 2^{-p/2}i^{e}\frac{1}{\sqrt{2}}\left(P_{1}+P_{2}\right)U_{C}U_{H}\ket{s} &=
 \epsilon 2^{-(p+1)/2}i^{e} U_{C}U_{H}\left(P_{1}'+P_{2}'\right)\ket{s} \\ 
 &= \epsilon 2^{-(p+1)/2}i^{e'} U_{C}U_{H}\left(\ket{t}+i^{\beta}\ket{u}\right)
 \end{align*}
-where $P_{1,2}'$ can be efficiently computed as the circuit $U_{C}U_{H}$ is Clifford, $\beta\in\mathbb{}Z_{4}$, and $t$ and $u$ are two new computational basis states obtained from the action of $P_{1,2}$ on $s$. Note that we are writing $U_{C}$ here as a shorthand, as the circuit $U_{D}U_{CNOT}$ in the DCH represntation is also a control-type unitary.\par
+where $P_{1,2}'$ can be efficiently computed as the circuit $U_{C}U_{H}$ is Clifford, $\beta\in\mathbb{}Z_{4}$, and $t$ and $u$ are two new computational basis states obtained from the action of $P_{1,2}$ on $s$. Note that we are writing $U_{C}$ here as a shorthand, as the circuit $U_{D}U_{CNOT}$ in the DCH representation is also a control-type unitary.\par
 Once in this form, we employ the following proposition, called Proposition $4$ in \cite{Bravyi2018}:
 \begin{prop}
 \label{prop:pseudocz}
@@ -436,7 +436,7 @@ Given a stabilizer state $U_{H}\left(\ket{t}+i^{\beta}\ket{u}\right)$, we can co
 \end{prop}
 As a means of proving this proposition, we will go through and construct $W_{C}$ and $U_{H}'$.
 \begin{proof}[Proof of Proposition~\ref{prop:pseudocz}]
-Firstly, consider the case $t=u$. Then we have $s'=t$, and the result depends on the phase $\beta$. If $\beta=0$, then the state is unchaged. If $\beta =1,3$, then we have
+Firstly, consider the case $t=u$. Then we have $s'=t$, and the result depends on the phase $\beta$. If $\beta=0$, then the state is unchanged. If $\beta =1,3$, then we have
 \[\frac{1}{\sqrt{2}}U_{H}\left(1+i^{\beta}\right)\ket{s'} = \frac{\left(1\pm \mathi\right)}{\sqrt{2}}U_{H}\ket{s'}\]
 and it suffices to update the global phase term
 \[
@@ -444,7 +444,7 @@ and it suffices to update the global phase term
 \beta = 1 & \implies & e\gets e+1\;\bmod\, 8\\
 \beta=3 & \implies & e\gets e+7\;\bmod\,8
 \end{array}\]
-Finally, if $\beta=2$, we have $\ket{s'}-\ket{s'}$ and the state is cancelled out. We denote this by setting $\epsilon\gets 0$. This only arises in the case of applying a Pauli projector that is orthogonal to the state.\par
+Finally, if $\beta=2$, we have $\ket{s'}-\ket{s'}$ and the state is canceled out. We denote this by setting $\epsilon\gets 0$. This only arises in the case of applying a Pauli projector that is orthogonal to the state.\par
 If $t\neq u$, then we instead note that we can always define some sequence of $CNOT$ gates $V_{C}$ such that
 \[
 \begin{array}{lr}
@@ -487,7 +487,7 @@ ZXZ & \rightarrow & -X^{x_{i}}\\
 SXS^{\dagger} & \rightarrow & -i (ZX)^{x_{i}}\\
 \end{array} = i^{B_{ii}}X^{x_{i}}Z^{x_{i}B_{ii}\;(\bmod\,2)}
 \right.\]
-We also have that $CZ (X\otimes I) CZ = XZ,\;CZ(I\otimes X)CZ=ZX$, i.e.~a CZ conjugated with a Pauli X on the control (target) qubit adds a Pauli $Z$ on the target (control) qubit. Qubit $i$ picks up a $Z$ operator each time there is a $CZ$ between qubits $i$ and $j$, and an $X$ acting on qubit $j$. Using the off-diaognal entries of the phase matrix, we can write
+We also have that $CZ (X\otimes I) CZ = XZ,\;CZ(I\otimes X)CZ=ZX$, i.e.~a CZ conjugated with a Pauli X on the control (target) qubit adds a Pauli $Z$ on the target (control) qubit. Qubit $i$ picks up a $Z$ operator each time there is a $CZ$ between qubits $i$ and $j$, and an $X$ acting on qubit $j$. Using the off-diagonal entries of the phase matrix, we can write
 \[Z_{i}^{z'_{i}}:z' = \sum_{j\neq i}x_{j}B_{j,i}\;\bmod\,2\]
 Combining this with the fact we also pick up a Pauli Z from the diagonal if $B_{ii}=1,3$, we can write $z_{i}=aB\;\bmod\,2$. Finally, we need to consider the extra $-1$ phase  contributions for each $i:x_{i}z_{i}'=1$, as a result of preserving the ordering of $P'$. Together with the diagonal phases, this can be simplified to
 \[
@@ -500,7 +500,7 @@ U_{D}^{\dagger}X(x)U_{D} = i^{xMx^{T}}Z(xM)X(x)
 \end{equation}
 A similar result applies to commuting a Pauli operator through the $U_{CNOT}$ layer. $CNOT$ has the property that it maps $I_{c}Z_{t}\rightarrow Z_{c}Z_{t}$ and $X_{c}I_{t}\rightarrow X_{c}X_{t}$ under conjugation. Thus, we can compute the new strings $x',z'$ by applying an appropriate CNOT matrix.\par
 For the X bits, we can simply apply $x'=xW^{-1}$, where we use the inverse matrix as we are computing $U_{CNOT}^{\dagger} X U_{CNOT}$ and thus the binary string is subject to the inverse sequence of CNOT gates. \par
-For the string $z$, we need to apply a CNOT matrix with the controls and targets swapped. From the definition given in Eq.~\ref{eq:cnot_matrix}, we can see that if the binary matrix $E$ encodes $CNOT_{c,t}$, then $CNOT_{t,c}$ is encoded by $E^{T}$. We then update the strign $z$ under the sequence $E_{m}^{t}E_{m-1}^{t}\dots E_{1}^{t} = W^{T}$. This gives
+For the string $z$, we need to apply a CNOT matrix with the controls and targets swapped. From the definition given in Eq.~\ref{eq:cnot_matrix}, we can see that if the binary matrix $E$ encodes $CNOT_{c,t}$, then $CNOT_{t,c}$ is encoded by $E^{T}$. We then update the string $z$ under the sequence $E_{m}^{t}E_{m-1}^{t}\dots E_{1}^{t} = W^{T}$. This gives
 \begin{equation}
 U_{CNOT}^{\dagger}i^{a}Z(z)X(x)U_{CNOT} = i^{a}Z(zW^{T})X(xW^{-1}).
 \label{eq:dch_cupdate}
@@ -516,15 +516,15 @@ HZXH & \rightarrow -ZX
 \]
 The $x$ and $z$ bits are only changed for those bits where $v_{i}=1$, and so we can write
 \[z_{i}' = z_{i}(1-v_{i}) + x_{i}v_{i}\]
-and vice-versa for the $x$ bits. In terms of boolean operations, this can also be written as $z_{i}'= z_{i}\wedge\neg v_{i} \oplus x_{i}\wedge v_{i}$. Finally, we have the phase correction whenere $x_{i}=z_{i}=z_{i}=1$. Thus, overall, we can write
+and vice-versa for the $x$ bits. In terms of boolean operations, this can also be written as $z_{i}'= z_{i}\wedge\neg v_{i} \oplus x_{i}\wedge v_{i}$. Finally, we have the phase correction whenever $x_{i}=z_{i}=z_{i}=1$. Thus, overall, we can write
 \begin{equation}
 U_{H}^{\dagger}i^{a}Z(z)X(z)U_{H} = i^{a+v\cdot\left(x\wedge z\right)}Z(z\wedge\neg v \oplus x\wedge v)X(x\wedge v)
 \label{eq:dch_hupdate}
 \end{equation}
 and this update takes time $O(n)$ to compute.\par
-To complete the application of Propositon~\ref{prop:pseudocz}, we also need to be able to update $U_{D}U_{CNOT}$ by right multiplication with $W_{C}$. We can split $W_{C}=W_{CNOT}W_{D}$, where $W_{D}$ is made up of $CZ$ gates and the single $S$ gate.\par
+To complete the application of Proposition~\ref{prop:pseudocz}, we also need to be able to update $U_{D}U_{CNOT}$ by right multiplication with $W_{C}$. We can split $W_{C}=W_{CNOT}W_{D}$, where $W_{D}$ is made up of $CZ$ gates and the single $S$ gate.\par
 The $U_{CNOT}$ layer updates as $U_{CNOT}'=U_{CNOT}W_{CNOT}$. Because of the ordering of the circuits, we here update the matrix $W$ by left multiplication, and update $W^{\dagger}$ by right multiplication. Thus, for each $CNOT$ gate in $W_{CNOT}$, we update the columns of $W^{-1}$ and the rows of $W$ using the rules given in Eq.~\ref{eq:dch_cupdate}.\par
-We then need to commute the diagonal layer $W_{D}$ past $U_{CNOT}'$. We can do this by adapting Eq.~\ref{eq:cdc} to instead compute $U_{CNOT}W_{D}U_{CNOT}^{\dagger}$, giving a new phase matrix $C'=W^{-1}CW^{-1}$ where $C$ encodes the action of $W_{D}$. This computation again benefits from storing $W^{-1}$ in the DCH information, and can be further optimized by noting that many entries of $C$ are zero. Finally, we can combine the two phase matrices by simplying adding all the elements, keeping the diagonal entries $\bmod 4$ and the off-diagonal entries $\bmod 2$. All together, including the Pauli updates, applying Proposition~\ref{prop:pseudocz} takes time $O(n^2)$.
+We then need to commute the diagonal layer $W_{D}$ past $U_{CNOT}'$. We can do this by adapting Eq.~\ref{eq:cdc} to instead compute $U_{CNOT}W_{D}U_{CNOT}^{\dagger}$, giving a new phase matrix $C'=W^{-1}CW^{-1}$ where $C$ encodes the action of $W_{D}$. This computation again benefits from storing $W^{-1}$ in the DCH information, and can be further optimized by noting that many entries of $C$ are zero. Finally, we can combine the two phase matrices by simply adding all the elements, keeping the diagonal entries $\bmod 4$ and the off-diagonal entries $\bmod 2$. All together, including the Pauli updates, applying Proposition~\ref{prop:pseudocz} takes time $O(n^2)$.
 \subsubsection*{Applying Proposition~\ref{prop:pseudocz} to CH States}
 % Commuting through C by building up term by term from the individual tableau entries
 % Again, Pauli convention is important
@@ -548,13 +548,13 @@ The extra factor of $2$ in the phase arises from having to commute the Pauli $Z$
 \[MF^{T} : \left[MF^{T}\right]_{i,j} = \text{row}_{i}(M)\cdot \text{row}_{j}(F),\]
 which is additionally symmetric as 
 \[\comm{U_{C}^{\dagger}X_{j}U_{C}}{U_{C}^{\dagger}X_{k}U_{C}} = \comm{X_{j}}{X_{k}} = 0.\]
-Similiar to the way we encode the phase polynomial in the DCH form, we can then simplify the overall phase calculation as
+Similar to the way we encode the phase polynomial in the DCH form, we can then simplify the overall phase calculation as
 \[aJa^{T} : \left[J\right]_{i,j} = \begin{cases} \gamma_{i} & i=j \\ MF^{T}_{i,j} & i\neq j \end{cases}\]
 where we pick up the correct factor of $2$ from the symmetric nature of $MF^{T}$.
 Computing each of the matrix-vector multiplications to commute past $U_{C} $takes $O(n^{2})$ time. We can then use the same update rule as for the DCH form to commute the Pauli operator past the $U_{H}$ layer.\par
 Finally, to finish applying Proposition~\ref{prop:pseudocz}, we need to update the tableau of $U_{C}$ to $U_{C}W_{C}$. We have
 \[\left(U_{C}W_{C}\right)^{\dagger}X_{i},Z_{i}\left(U_{C}W_{C}\right) = W_{C}^{\dagger}\left(U_{C}^{\dagger}X_{i},Z_{i}U_{C}\right)W_{C}\]
-an thus we need to update the Paulis in the tableau by conjugtion with $CNOT$, $CZ$ and $S$ gates. These rules for updating $U_{C}$ by right-multiplication with a control type unitary are the same as for the CHP tableau, with some additional corrections for phase.
+an thus we need to update the Paulis in the tableau by conjugation with $CNOT$, $CZ$ and $S$ gates. These rules for updating $U_{C}$ by right-multiplication with a control type unitary are the same as for the CHP tableau, with some additional corrections for phase.
 \begin{align}
 S & \left\{
 \begin{array}{rcl}
@@ -582,8 +582,8 @@ Proposition~\ref{prop:pseudocz} can also be extended to apply to sampling measur
 \[
 \begin{array}{r c l}
 \Pi_{+P}\ket{\phi} = \ket{\phi} & P\ket{\phi} = \ket{\phi} & \text{Deterministic Outcome}\;+1\\
-\Pi_{+P}\ket{\phi} = 0 & P\ket{\phi} = -\ket{\phi} & \text{Determinitic Outcome}\; -1\\
-\Pi{+P}\ket{\phi} = \ket{\phi}+\ket{\varphi} & P\ket{\phi}=\ket{\varphi} & \text{Random Outome} \\
+\Pi_{+P}\ket{\phi} = 0 & P\ket{\phi} = -\ket{\phi} & \text{Deterministic Outcome}\; -1\\
+\Pi{+P}\ket{\phi} = \ket{\phi}+\ket{\varphi} & P\ket{\phi}=\ket{\varphi} & \text{Random Outcome} \\
 \end{array}
 \]
 In terms of measuring an operator $P$, then we can begin by commuting the projector $I+P$ through the Clifford circuit as described in the previous sections. Dropping the normalisation, we have
@@ -602,7 +602,7 @@ Commuting Pauli operators through the layers of control type operators can also 
 &= w^{e}\left(\bra{0^{\otimes n}}U_{C}\right)U_{H}\ket{s} \nonumber \\
 &= w^{e}\matrixel{0^{\otimes n}}{U_{H}}{s}.
 \end{align*}
-This trick, using the definition of a control-type operator to simplify the inner product, can be extended to any comptuational basis state. Writing $\ket{t}=X(t)\ket{0^{\otimes n}}$, we can then commute the $X$ operators past the control-type layer (s) to obtain
+This trick, using the definition of a control-type operator to simplify the inner product, can be extended to any computational basis state. Writing $\ket{t}=X(t)\ket{0^{\otimes n}}$, we can then commute the $X$ operators past the control-type layer (s) to obtain
 \begin{align}
 \matrixel{t}{U_{C}U_{H}}{s} &= \matrixel{0^{\otimes n}}{P'U_{H}}{s} \nonumber \\
 &= \matrixel{0^{\otimes n}}{i^{\mu}Z(z')X(x')\,U_{H}}{s} = \matrixel{x'}{U_{H}}{s}
@@ -618,8 +618,8 @@ where $x\leq v$ denotes the binary strings $x:x_{i}=v_{i}\iff v_{i}=0$ and $\lef
 \begin{equation}
 \matrixel{t}{\phi} = 2^{-\left\vert{v}\right\vert /2}i^{\mu}\prod_{j:v_{j}=1}(-1)^{x'_{j}s_{j}}\prod_{j:v_{j}=0}\braket{x'_{j}}{s},
 \end{equation}
-which equals $0$ if any $u_{j}\neq s_{j}$ for $v_{j}=0$, and is propostional to $2^{-\left\vert v\right\vert/2}$ otherwise. As this requires commuting a Pauli operator through the C/DC layer (s), computing these amplitudes takes time $O(n^{2})$.\par
-This result can also be extened to sample strings from the probability distriution $P(x)=\left\vert\matrixel{t}{V}{s}\right\vert^{2}$, where $V_{C}$ is a Clifford circuit such that $V_{C}=U_{C}U_{H}\equiv U_{D}U_{CNOT}U_{H}$. From the above, we know that any string with a non-zero amplitude occurs with equal probability. This, it is sufficient to start with a binary string
+which equals $0$ if any $u_{j}\neq s_{j}$ for $v_{j}=0$, and is proportional to $2^{-\left\vert v\right\vert/2}$ otherwise. As this requires commuting a Pauli operator through the C/DC layer (s), computing these amplitudes takes time $O(n^{2})$.\par
+This result can also be extended to sample strings from the probability distribution $P(x)=\left\vert\matrixel{t}{V}{s}\right\vert^{2}$, where $V_{C}$ is a Clifford circuit such that $V_{C}=U_{C}U_{H}\equiv U_{D}U_{CNOT}U_{H}$. From the above, we know that any string with a non-zero amplitude occurs with equal probability. This, it is sufficient to start with a binary string
 \[w:w_{j}=\begin{cases}s_{j} & v_{j}=0 \\ 0 & \text{otherwise}\end{cases}\]
 and then pick each of the remaining $\left\vert v\right\vert$ bits at random with equal probability.
 \subsubsection*{Computing Inner Products}
@@ -641,7 +641,7 @@ where $\ket{\Phi}$ is encoded in DCH or CH form, we can compute the inner produc
 \begin{proof}[Proof of Proposition~\ref{prop:stab_inner_prod}]
 In both the DCH and CH form, we can simulate the action of a single Hadamard gate in time $O(n^{2})$. The Hadamard circuit $V_{H}$ contains at most $n$ Hadamard gates, and so we can compute $V_{H}\ket{\Phi}$ in time $O(n^{3})$. The amplitude then reduces to computing the amplitude $\braket{t}{\Phi'}$, which takes time $O(n^{2})$. The overall worst-case complexity is thus $O(n^{3})$.
 \end{proof}
-This method bares a strong resemblence to the `basis circuit' method described in~\cite{Garcia2012}, with the advantage that the `basis circuit' is explicity stored in the DCH and CH datastructures, rather than needing to be computed froma  tableau. In the following sections, we will show how to compute $\ket{\Phi}$ from the DCH/CH data of $\ket{\varphi}$ and $\ket{\phi}$.\par
+This method bares a strong resemblance to the `basis circuit' method described in~\cite{Garcia2012}, with the advantage that the `basis circuit' is explicitly stored in the DCH and CH data-structures, rather than needing to be computed froma  tableau. In the following sections, we will show how to compute $\ket{\Phi}$ from the DCH/CH data of $\ket{\varphi}$ and $\ket{\phi}$.\par
 \large{\itshape{The DCH Case}}\\
 In this representation, we need to compute $U_{D}'U_{CNOT}'=V_{CNOT}^{\dagger}V_{D}^{\dagger}U_{D}U_{CNOT}$. We begin by combining the two phase layers, noting that
 \[U_{D}^{\dagger}\ket{x} = \mathi^{-\,xBx^{t}}\ket{x}\]
@@ -709,11 +709,11 @@ GG'=G'G=I
 \label{eq:G_result}
 \end{equation}
 and thus, $G'=G^{-1}$.\par
-A feature of CHP tableaux is that the $j$th stabilizer and destabilizer anticommute. Here, similarly
+A feature of CHP tableaux is that the $j$th stabilizer and destabilizer anti-commute. Here, similarly
 \[U_{C}^{\dagger}X_{j}U_{C}\,U_{C}^{\dagger}Z_{k}U_{C}=\left(-1\right)^{\delta_{jk}}U_{C}^{\dagger}Z_{k}U_{C}\,U_{C}^{\dagger}X_{j}U_{C}\]
 where the extra phase arises from the commutation relations of Pauli operators. In terms of the entries of the tableau, this tells us that
 \[\text{row}_{j}(F)\cdot\text{row}_{k}(G)=\delta_{jk}\forall\,j,k\implies FG^{T}=I.\]
-This also holds for the tableau of $U_{C}^{\dagger}$. From this, we can concldue that $F=\left(G^{-1}\right)^{T}$, and similarly $F'=G^{T}$.\par
+This also holds for the tableau of $U_{C}^{\dagger}$. From this, we can conclude that $F=\left(G^{-1}\right)^{T}$, and similarly $F'=G^{T}$.\par
 Finally, consider the $X_{j}$ entries. Again applying Eq.~\ref{eq:tableau_update_pauli}, we have
 \[U_{C}\left(U_{C}^{\dagger}X_{j}U_{C}\right)U_{C}^{\dagger}= X(\text{row}_{j}(F)F')Z(\text{row}_{j}(F)M' + \text{row}_{j}(M)G') = X_{j}.\]
 As the Pauli $Z$ terms cancel, we have
@@ -736,7 +736,7 @@ If $\ket{\varphi}$ is an equatorial state, we can write the inner product as
 \begin{equation}
 \braket{\phi}{\varphi} = 2^{-(n+\vert v\vert)/2}\mathi^{sKs^{T}+2s\cdot v}\sum_{x\in\mathbb{Z}_{2}^{\vert v\vert}}\mathi^{xK(1,1)x^{T}+2x[s+sK](1)^{T}}
 \end{equation}\label{claim:exp_sum_ip}
-where $s(1)$ denotes the elements of a vector $s_{j}: v_{j}=1$, and $K(1,1)$ is the submatrix with rows $i$ and columns $j$ such that $v_{i},v_{j}=1$. 
+where $s(1)$ denotes the elements of a vector $s_{j}: v_{j}=1$, and $K(1,1)$ is the sub-matrix with rows $i$ and columns $j$ such that $v_{i},v_{j}=1$. 
 \end{cla}
 \begin{proof}[Proof of Claim~\ref{claim:exp_sum_ip}]
 Let us assume that, given a control-type unitary $U_{C}\equiv U_{D}U_{CNOT}$, we can write $U_{C}^{\dagger}\ket{\varphi}=\sum_{x\in\mathbb{Z}_{2}^{n}}i^{xKx^{T}}\ket{x}$ for an appropriate phase matrix $K$. We will show in the following section how to construct this matrix $K$ given the CH and DCH representation of a state $\ket{\phi}$. Given this form then, we have
@@ -761,7 +761,7 @@ Using $FG^{T}=I$, as introduced in the previous section, and setting $x=yG^{T}$,
 \[\sum_{y\in\mathbb{Z}_{2}^{n}}\mathi^{yG^{T}(A+J)Gy^{T}}\ket{y}=\sum_{y\in\mathbb{Z}_{2}^{n}}\mathi^{yKy^{T}}\ket{y}\]
 as required where $K=G^{T}(A+J)G$.
 \end{proof}
-Once the calculaton is in this form, we can compute the inner product in time $O(\vert v\vert^{3})$ using the algorithm for exponential sums developed by Sergey Brayyi~\cite{Bravyi2018}. Computing the phase matrix $K$ takes time $O(n^{2})$ in both cases, and thus as $\vert v\vert\leq n$ we have a general performance $O(n^{3})$.
+Once the calculation is in this form, we can compute the inner product in time $O(\vert v\vert^{3})$ using the algorithm for exponential sums developed by Sergey Bravyi~\cite{Bravyi2018}. Computing the phase matrix $K$ takes time $O(n^{2})$ in both cases, and thus as $\vert v\vert\leq n$ we have a general performance $O(n^{3})$.
 \begin{table}[t]
 \centering
 \begin{tabular}{|l|c|c|c|c|c|}
@@ -782,17 +782,17 @@ Inner Product & $O(n^{3})$ & $O(n^{3})$ & $O(n^{3})$ & $O(n^{3})$ & N/A \\
 \end{tabular}
 % \footnotetext{Here, $d$ is the degree of the graph, which varies from $\log{n}$ to $n$.}
 % \footnotetext{We note that, while all algorithms for measurement are in principle extensible beyond single qubit measurements, only the DCH and CH simulators currently implement arbtirary Pauli measurements.}
-\caption{Comparison of the asymptotic complexity of different stabilizer circuit simulators, including common operations and their memory footprint. We include the graph based representation of Anders \& Briegel, discussed later in this section, and omit the `Affine Space' simulator as it has no current implemention for gate updates.\\ Here, $d$ is the degree of the graph used as an internal representation, which varies from $\log{n}$ to $n$~\cite{Anders2006}. We further note that, while all algorithms for measurement are in principle extensible beyond single qubit measurements, only the DCH and CH simulators currently implement arbtirary Pauli measurements.}
+\caption{Comparison of the asymptotic complexity of different stabilizer circuit simulators, including common operations and their memory footprint. We include the graph based representation of Anders \& Briegel, discussed later in this section, and omit the `Affine Space' simulator as it has no current implementation for gate updates.\\ Here, $d$ is the degree of the graph used as an internal representation, which varies from $\log{n}$ to $n$~\cite{Anders2006}. We further note that, while all algorithms for measurement are in principle extensible beyond single qubit measurements, only the DCH and CH simulators currently implement arbtirary Pauli measurements.}
 \label{tab:comparison}
 \end{table}
 \subsection{Implementations in Software}\label{sec:stabilizer_simulators}
-The DCH and CH data structures and most routines were implemented in \texttt{C++}, to produce a stabilizer circuit simulator. The one expection was the arbitrary stabilizer state inner product, which was derived but left unimplemented due to time constraints. In this section, we will review some of the optimizations employed, and present data comparing their performance with existing software implementations.\par
-The resulting simulators were also validated through the use of testing random circuits. The CH representation was validated by comparison to a \texttt{MATLAB} version of the simulator develoepd independently by David Gosset. The DCH representation was then validated against this successfully tested CH representation, using random circuits and conversion to state-vectors through $2^{n}$ calls of the computational amplitude routine.
+The DCH and CH data structures and most routines were implemented in \texttt{C++}, to produce a stabilizer circuit simulator. The one exception was the arbitrary stabilizer state inner product, which was derived but left unimplemented due to time constraints. In this section, we will review some of the optimizations employed, and present data comparing their performance with existing software implementations.\par
+The resulting simulators were also validated through the use of testing random circuits. The CH representation was validated by comparison to a \texttt{MATLAB} version of the simulator developed independently by David Gosset. The DCH representation was then validated against this successfully tested CH representation, using random circuits and conversion to state-vectors through $2^{n}$ calls of the computational amplitude routine.
 \subsubsection*{Efficient Binary Operations}\label{sec:binary_ops}
 % Both methods involve operations variously modulo 2 and 4
-The datastructures and subroutines underpinning the CH and DCH representations are built out of arithmetic performed modulo $2$ and $4$, depending on the context. This allows us to efficiently store the representations using binary bits as opposed to integers, and then use boolean operations as part of the simulation routines.\par
+The data-structures and subroutines underpinning the CH and DCH representations are built out of arithmetic performed modulo $2$ and $4$, depending on the context. This allows us to efficiently store the representations using binary bits as opposed to integers, and then use boolean operations as part of the simulation routines.\par
 % Addition/subtraction modulo 2 > xor
-Addition and subtraction modulo $2$, such as is required in the $U_{C}$ updates of the CH representation and the $U_{D}$ updates in the DCH representation, is equivalent to the boolen `XOR' operation, defined as
+Addition and subtraction modulo $2$, such as is required in the $U_{C}$ updates of the CH representation and the $U_{D}$ updates in the DCH representation, is equivalent to the boolean `XOR' operation, defined as
 \[
 \begin{array}{c|c|c|c|c}
 a & b & a\oplus b & a+b\left(\bmod{2}\right)&a-b\left(\bmod{2}\right)\\
@@ -804,7 +804,7 @@ a & b & a\oplus b & a+b\left(\bmod{2}\right)&a-b\left(\bmod{2}\right)\\
 \end{array}
 \label{eq:xor}
 \]
-For addition modulo $4$, we encode each number using two binary bits $a$ and $b$ as $2*a+b$. In this context, $a$ is typically referred to as the `2s' bit and $b$ as the `1s' bit. Addition can be done for the  1s and 2s terms separetly, with an additional carry correction
+For addition modulo $4$, we encode each number using two binary bits $a$ and $b$ as $2*a+b$. In this context, $a$ is typically referred to as the `2s' bit and $b$ as the `1s' bit. Addition can be done for the  1s and 2s terms separately, with an additional carry correction
 \[x+y\pmod{4} = 2*\left(a_{x}\oplus a_{y} \oplus (b_{x}\wedge b_{y})\right) + \left(b_{x}\oplus b_{y}\right).\]
 In the case of subtraction modulo $4$, we note that adding and subtracting $2$ can be achieved using just the $xor$ operation, as only the two bit is changed. Otherwise, we note that
 \[
@@ -818,10 +818,10 @@ a  & a-3 \pmod{4} & a-1\pmod{4}\\
 \end{array}
 \]
 i.e.\ $a-3=a+1$, and $a-1=a+3$, where the addition is again modulo $4$. This trick allows us to simplify $a-b\pmod{4}$ by setting $b_{2}\gets b_{2}\oplus b_{1}$, and then using addition.\par
-Vector and matrix multiplcations modulo $2$ can also be reduced to a set of binary operations. Each element $[aM]_{i}]$, $[LM]_{i,j}$ can be written as a binary inner product, respectively $a\cdot \text{col}_{i}(M)$ and $\text{row}_{i}(KL)\cdot\text{col}_{j}(M)$. Computing the binary inner product can then be expanded out in terms of boolean operations as
+Vector and matrix multiplications modulo $2$ can also be reduced to a set of binary operations. Each element $[aM]_{i}]$, $[LM]_{i,j}$ can be written as a binary inner product, respectively $a\cdot \text{col}_{i}(M)$ and $\text{row}_{i}(KL)\cdot\text{col}_{j}(M)$. Computing the binary inner product can then be expanded out in terms of boolean operations as
 \[x\cdot y = \left(x_{1}\wedge y_{1}\right)\oplus\left(x_{2}\wedge y_{2}\right)\cdots\oplus\left(x_{n}\wedge y_{n}\right).\]
-Typically, we are applying the same operation to entire vectors, rows or columns of a binary matrix. Thus, we can employ a technique called `bitpacking' to efficiently store and update these binary values. In \texttt{C++}, integers can by stored using 8, 16, 32 or 64 binary bits (1, 2, 3 and 4 bytes, respectively). The builtin in \texttt{bool} datatype is also typically stored using 1 byte, as this is the smallest unit of memory addressable by a processsor~\cite{CPPRefTypes}.\par
-Bitpacking instead stores up to 64 binary bits in a single variable, manipulating them through the use of `bitwise' oeprators~\cite{CPPRefBitwise}. Bitpacking typically achievs an $8$-fold reduction in the memory footprint. Additionally, a bitwise operation between two variables acts on all bits simulatenously in a single timestep. For example, considering the XOR between two binary vectors, we can write
+Typically, we are applying the same operation to entire vectors, rows or columns of a binary matrix. Thus, we can employ a technique called `bitpacking' to efficiently store and update these binary values. In \texttt{C++}, integers can by stored using 8, 16, 32 or 64 binary bits (1, 2, 3 and 4 bytes, respectively). The built-in in \texttt{bool} data-type is also typically stored using 1 byte, as this is the smallest unit of memory addressable by a processor~\cite{CPPRefTypes}.\par
+Bitpacking instead stores up to 64 binary bits in a single variable, manipulating them through the use of `bitwise' operators~\cite{CPPRefBitwise}. Bitpacking typically achieves an $8$-fold reduction in the memory footprint. Additionally, a bitwise operation between two variables acts on all bits simultaneously in a single time-step. For example, considering the XOR between two binary vectors, we can write
 \[
 \begin{array}{rcl}
 x\oplus y = [x_{1}\oplus y_{1},\cdots x_{n}\oplus y_{n}] & \iff &
@@ -836,14 +836,14 @@ where \texttt{\%} is the \texttt{C++} modulo operator.\par
 Using these operations allows us to reduce the effective complexity of many common subroutines by a factor of $n$, as long as the number of variables $n$ is less than $64$. For example, instead of $O(n)$ time, computing the binary inner product now requires just two operations: a bitwise logical AND, and the parity intrinsic. However, above $64$ bits, we need to pack the bits across multiple variables, and so the number of calls to intrinsic functions will again asymptotically as $O(n)$. Specifically, the number of operations required will go as $n/64$.\par
 \large{\itshape{Case study: Stabilizer simulations with Affine Spaces}}\par
 % Example of bitpacking
-As an example of the use of bitpacking to optimize stabilizer simulators, we developed a \texttt{C++} implementation of the stabilizer state simulator introduced in Appendices~B, C and E of~\cite{Bravyi2016}. While not a full simulator, they provide explicit algorithms for performing Pauli measurements and computing stabilizer inner products. These methods were implemented by the authors in \texttt{MATLAB}, using matrices of integers and repreated calls to the \texttt{mod} function in MATLAB.\par
+As an example of the use of bitpacking to optimize stabilizer simulators, we developed a \texttt{C++} implementation of the stabilizer state simulator introduced in Appendices~B, C and E of~\cite{Bravyi2016}. While not a full simulator, they provide explicit algorithms for performing Pauli measurements and computing stabilizer inner products. These methods were implemented by the authors in \texttt{MATLAB}, using matrices of integers and repeated calls to the \texttt{mod} function in MATLAB.\par
 In particular, in their encoding a stabilizer state is based on Eq.~\ref{eq:affineform}, described by a tuple
 \[\ket{\phi} = \left(n, k, h, G, G^{-1}, Q, D, J\right)\]
 where $n$ is the number of qubits, $k$ is dimension of the the affine space $\mathcal{K}$, generated by the first $k$ columns of the $n\times n$ binary matrix $G$ and an $n$-bit binary vector $h$. The inverse matrix $G^{-1}$ is also stored. The phase terms are encoded in a quadratic form using a constant offset $Q\in\mathbb{Z}_{4}$, a vector $D$ of elements $\bmod{4}$, and a symmetric $n\times n$ binary matrix $J$.\par
 The \texttt{C++} simulator makes use of bitpacking to efficiently store $h$, $G$, $G^{-1}$ and $J$. Additionally, we store the elements of $D$ using two binary variables, separating the 1s and 2s bits. The routines were verified and benchmarked against the existing \texttt{MATLAB} implementation using the \texttt{MATLAB} EXternal languages (MEX) interface, which allows compiled code to be called from within \texttt{MATLAB} applications~\cite{MEXRef}.\par
 \begin{figure}[p]
 \centering
-\caption{Figures showing the perforamnce of the \texttt{MATLAB} and \texttt{C++} implementations of a stabilize simulator based on Affine Spaces.}
+\caption{Figures showing the performance of the \texttt{MATLAB} and \texttt{C++} implementations of a stabilize simulator based on Affine Spaces.}
 \label{fig:affine_timings}
 \begin{subfigure}[t]{0.9\textwidth}
     \begin{scaletikzpicturetowidth}{\textwidth}
@@ -872,30 +872,30 @@ The \texttt{C++} simulator makes use of bitpacking to efficiently store $h$, $G$
     \end{scaletikzpicturetowidth}
 \end{subfigure}
 \end{figure}
-The results of the benchmark are shown in Figure~\ref{fig:affine_timings}. We include two core subroutines specific to the affine space simulator, called \texttt{Shrink} and \texttt{Extend}, which are called as part of computing stabilizer inner products and simulating Pauli measurements respectively, as well as results for arbitrary $n$ qubit Pauli mesaurements and computing the inner product between stabilizer states.\par
-The obsereved differences in runtime are relatively consistent across each routine. In general, the \texttt{C++} implementation has a significant advantage in the $5$--$15$ qubit range, with a speedup of anywhere from $1.6$ to $10$ times. This advantage then drops off as the number of qubits increases, tending to a constant speedup of between $1.5$ to $3$ times. The notable exception to this is in the \texttt{Extent} routine, which actually performs worse than the \texttt{MATLAB} version above $35$ qubits. All benchmarks have a cutoff below $64$ qubits, which is enforced by the use of $64$ bit integers for bitpacking in the \texttt{C++} simulator.
+The results of the benchmark are shown in Figure~\ref{fig:affine_timings}. We include two core subroutines specific to the affine space simulator, called \texttt{Shrink} and \texttt{Extend}, which are called as part of computing stabilizer inner products and simulating Pauli measurements respectively, as well as results for arbitrary $n$ qubit Pauli measurements and computing the inner product between stabilizer states.\par
+The observed differences in runtime are relatively consistent across each routine. In general, the \texttt{C++} implementation has a significant advantage in the $5$--$15$ qubit range, with a speedup of anywhere from $1.6$ to $10$ times. This advantage then drops off as the number of qubits increases, tending to a constant speedup of between $1.5$ to $3$ times. The notable exception to this is in the \texttt{Extent} routine, which actually performs worse than the \texttt{MATLAB} version above $35$ qubits. All benchmarks have a cutoff below $64$ qubits, which is enforced by the use of $64$ bit integers for bitpacking in the \texttt{C++} simulator.
 \par
 \large{\itshape{Specific Optimizations for the CH and DCH Forms}}\par
-We make use of bitpacking to efficiently store the CH and DCH forms. As many subroutines require computing vector-matrix multiplcations of the form $aM$, we store the matrices in `column format' where each bitpacked variable stores one column of the binary matrix. This allows us to make use of intrinsic functions to speedup these multiplcations.\par
-Transposed matrices are computed using `lazy evaluation'. When the transposed matrix is required, we compute it and store it. We then additionally store a flag to indicate if the transposed matrix is up to date. If later function calls change the values of the transposed matrix, the flag is set to false and the tranpose will be recomputed only when required.\par
-Whenever the result of a calculation is expected to be symmetric, we an halve the number of operations by copying values across. This gives a constant factor speedup in, for example, computing the phase matrices $K$ as part of inner product calculations. We can also make use of this symmetic structure to avoid tranposing a matrix when accessing a row.\par
-Typically, phase matrices are stored as binary matrices with $0$ diagonal, and then a separate pair of bitpacked variables storing the diagonal entries which are modulo $4$. When required, we update the diagonals separately using an explicit expansion of the matrix multiplcations.\par
+We make use of bitpacking to efficiently store the CH and DCH forms. As many subroutines require computing vector-matrix multiplications of the form $aM$, we store the matrices in `column format' where each bitpacked variable stores one column of the binary matrix. This allows us to make use of intrinsic functions to speedup these multiplications.\par
+Transposed matrices are computed using `lazy evaluation'. When the transposed matrix is required, we compute it and store it. We then additionally store a flag to indicate if the transposed matrix is up to date. If later function calls change the values of the transposed matrix, the flag is set to false and the transpose will be recomputed only when required.\par
+Whenever the result of a calculation is expected to be symmetric, we an halve the number of operations by copying values across. This gives a constant factor speedup in, for example, computing the phase matrices $K$ as part of inner product calculations. We can also make use of this symmetric structure to avoid transposing a matrix when accessing a row.\par
+Typically, phase matrices are stored as binary matrices with $0$ diagonal, and then a separate pair of bitpacked variables storing the diagonal entries which are modulo $4$. When required, we update the diagonals separately using an explicit expansion of the matrix multiplications.\par
 Some updates for the DCH form are further optimised by using explicit expansions of the matrix multiplications. For example, when commuting a Pauli $Z$ through the CNOT layer as in Eq.~\ref{eq:dch_cupdate}, we avoid a call to the transpose $W^{T}$ by noting that
 \[[zW^{T}]_{i} = \sum_{j}z_{j}W^{T}_{j,i}=\sum_{j}z_{j}W_{i,j} \]
 i.e.\ each entry $[zW^{T}]_{i}$ is a sum of some entries in row $i$. We can thus build up the new vector $z'=zW^{T}$ by repeatedly doing $z'\gets z' \oplus \text{col}_{j}(W)$ for each $j:z_{j}=1$.
 \subsection{Performance Benchmarks}
 % Two piece of stabilizer circuit simulation software: 1 based on CHP
 To establish the performance of the DCH and CH implementations, we benchmark them against two existing stabilizer circuit simulators, which are available publicly online. The first is the \texttt{C} implementation of the CHP method, developed by Scott Aaronson~\cite{Aaronson2004b}. This uses a variant of bitpacking based on $32$-bit integers. The second method is a radically different representation of stabilizer states, based on the fact that any stabilizer state can be generated by a local Clifford circuit (single qubit Clifford gates), acting on a special class of stabilize state called a graph state~\cite{Schlingemann2001,VandenNest2004}.\par
-Graph states are named as their structure is described by a mathematical graph of vertices $V$ and endges $E$, where each qubit is a vertex. From this grpah, a graph-state is then built-up as
+Graph states are named as their structure is described by a mathematical graph of vertices $V$ and edges $E$, where each qubit is a vertex. From this graph, a graph-state is then built-up as
 \[\ket{(V,E)} = \left(\prod_{i,j \in E}CZ_{i,j}\right)\ket{+^{\otimes n}},\]
 by performing a $CZ$ gate between every pair of qubits connected by an edge of the graph~\cite{VandenNest2004}.\par
 The so called `Anders \& Briegel' simulator describes a stabilizer state by its corresponding graph, and by sequences of local Clifford operators acting at each vertex. A \texttt{C++} implementation of this simulator also exists, called \texttt{GraphSim}~\cite{Anders2006b}. This stores a graph as a list of vertices, each with local information about the vertices connected to it.\par
 % Use a heuristic for dependence on entanglement noted by Aaronson & Gottesman
 The expected runtime of different routines using the Anders \& Briegel method are also given in Table~\ref{tab:comparison}. Importantly, in their analysis, routines are quoted with a runtime that scales as $d$, the maximum `degree' or number of edges involving a given vertex. By definition, $d\leq n$, the number of vertices in the graph, and thus the simulator has a worst case performance comparable to the DCH, CH and tableau methods. However, this analysis makes explicit a feature of stabilizer circuit simulators; their runtime in practice depends on the state/circuit being considered.\par
 This phenomenon was first described in~\cite{Aaronson2004}, who observed that the runtime for Pauli measurements seemingly varied between linear and quadratic scaling in the number of qubits, despite the expected asymptotic quadratic scaling. In particular, the algorithm for computing a given measurement in the CHP representation requires between $1$ and $n$ calls to a subroutine which takes $O(n)$ to evaluate, and the exact number is determined by the sparsity of the $X$-bits of the stabilizers, which is in turn related to the number of entangling gates in the circuit.\par
-Similar results hold in detailed analysis of the CH and DCH representations, where the exact number of calcuations required will depend on the sparisty of the matrices/vectors encoding different features of the stabilizer circuits. Consider for example the inner product algorithm of Proposition~\ref{prop:stab_inner_prod}, where we need to apply $\vert v\vert$ $H$ gates at a cost of $O(n^{2})$ each.\par
+Similar results hold in detailed analysis of the CH and DCH representations, where the exact number of calculations required will depend on the sparisty of the matrices/vectors encoding different features of the stabilizer circuits. Consider for example the inner product algorithm of Proposition~\ref{prop:stab_inner_prod}, where we need to apply $\vert v\vert$ $H$ gates at a cost of $O(n^{2})$ each.\par
 As a result, Aaronson \& Gottesman introduced a heuristic for evaluating stabilizer circuit simulators. We begin by applying a random stabilizer circuit to the state, choosing $H$, $S$ and $CNOT$ gates at random, before applying the operation we are benchmarking and recording the runtime. Using an argument based on message passing, the authors claim that in general we need $O(n\log{n})$ gates in the circuit to observe this transition between easier and harder instances of stabilizer circuit simulation, and so we apply $\beta n\log{n}$ gates where $\beta$ is a parameter that varies between $0.5$ and $1.2$. This heuristic is also employed by Garcia et al.\ in their paper presenting an algorithm for computing stabilizer inner products, where they observe a transition between quadratic and cubic scaling with varying $\beta$~\cite{Garcia2012}.\par
-Here we present results comparing the performance of different operations between the DCH, CH, CHP and GraphSim methods, for different values of the paramter $\beta$. All runtimes are averages taken over $100000$ repetitions, where we first apply a random stabilizer circuit of $\beta n\log{n}$ gates, and then record the time taken by the particular operation.\par
+Here we present results comparing the performance of different operations between the DCH, CH, CHP and GraphSim methods, for different values of the parameter $\beta$. All run-times are averages taken over $100000$ repetitions, where we first apply a random stabilizer circuit of $\beta n\log{n}$ gates, and then record the time taken by the particular operation.\par
 % Show graphs of perforamce comparison
 \begin{figure}[p]
 \centering
@@ -913,12 +913,12 @@ Here we present results comparing the performance of different operations betwee
         \input{Figures/StabilizerTimings/H-1.6}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
-\caption{Average runtime of the single qubit $H$ and $S$ gates as a function of the number of qubits across different stabilizer simulators. Single qubit gates show no dependence on length of the preceeding circuit, encoded as the $\beta$ parameter.}
+\caption{Average runtime of the single qubit $H$ and $S$ gates as a function of the number of qubits across different stabilizer simulators. Single qubit gates show no dependence on length of the preceding circuit, encoded as the $\beta$ parameter.}
 \label{fig:single_qubit_clifford_timings}
 \end{figure}
 \begin{figure}[p]
 \centering
-\caption{Average runtime of entangling $CNOT$ and $CZ$ gates as a function of the number of qubits for different stabilizer simulators, for extremal values of $\beta$. The Anders \& Briegel method shows a signficant dependence on circuit length.}
+\caption{Average runtime of entangling $CNOT$ and $CZ$ gates as a function of the number of qubits for different stabilizer simulators, for extremal values of $\beta$. The Anders \& Briegel method shows a significant dependence on circuit length.}
 \label{fig:entangling_gates}
 \begin{subfigure}[t]{0.45\textwidth}
     \centering
@@ -979,8 +979,8 @@ Here we present results comparing the performance of different operations betwee
 \end{figure}
 \begin{figure}[p]
 \centering
-\caption{Average runtime of single qubit measurements in the $X$ and $Z$ basis, as a funciton of the number of qubits and the
-length of the preceeding stabilizer circuit, for $4$ stabilizer simulators.}
+\caption{Average runtime of single qubit measurements in the $X$ and $Z$ basis, as a function of the number of qubits and the
+length of the preceding stabilizer circuit, for $4$ stabilizer simulators.}
 \label{fig:single_measurements}
 \begin{subfigure}[t]{0.42\textwidth}
     \centering
@@ -1039,12 +1039,12 @@ length of the preceeding stabilizer circuit, for $4$ stabilizer simulators.}
     \end{scaletikzpicturetowidth}
 \end{subfigure}
 \end{figure}
-We also present data for routines specific to the DCH and CH routines. In particular, we present data demonstrating the runtime of arbitrary $n$-qubit Pauli measurements, and for the specialised `equatorial' inner product defined in Claim~\ref{claim:exp_sum_ip}. We also consider the effect of weight on the complexity of Pauli measurements.
+We also present data for routines specific to the DCH and CH routines. In particular, we present data demonstrating the runtime of arbitrary $n$-qubit Pauli measurements, and for the specialized `equatorial' inner product defined in Claim~\ref{claim:exp_sum_ip}. We also consider the effect of weight on the complexity of Pauli measurements.
 \begin{figure}[p]
 \centering
 \begin{subfigure}[t]{0.48\textwidth}
 \centering
-\caption{Computing Comptuational Amplitudes}
+\caption{Computing Computational Amplitudes}
 \label{fig:amp_comparison}
     \begin{scaletikzpicturetowidth}{\textwidth}
         \input{Figures/StabilizerTimings/amplitude_comparison}
@@ -1062,7 +1062,7 @@ We also present data for routines specific to the DCH and CH routines. In partic
 \label{fig:other_routines}
 \end{figure}
 \begin{figure}[p]
-\caption{Average runtime of Pauli measurements for the CH and DCH simulators. A solid line represnets a single Pauli $Z$ measurement. The dashed lines repesenent $n$-qubit Pauli $Z$ measurements, and the dotted line random $n$-qubit Paulis.}
+\caption{Average runtime of Pauli measurements for the CH and DCH simulators. A solid line represents a single Pauli $Z$ measurement. The dashed lines represent $n$-qubit Pauli $Z$ measurements, and the dotted line random $n$-qubit Paulis.}
 \centering
 \begin{scaletikzpicturetowidth}{0.75\textwidth}
     \input{Figures/StabilizerTimings/measure_comparison}
@@ -1072,11 +1072,11 @@ We also present data for routines specific to the DCH and CH routines. In partic
 \section{Discussion}
 In this chapter, we have introduced two new representations for simulating stabilizer circuits, including their implementation in software, and presented data evaluating their performance against previous methods.\par
 In particular, we make use of bitpacking techniques to try and further improve their runtime. Figure~\ref{fig:affine_timings} introduced results comparing a bitpacked simulator with a prior \texttt{MATLAB} implementation. In general, we see a broad speedup over the \texttt{MATLAB} version across the full parameter range, though the exact degree of this speedup decreases with increasing $n$. The main exception is the \texttt{Extend} routine, where we observe the \texttt{C++} implementation scaling roughly quadratically with the input size, whereas the \texttt{MATLAB} version exhibits a closer to linear scaling.\par
-One possible explanation for this effect is an unfortunate side-effect of the use of MEX files, namely that the \texttt{C++} version additionally needs to convert the MATLAB data into a \text{C++} data-structure. This adds an additional $O(n^{2})$ overhead to the runtime of the \texttt{C++} simulator. Otherwise as coded, the \texttt{Extend} algorithm has only $O(n)$ steps. In more complex functions like measurement, \texttt{Shrink} and inner products, which have runtimes $10-100$ times longer than \texttt{Extend}, this effect is less significant, but nonetheless likely contributes to the steeper gradient of the \texttt{C++} scalings.\par
+One possible explanation for this effect is an unfortunate side-effect of the use of MEX files, namely that the \texttt{C++} version additionally needs to convert the MATLAB data into a \text{C++} data-structure. This adds an additional $O(n^{2})$ overhead to the runtime of the \texttt{C++} simulator. Otherwise as coded, the \texttt{Extend} algorithm has only $O(n)$ steps. In more complex functions like measurement, \texttt{Shrink} and inner products, which have run-times $10-100$ times longer than \texttt{Extend}, this effect is less significant, but nonetheless likely contributes to the steeper gradient of the \texttt{C++} scalings.\par
 The difference in performance is most significant for the inner product routine, which has an overall complexity that scales as $O(n^{3})$ resulting from up to $n$ calls to the \texttt{Shrink} routine, and a call to Sergey Bravyi's Exponential Sum routine which also has runtime $O(n^{3})$. In this case, the effect of the additional data-copying is suppressed by the overall runtime of the algorithm. \par
 % Case study results: Vectorization and limits of current implementations
-It is important to note that the \texttt{MATLAB} implementations also benefit from a degree of parallelization, through a combination of multithreading, and so called `Single Instruction stream Multiple Data stream' (SIMD) operations~\cite{Flynn1972}. Matrix and vector multiplications are intrinsically parallelisable, as each element in the result is computed from a unique set of multiplication and addition operations. One option for optimising parallel code is to make multiple `threads' available to the program, which each tackle a different part of the computation. However, as we are frequently performing lots of identical operations over different inputs, they can also benefit from SIMD CPU instructions. These are optimizations which speedup computations by loading multiple values into a special shared binary registers, applying a common operation to the entire register, and then reading the result back out~\cite{SIMD}. \texttt{MATLAB} is built atop the long established \texttt{LAPACK} and \texttt{BLAS} libraries for linear algebra, which implement these types of optimization~\cite{MATLABTech,LAPACK,BLAS}.\par
-The effect of these optimizations becomes apparent when we try to extend a bitpacked simulation beyond $64$ qubits. In this case, we need to use an array of integer values to encode each binary vector, and each operation now incurs the overhead of looping over these arrays. As an example, Figure~\ref{fig:big_sum} shows the runtime of the Exponential Sum algorithm of~\cite{Bravyi2018}, extended up to $150$ qubits. We choose Exponential Sum for this benchmark as it has a complexity that scales as $O(n^{3})$, reducing the impact of the MEX interface on performance. As before, the speedup shown by the \texttt{C++} impelmentation continually decreases with increasing $n$. Given that some measure of performance improvement is expected by virtue of using a compiled language, compared with the dynamic langauge \texttt{MATLAB}, we can see that the bitpacking method is no longer providing significant speedup.
+It is important to note that the \texttt{MATLAB} implementations also benefit from a degree of parallelization, through a combination of multi-threading, and so called `Single Instruction stream Multiple Data stream' (SIMD) operations~\cite{Flynn1972}. Matrix and vector multiplications are intrinsically parallelisable, as each element in the result is computed from a unique set of multiplication and addition operations. One option for optimising parallel code is to make multiple `threads' available to the program, which each tackle a different part of the computation. However, as we are frequently performing lots of identical operations over different inputs, they can also benefit from SIMD CPU instructions. These are optimizations which speedup computations by loading multiple values into a special shared binary registers, applying a common operation to the entire register, and then reading the result back out~\cite{SIMD}. \texttt{MATLAB} is built atop the long established \texttt{LAPACK} and \texttt{BLAS} libraries for linear algebra, which implement these types of optimization~\cite{MATLABTech,LAPACK,BLAS}.\par
+The effect of these optimizations becomes apparent when we try to extend a bitpacked simulation beyond $64$ qubits. In this case, we need to use an array of integer values to encode each binary vector, and each operation now incurs the overhead of looping over these arrays. As an example, Figure~\ref{fig:big_sum} shows the runtime of the Exponential Sum algorithm of~\cite{Bravyi2018}, extended up to $150$ qubits. We choose Exponential Sum for this benchmark as it has a complexity that scales as $O(n^{3})$, reducing the impact of the MEX interface on performance. As before, the speedup shown by the \texttt{C++} implementation continually decreases with increasing $n$. Given that some measure of performance improvement is expected by virtue of using a compiled language, compared with the dynamic language \texttt{MATLAB}, we can see that the bitpacking method is no longer providing significant speedup.
 \par
 \begin{figure}[t]
     \centering
@@ -1088,15 +1088,15 @@ The effect of these optimizations becomes apparent when we try to extend a bitpa
 \end{figure}
 It would also be possible to further optimize the implementation developed here with the addition of SIMD operations. Instead of looping over each integer variable used to encode large bitpacked vectors, the variables could instead be loaded into SIMD registers. THis would significantly optimize the computations up to $512$ qubits, as 512 bits is the largest register currently supported~\cite{SIMD}. An SIMD implementation is outside the scope of this thesis, but would be a significant performance upgrade to the CH and DCH simulators.
 \subsection*{CH and DCH Performance}
-Comparisons between the DCH and CH forms and previous stabilizer simulators are shown in Figures~\ref{fig:single_qubit_clifford_timings},~\ref{fig:entangling_gates} and~\ref{fig:single_measurements}. Broadly, we see that the DCH and CH representations are competetive with previous techniques, in spite of tracking additional phase information and offering additional `functionality'.\par
-Specifically, for single qubit Clifford gates, we see that the Graph Sim method has the best overall performance. Because applying a single qubit operator in this picutre only requires updating `local' information, it can be implemented using a lookup table and thus has constant complexity. This is a significant advantage over the other methods.\par
-However, as mentioned in Table~\ref{tab:comparison}, the graph based datastructure employed by Anders \& Breigel has a runtime that scales as the maximum degree $d$ of the graph for entangling gates, as they alter this underlying graph. This effect becomes clear with increasing $\beta$, where the complexity of graph and subsequently the runtime of entangling gates significantly increases. At the largest tested value, $61$ qubits, the runtime of an entangling gate grew from $\approx 3\mathrm{x}10^{-7}$ at $\beta=0.5$, to $\approx 1\mathrm{x}1-^{-5}$ at $\beta=1.6$. In contrast, we note that the CHP, CH and DCH methods also show no apparent dependence on $\beta$. This would be expected from the update algorithms, which rely on binary operations that are independent of the sparsity of the data structures.\par
-The DCH also benefits from a constant time complexity for all phase gates, leading to its improved performance for the `CZ' gate. The CH representation has no constant time operations, but is broadly competitive in terms of single qubit gate performance. Thois is especially true in the case of the Hadamard cade, inspite of the theoretical $O(n^{2})$ complexity of thisoperation. However, the DCH representation shows a significantly increased overhead in simulating Hadamard gates. This suggests the simulator is a poor choice for circuits involving many basis changes.\par
-The origin of this increased overhead can potentially be explained by comparing the performance of Pauli measurements, where the CH simulator also out-performs the DCH method. This suggests that the additional overhead is incurred when commuting Pauli operators through the cicuit layers. We might also expect that applying the circuit correction of Proposition~\ref{prop:pseudocz} is slower for the DCH form, as it involves explicit matrix operations. In contrast, the CH form here requires only column updates, which take a single time-step as we store binary matrices ias bitpacked column matrices.\par
+Comparisons between the DCH and CH forms and previous stabilizer simulators are shown in Figures~\ref{fig:single_qubit_clifford_timings},~\ref{fig:entangling_gates} and~\ref{fig:single_measurements}. Broadly, we see that the DCH and CH representations are competitive with previous techniques, in spite of tracking additional phase information and offering additional `functionality'.\par
+Specifically, for single qubit Clifford gates, we see that the Graph Sim method has the best overall performance. Because applying a single qubit operator in this picture only requires updating `local' information, it can be implemented using a lookup table and thus has constant complexity. This is a significant advantage over the other methods.\par
+However, as mentioned in Table~\ref{tab:comparison}, the graph based data-structure employed by Anders \& Breigel has a runtime that scales as the maximum degree $d$ of the graph for entangling gates, as they alter this underlying graph. This effect becomes clear with increasing $\beta$, where the complexity of graph and subsequently the runtime of entangling gates significantly increases. At the largest tested value, $61$ qubits, the runtime of an entangling gate grew from $\approx 3\mathrm{x}10^{-7}$ at $\beta=0.5$, to $\approx 1\mathrm{x}1-^{-5}$ at $\beta=1.6$. In contrast, we note that the CHP, CH and DCH methods also show no apparent dependence on $\beta$. This would be expected from the update algorithms, which rely on binary operations that are independent of the sparsity of the data structures.\par
+The DCH also benefits from a constant time complexity for all phase gates, leading to its improved performance for the `CZ' gate. The CH representation has no constant time operations, but is broadly competitive in terms of single qubit gate performance. This is especially true in the case of the Hadamard gate, in spite of the theoretical $O(n^{2})$ complexity of this operation. However, the DCH representation shows a significantly increased overhead in simulating Hadamard gates. This suggests the simulator is a poor choice for circuits involving many basis changes.\par
+The origin of this increased overhead can potentially be explained by comparing the performance of Pauli measurements, where the CH simulator also out-performs the DCH method. This suggests that the additional overhead is incurred when commuting Pauli operators through the circuit layers. We might also expect that applying the circuit correction of Proposition~\ref{prop:pseudocz} is slower for the DCH form, as it involves explicit matrix operations. In contrast, the CH form here requires only column updates, which take a single time-step as we store binary matrices as bitpacked column matrices.\par
 The effect of commuting Paulis can be clarified by also considering Figure~\ref{fig:measurement_comparison}. We see that the CH method has a significant advantage for both single and $n$ qubit $Z$-rotations, but that the DCH method shows slightly better performance for arbitrary Pauli operators. This likely follows from the need to compute a transpose of the $F$ and $M$ matrices, whereas the DCH method is optimized to avoid then need for transposition.\par
-Transposition is also likely the cause of the increased overhead incurred by the CH representation in computing the equatorial inner products, and in computing computational state amplitudes, shown in Figure~\ref{fig:other_routines}. Importantly, as discussed before, transposed matrices are stored `lazily', computed only when required and then cached until outdated. Thus, in computing multiple anplitudes or inner products as is likely in a practical simulation, this performance gap between the two representations would likely decrease.\par
-An interesting feature of computing computational basis state amplitudes and equatorial inner produts is that they do not show only a small dependence on the length of the preceeding stabilizer circuit. This is in contrast to the results of~\cite{Garcia2012}, which observed a transition from quadratic to cubic scaling in the number of qubits when computing stabilizer inner products, even for computational state amplitudes. This would be expected from the implementation of both routines, making use of intrinsic functions. These allow us to avoid inspecting matrices and vectors elementwise, instead operating on rows and columns at a time, and thus makes us less sensitive to the sparsity of the DCH/CH encoding.\par 
-Finally, if we consider simulating of Pauli measurements, we again observe that as implemented the DCH and CH forms have little apparent dependence on the sparisty of the underlying datastructures. At low values of $\beta$, each method shows a similar performance for Pauli $X$ and $Z$ measurements, with a slight advantage for the CH and GraphSim methods when simulating $X$ measurements. However, as previously mentioned, Pauli measurements in the CHP method have a scaling that increases with the number of non-zero entries in the tableau. The measurement routine of the GraphSim method, like the entangling gates, also depends on the maximal degree of the underlying graph. Thus, both routines see a significant increase in runtime as $\beta$ increases. The GraphSim method in particular sees an almost $100$ times increase in runtime between the smallest and largest values of $\beta$ at $n=60$.\par
-Again, likely as a result of the bitpacked implementation, the DCH and CH methods are mostly unaffected by increasing $\beta$, with their runtime growing by a factor of $1.33-2$ between the extremeal values. This small shift can be attributed to an increase in the number of non-zero entries, and thus the number of operations required in commuting a Pauli through the circuit and applying Proposition~\ref{prop:pseudocz}.\par
+Transposition is also likely the cause of the increased overhead incurred by the CH representation in computing the equatorial inner products, and in computing computational state amplitudes, shown in Figure~\ref{fig:other_routines}. Importantly, as discussed before, transposed matrices are stored `lazily', computed only when required and then cached until outdated. Thus, in computing multiple amplitudes or inner products as is likely in a practical simulation, this performance gap between the two representations would likely decrease.\par
+An interesting feature of computing computational basis state amplitudes and equatorial inner products is that they do not show only a small dependence on the length of the preceding stabilizer circuit. This is in contrast to the results of~\cite{Garcia2012}, which observed a transition from quadratic to cubic scaling in the number of qubits when computing stabilizer inner products, even for computational state amplitudes. This would be expected from the implementation of both routines, making use of intrinsic functions. These allow us to avoid inspecting matrices and vectors element-wise, instead operating on rows and columns at a time, and thus makes us less sensitive to the sparsity of the DCH/CH encoding.\par 
+Finally, if we consider simulating of Pauli measurements, we again observe that as implemented the DCH and CH forms have little apparent dependence on the sparsity of the underlying data-structures. At low values of $\beta$, each method shows a similar performance for Pauli $X$ and $Z$ measurements, with a slight advantage for the CH and GraphSim methods when simulating $X$ measurements. However, as previously mentioned, Pauli measurements in the CHP method have a scaling that increases with the number of non-zero entries in the tableau. The measurement routine of the GraphSim method, like the entangling gates, also depends on the maximal degree of the underlying graph. Thus, both routines see a significant increase in runtime as $\beta$ increases. The GraphSim method in particular sees an almost $100$ times increase in runtime between the smallest and largest values of $\beta$ at $n=60$.\par
+Again, likely as a result of the bitpacked implementation, the DCH and CH methods are mostly unaffected by increasing $\beta$, with their runtime growing by a factor of $1.33-2$ between the extremal values. This small shift can be attributed to an increase in the number of non-zero entries, and thus the number of operations required in commuting a Pauli through the circuit and applying Proposition~\ref{prop:pseudocz}.\par
 If we were to extend the CH and DCH methods above $64$ qubits, we might expect this effect to become slightly more pronounced, as we would also incur the overhead of checking multiple binary variables. This effect can in fact be observed in the CHP data, which employs a version of bitpacking based on $32$-bit integers. Above $32$ qubits, we see a sharp jump in the runtime, which arises from the need to employ two integers for each bitpacked variable.
-In conclusion then, we have developed two novel stabilizer simulators which are performant, and offer improved `functionality' over previous methods. To further develop these tools, it would be important to extend them beyond the current $64$ qubit limit, and to finish the implementation of arbitrary stabilizer inner products. With the addition of these routines, this software would form a very versatile toolset for simulating different aspects of stabilizer circuits.
+In conclusion then, we have developed two novel stabilizer simulators which are performant, and offer improved `functionality' over previous methods. To further develop these tools, it would be important to extend them beyond the current $64$ qubit limit, and to finish the implementation of arbitrary stabilizer inner products. With the addition of these routines, this software would form a very versatile tool-set for simulating different aspects of stabilizer circuits.
