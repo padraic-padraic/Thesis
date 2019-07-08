@@ -6,8 +6,8 @@
 \section{Introduction}
 %Connect back to `resource theory' ideas
 %Expand circuit/circuit state in terms of a free resource, here stabilizers
-In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this chapter, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
-This model forms the basis for the definition of Stabilizer Rank, a quantity which tries to relate the computational power of non-stabilizer states to the task of classical simulation.
+In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this section, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
+This model forms the basis for the definition of Stabilizer Rank, a quantity which tries to relate the computational power of non-stabilizer states to the task of classical simulation. This chapter will be focused on extending the stabilizer rank method, whereas the following chapter will focus on its implementation for the task of classical simulation.
 \subsection{Pauli Based Computations}
 A Pauli Based Computation (PBC) is a measurement-based model of quantum computing, whereby a computation is realised by applying a sequence of Pauli measurements to a set of non-stabilizer magic states, and post-processing of the measurement outcomes. In general, this sequence will be `adaptive', and the choice of measurement operator will depend on the outcome of previous measurements.\par
 It is well known that quantum circuits built out of Clifford gates and the $T$ gate are universal for quantum computation~\cite{Bravyi2005}. Thus, any arbitrary computation $U$ acting on a computational input state can be expressed as a circuit with $m$ Clifford operations and $t$ $T$ gates.\par
@@ -43,40 +43,82 @@ Once in this form, we can commute every Clifford operator through the circuit an
 It is then possible to show that these measurements can be rearranged such that all measurements commute, and  act non-trivially on only the $t$ magic states. The key technique is a lemma showing that if any pair $P_{j},P_{k}$ anticommute, they can be updated by sampling a measurement outcome $\lambda_{k}=\pm1$ uniformly at random, replacing the $P_{j}$ with a Clifford operator $V_{j,k}=\frac{\lambda_{j}P_{j}+\lambda_{k}P_{k}}{\sqrt{2}}$, where $\lambda_{j}$ was the outcome of measuring $P_{j}$. This Clifford can then be commuted through the rest of the measurement layer~\cite{Yoganathan2019}.\par
 Now consider prepending the circuit with Pauli $Z$ measurements on the $n$ computational qubits. By definition, these measurements are deterministic and do not change alter the computation. Application of the above Lemma ensures that these computational measurements all commute with the final measurement operators $P_{i}$, and thus that the $P_{i}$ act trivially on the $n$ computational qubits~\cite{Bravyi2015}.\par
 Overall then, the PBC model allows us to realise quantum computation using only a supply of non-stabilizer resource states, Pauli measurements, and probabilistic classical computation, used to compute and update the Pauli measurement sequence~\cite{Yoganathan2019}. The classical component of the computation is efficient, that is to say the measurement sequence can be computed with a runtime that scales polynomially in the number of qubits.\par
-A PBC $\mathcal{C}$, obtained from some Clifford + $T$ circuit $U$, can be said to efficiently simulate the original circuit, in both the weak~\cite{Yoganathan2019} and strong sense~\cite{Bravyi2015}. Strong simulation follows from the result that an adaptive circuit with postselection has a corresponding PBC with postselected Pauli measurements~\cite{Yoganathan2019}. In particular, we can fix both the measurement outcomes of the circuit, and the measurement-controlled correction operations introduced by state-injection. The result is a non-adaptive circuit, which is translated to a non-adaptive PBC with a fixed Pauli projector $\Pi_{x,s}$~\cite{Yoganathan2019}, where $x$ and $s$ are the postselected binary bits corresponding to the measurement outcome and the state-injection gadgets, respectively~\cite{Bravyi2015,Bravyi2016}. The corresponding probability amplitude is thus given by
+A PBC $\mathcal{C}$, obtained from some Clifford + $T$ circuit $U$, can be said to efficiently simulate the original circuit, in both the weak~\cite{Yoganathan2019} and strong sense~\cite{Bravyi2015}. Weak simulation follows immediately as, given a method to sample from the measurement operators of the PBC, this also corresponds to a sample of the output distribution of the original circuit~\cite{Yoganathan2019}. Strong simulation then follows from the result that an adaptive circuit with postselection has a corresponding PBC with postselected Pauli measurements~\cite{Yoganathan2019}. In particular, we can fix both the measurement outcomes of the circuit, and the measurement-controlled correction operations introduced by state-injection. The result is a non-adaptive circuit, which is translated to a non-adaptive PBC with a fixed Pauli projector $\Pi_{x,s}$~\cite{Yoganathan2019}, where $x$ and $s$ are the postselected binary bits corresponding to the measurement outcome and the state-injection gadgets, respectively~\cite{Bravyi2015,Bravyi2016}. The corresponding probability amplitude is thus given by
 \begin{equation}
 \matrixel{x}{U}{0^{\otimes n}}\equiv 2^{t}\matrixel{T^{\otimes t}}{\Pi_{x,s}}{T^{\otimes t}}
 \label{eq:pbc_strongsim}
 \end{equation}
-where we reweight the probability to account for the fact that each of the $2^{t}$ different outcomes on the state-injection gadgets is equiprobable.\par
-Weak simulation does not necessarily require postselection. Indeed, given a method to sample from the measurement operators of the PBC, this also corresponds to a sample of the output distribution of the original circuit~\cite{Yoganathan2019}. An explicit method was outlined in~\cite{Bravyi2015}, based on computing individual measurement probabilities and using them to sample marginals. In particular, consider sampling the $j$th bit of an output string $x$, given outcomes for bits $x_{1},x_{2},\dots x_{j-1}$. We can sample $x_{j}$ but computing two probability terms, as~\cite{Bravyi2016}
+where we reweight the probability to account for the fact that each of the $2^{t}$ different outcomes on the state-injection gadgets is equiprobable.
+\subsection{Stabilizer State Decompositions}
+In the PBC model of quantum computation, the role of non-stabilzier states as a resource for quantum computation is made explicit. It is also clear that the PBC would require exponential time to simulate clasically, as Pauli expectation values on non-stabilzier states cannot in general be efficiently computed~\cite{Gottesman1998b}.\par
+In the context of resource theories for quantum computation, we can consider studying quantum computations by decomposing computations in terms of the `free' set of operations. This is what Bravyi, Smith \& Smolin did when considering stabilizer state decompositions of magic states. We define a stabilizer state decomposition of a general state $\ket{\psi}$ as
 \begin{equation}
-    P(x_{j}\vert x_{1},x_{2},\cdots x_{j-1}) = \frac{P(x_{1},\dots x_{j})}{P(x_{1},\dots x{j-1})} \equiv \frac{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\dots x_{j}}}{T^{\otimes t}}}{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\cdots x-{j-1}}}{T^{\otimes t}}}.
+\ket{\psi} = \sum_{i=1}^{\chi}c_{i}\ket{\phi_{i}},
+\label{eq:stab_state_decomposition}
+\end{equation}
+where each $\ket{\phi_{i}}$ is a stabilizer state and the total number of terms in the decomposition, $\chi$, is called the \emph{Stabilizer Rank} of the state $\ket{\psi}$.\par
+Given a PBC, and a stabilizer state decomposition of the magic states $\ket{T}^{\otimes t}$, then strong simulation of a PBC reduces to computing a Pauli expectation value for each term in the decomposition. As these are stabilizer states, this expectation value can be computed efficiently. Using that fact that Pauli projectors map stabilizer states to stabilizer states, we can write
+\[\Pi\ket{T^{\otimes t}} = \sum_{i=1}^{\chi}c_{i}\Pi\ket{\phi_{i}}=\sum_{i=1}^{\chi}c_{i}\ket{\phi_{i}'}=\ket{psi'}\]
+and thus, the overall expectation value is given by
+\begin{equation}
+\matrixel{T^{\otimes t}}{\Pi}{T^{\otimes t}} = \braket{T^{\otimes t}}{\psi'} = \sum_{i,j}c_{i}^{*}c_{j}\braket{\phi_{i}}{\phi'_{j}},
+\end{equation}
+a sum of $\chi^{2}$ stabilizer inner products. Thus, the overall runtime of the simulation scales as $O\left(\chi^{2}\poly(n)\right)$~\cite{Bravyi2015}.\par
+An explicit method for weak sampling using stabilizer state decompositions was also outlined in~\cite{Bravyi2015}, based on computing individual measurement probabilities and using them to sample marginals. In particular, consider sampling the $j$th bit of an output string $x$, given outcomes for bits $x_{1},x_{2},\dots x_{j-1}$. We can sample $x_{j}$ but computing two probability terms, as~\cite{Bravyi2016}
+\begin{equation}
+    P(x_{j}\vert x_{1},x_{2},\cdots x_{j-1}) = \frac{P(x_{1},\dots x_{j})}{P(x_{1},\dots x_{j-1})} \equiv \frac{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\dots x_{j}}}{T^{\otimes t}}}{\matrixel{T^{\otimes t}}{\Pi_{x_{1},\cdots x_{j-1}}}{T^{\otimes t}}}.
 \label{eq:pbc_sampling}
 \end{equation}
-Fixing $x_{j}=0$, and computing the conditional probability, we can thus sample the $j$th bit by generating uniform random numbers. If $r\leq P(0\vert x_{1},x_{2},\cdots x_{j-1})$, we return $0$, else we return $1$.
-\subsection{Stabilizer State Decompositions}
-% Here we just focus on that rank, consider simulation in the next chapter
-% Compare w/ stabilizer frames, previous attempts to do this...
-% CF Gottesman Knill and pauli operator basis
-% Moving to relax the exact requirement
-% Construction based on Random codes
-% Further Quadratic Saving
-\section{Results}
+Fixing $x_{j}=0$, and computing the conditional probability, we can thus sample the $j$th bit by generating uniform random numbers. If $r\leq P(0\vert x_{1},x_{2},\cdots x_{j-1})$, we return $0$, else we return $1$.\par
+Importantly, the authors were able to show that stabilizer rank decompositions of magic states can be smaller than expected. As a simple example, consider two copies of the $\ket{T}$ magic state:
+\begin{equation}
+\begin{array}{l r}
+\ket{T} = \frac{1}{\sqrt{2}}\left(\ket{0}+\mathe^{\mathi \pi /4}\ket{1} \right)& \chi\left(\ket{T}\right)=2\\
+\ket{T^{\otimes 2}} = \frac{1}{2}\left(\ket{00}+\mathi\ket{11} + \mathe^{\mathi\pi/4}\left(\ket{01}+\ket{10}\right)\right) & \chi\left(\ket{T^{\otimes 2}}\right) = 2
+\end{array}
+\end{equation}
+This is a quadratic reduction in the number of terms in the decomposition, compared to an expansion in the computational basis. The authors in fact improved this asymptotic bound by using random walk methods to search for other stabilizer state decompositions. They were able to set an upper bound $\ket{T^{\otimes 6}}\leq 7$, and thus
+\begin{equation}
+\chi\left(\ket{T^{\otimes t}}\right) = 7^{t/6}=2^{\frac{\log_{2}(7)}{6}t}\approx 2^{0.47 t}
+\label{eq:exact_t_state_bound}
+\end{equation}
+giving strong simulation with stabilizer state decompositions a smaller exponential overhead than state-vector methods, even with the dependence on $\chi^{2}$ in the runtime.\par
+Previous works have also explored stabilizer decompositions of universal quantum computations, containing non-Clifford gates. In their original paper, Aaronson \& Gottesman explored expanding gates in the Pauli operator basis. Each branch in the expansion will produce a different stabilizer state~\cite{Aaronson2004}.
+\[U\ket{\phi} = \sum_{i}a_{i}P_{i}\ket{\phi} = \sum_{i}a_{i}\ket{\phi'_{i}}\]
+In general, this will require up to $4^{m}$ stabilizer states for each $m$-qubit non-Clifford gate. For the $T$ gate in particular, we can write
+\[T\equiv \begin{pmatrix}1 & 0 \\ 0 & \frac{1}{\sqrt{2}}(1+i)\end{pmatrix} = \frac{\sqrt{2}+\mathi}{\sqrt{2}}I-\frac{\mathi}{\sqrt{2}}Z \]
+and thus this extension of the CHP method requires $2^{t}$ stabilizer states for $t$ $T$ gates.\par
+A different method was also proposed by Garcia et al., which they call stabilizer frames~\cite{Garcia2015}. These are stabilizer state decompositions built out of so-called `co-factors', made from post-selecting the results of single qubit computational basis measurements. For example, the action of a controlled-$S$ gate can be expanded into two stabilizer state terms, by post-selecting on the control bit being $\ket{0}$ or $\ket{1}$. For the $T$ gate, stabilizer frames similarly require a number of terms that that scales as $2^{t}$.
+\subsubsection*{Norm Estimation and Approximate Decompositions}
+The stabilizer rank method as introduced in~\cite{Bravyi2015} already compares favourably to similar methods of simulating quantum circuits through stabilizer state decompositions. However, the method was further refined in a successive paper, which extended its results to the case of approximate simulation~\cite{Bravyi2016}.\par
+The first development of~\cite{Bravyi2016} was an algorithm for estimating the norm of stabilizer states that could be used to optimize the computation of Pauli expectation values on stabilizer state decompositions. A detailed discussion of this norm estimation routine will be given in Chapter~\ref{chap:simulator}. Importantly however, this method allows Pauli expectation values to be approximated to within $\epsilon$ additive error, with a runtime that scales as $O(\chi t^{3}\epsilon^{-2})$, a quadratic reduction in terms of the stabilizer rank~\cite{Bravyi2016}.\par
+The second component was a method for construction approximate stabilizer state decompositions
+\begin{equation}
+\ket{\tilde{\psi}}=\sum_{i=1}^{\chi_{\epsilon}}c_{i}\ket{\phi_{i}}\,:\;F\left(\ket{\tilde{\psi}},\ket{\psi}\right)\geq1-\epsilon
+\label{eq:old_approx_rank}
+\end{equation}
+where $F$ is the fidelity and $\chi_{\epsilon}$ is called the approximate stabilizer rank. Using a method which we will disucss in detail in Section~\ref{sec:approx_results}, the authors showed that
+\begin{equation}
+\chi_{\epsilon}\left(\ket{T}^{\otimes t}\right)\approx 2^{0.23t}\epsilon^{-2}.
+\label{eq:approx_t_rank}
+\end{equation}
+Thus giving a further quadratic reduction in the number of terms in the stabilizer state decomposition.\par
+Importantly however, these results only apply to the $T$ magic state. While Clifford+T is known to be a universal gate set for quantum computation, in practice the required number of $T$ counts will grow rapidly. For example, synthesising arbitrary-angle Pauli $Z$ rotations from Clifford+T gates can quickly result in a $T$ count in the hundreds~\cite{gridsynth,Ross2014}. In the rest of this chapter, we seek to extend our understanding of stabilizer state decompositions beyond the $\ket{T}$ magic state, and discuss the interpretation of the stabilizer rank as it relates to quantum computation.
+\section{Results}\label{sec:srank_results}
 % Here, we look to extend the work of Bravy, Smith, Smolin and Gosset to consider the stabilizer rank of more general classes of states
-\subsection{Exact Stabilizer Rank}
+\subsection{Exact Stabilizer Rank}\label{sec:exact_results}
 \subsubsection*{Computation Searches for Decompositions}
 \par
 \large{\itshape{Generating Stabilizer States}}\par
 \subsubsection*{Decompositions of Magic States}
 \subsubsection*{Decompositions of Arbitrary States}
-\subsection{Approximate Stabilizer Rank}
+\subsection{Approximate Stabilizer Rank}\label{sec:approx_results}
 \subsubsection*{Clifford Magic States}
 \subsubsection*{Stabilizer Fidelity}
 \par
 \large{\itshape{Equatorial States}}
 \subsubsection*{Sparsification}
-\section{Discussion}
+\section{Discussion}\label{sec:srank_discussion}
 % Stabilizer Rank has proven difficult to study
 % Lower bounds are not forthcoming
 % Whole theory of `extent' is just an upper bound
