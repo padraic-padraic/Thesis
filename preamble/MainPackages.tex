@@ -15,6 +15,7 @@
 %  which is your basic command for adding a picture.
 \usepackage{graphicx}
 \graphicspath{{./Figures/}}
+\usepackage{wrapfig}
 \usepackage{tikz}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.15}
@@ -46,8 +47,8 @@
 \usepackage{siunitx}
 % Use these two packages together -- they define symbols
 %  for e.g. units that you can use in both text and math mode.
-\usepackage{gensymb}
-\usepackage{textcomp}
+% \usepackage{gensymb}
+% \usepackage{textcomp}
 % You may also want the units package for making little
 %  fractions for unit specifications.
 %\usepackage{units}
@@ -164,7 +165,7 @@
 % Math e an i
 \newcommand{\mathe}{\ensuremath{\mathrm{e}}}
 \newcommand{\mathi}{\ensuremath{\mathrm{i}}}
-\newenvironment{benumerate}{\begin{enumerate}[label=\textbf{\arabic*})]}{\end{enumerate}}
+\newenvironment{benumerate}{\begin{enumerate}[label=\textbf{\arabic*}]}{\end{enumerate}}
 \newenvironment{anumerate}{\begin{enumerate}[label=\textbf{\alph*}.]}{\end{enumerate}}
 \usepackage{textgreek}
 \usepackage{mathtools}
