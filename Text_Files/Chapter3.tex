@@ -1,9 +1,7 @@
 % !TEX root = ../Main.tex
 
-\chapter{Stabilizer Decompositions of Quantum Circuits}
-\label{chap:stabrank}
-
-\section{Introduction}
+\chapter{Stabilizer Decompositions of Quantum States}\label{chap:stabrank}
+\section{Introduction}\label{sec:decomposition_intro}
 %Connect back to `resource theory' ideas
 %Expand circuit/circuit state in terms of a free resource, here stabilizers
 In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this section, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
@@ -91,7 +89,7 @@ and thus this extension of the CHP method requires $2^{t}$ stabilizer states for
 A different method was also proposed by Garcia et al., which they call stabilizer frames~\cite{Garcia2015}. These are stabilizer state decompositions built out of so-called `co-factors', made from post-selecting the results of single qubit computational basis measurements. For example, the action of a controlled-$S$ gate can be expanded into two stabilizer state terms, by post-selecting on the control bit being $\ket{0}$ or $\ket{1}$. For the $T$ gate, stabilizer frames similarly require a number of terms that that scales as $2^{t}$.
 \subsubsection*{Norm Estimation and Approximate Decompositions}
 The stabilizer rank method as introduced in~\cite{Bravyi2015} already compares favourably to similar methods of simulating quantum circuits through stabilizer state decompositions. However, the method was further refined in a successive paper, which extended its results to the case of approximate simulation~\cite{Bravyi2016}.\par
-The first development of~\cite{Bravyi2016} was an algorithm for estimating the norm of stabilizer states that could be used to optimize the computation of Pauli expectation values on stabilizer state decompositions. A detailed discussion of this norm estimation routine will be given in Chapter~\ref{chap:simulator}. Importantly however, this method allows Pauli expectation values to be approximated to within $\epsilon$ additive error, with a runtime that scales as $O(\chi t^{3}\epsilon^{-2})$, a quadratic reduction in terms of the stabilizer rank~\cite{Bravyi2016}.\par
+The first development of~\cite{Bravyi2016} was an algorithm for estimating the norm of stabilizer states that could be used to optimize the computation of Pauli expectation values on stabilizer state decompositions. A detailed discussion of this norm estimation routine will be given in Chapter~\ref{chap:simulator}. Importantly however, this method allows Pauli expectation values to be approximated to within $\epsilon$ error in total variation distance, with a runtime that scales as $O(\chi t^{3}\epsilon^{-2})$, a quadratic reduction in terms of the stabilizer rank~\cite{Bravyi2016}.\par
 The second component was a method for construction approximate stabilizer state decompositions
 \begin{equation}
 \ket{\tilde{\psi}}=\sum_{i=1}^{\chi_{\epsilon}}c_{i}\ket{\phi_{i}}\,:\;F\left(\ket{\tilde{\psi}},\ket{\psi}\right)\geq1-\epsilon
@@ -484,50 +482,185 @@ Following the argument in~\cite{Bravyi2016}, there is thus at least one subspace
 \left|\braket{R^{\otimes t}}{\mathcal{L}}\right|^{2} \approx \frac{\left|\mathcal{L}\right|f^{t}}{1+\left|\mathcal{L}\right|f^{t}}
 \],
 which can be rearranged to solve for how large we require $\left|\mathcal{L}\right|$ to obtain a given fidelity. More formally, and again extending the argument of~\cite{Bravyi2016}, we can use Eq.~\ref{eq:expectation_weight} and Markov's lemma to show that
-\[P\left[ \frac{Z\left(\mathcal{L}\right)}{\left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{t}\right)(1+\frac{\delta}{2})}\geq 1 \right] \leq \frac{\mathbb{E}\left[Z(\mathcal{L})\right]}{\left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{t}\right)(1+\frac{\delta}{2})}\leq 1 - \frac{\delta}{2+\delta}.\]
-Thus, with $O(\frac{1}{\delta})$ samples, we can generate a subspace $\mathcal{L'}:Z\left(\mathcal{L'}\right)\leq \left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{T}\right)\left(1+\frac{\delta}{2}\right)$~\cite{Bravyi2016}.\par
+\[P\left[ \frac{Z\left(\mathcal{L}\right)}{\left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{t}\right)(1+\frac{\epsilon}{2})}\geq 1 \right] \leq \frac{\mathbb{E}\left[Z(\mathcal{L})\right]}{\left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{t}\right)(1+\frac{\epsilon}{2})}\leq 1 - \frac{\epsilon}{2+\epsilon}.\]
+Thus, with $O(\frac{1}{\epsilon})$ samples, we can generate a subspace $\mathcal{L'}:Z\left(\mathcal{L'}\right)\leq \left(1+\left|\mathcal{L}\right|f_{\phi_{0}}(R)^{T}\right)\left(1+\frac{\epsilon}{2}\right)$~\cite{Bravyi2016}.\par
 If we now fix the size of the subspace such that
 \begin{align*}
-2&\leq \left|\mathcal{L'}\right|f_{\phi_{0}}^{t}\delta \leq 4 \\
-\implies \left|\mathcal{L'}\right|^{-1}f_{\phi_{0}}^{-t}&\leq \frac{\delta}{2}
+2&\leq \left|\mathcal{L'}\right|f_{\phi_{0}}^{t}\epsilon \leq 4 \\
+\implies \left|\mathcal{L'}\right|^{-1}f_{\phi_{0}}^{-t}&\leq \frac{\epsilon}{2}
 \end{align*}
 then the corresponding subspace state $\ket{\mathcal{L'}}$ achieves a fidelity
 \begin{align}
-\left|\braket{R^{\otimes t}}{\mathcal{L'}}\right|^{2}&=\frac{\left|\mathcal{L'}\right|f_{\phi_{0}}(R)}{\left(1+\left|\mathcal{L'}\right|f_{\phi_{0}}(R)\right)(1+\frac{\delta}{2})}\nonumber \\
-&= \frac{1}{(1+\left|\mathcal{L'}\right|^{-1}f_{\phi_{0}}^{-t})(1+\frac{\delta}{2})} \nonumber \\
-&\geq \frac{1}{\left(1+\frac{\delta}{2}\right)^{2}} \approx 1 - \delta.
+\left|\braket{R^{\otimes t}}{\mathcal{L'}}\right|^{2}&=\frac{\left|\mathcal{L'}\right|f_{\phi_{0}}(R)}{\left(1+\left|\mathcal{L'}\right|f_{\phi_{0}}(R)\right)(1+\frac{\epsilon}{2})}\nonumber \\
+&= \frac{1}{(1+\left|\mathcal{L'}\right|^{-1}f_{\phi_{0}}^{-t})(1+\frac{\epsilon}{2})} \nonumber \\
+&\geq \frac{1}{\left(1+\frac{\epsilon}{2}\right)^{2}} \approx 1 - \epsilon.
 \label{eq:clifford_fidelity}
 \end{align}
-We can thus generate an approximate stabilizer state decomposition that is $\delta$ close in fidelity by choosing a random subspace, provided that we have sufficiently many terms in the decomposition. Again applying the inequality from above, we have
+We can thus generate an approximate stabilizer state decomposition that is $\epsilon$ close in fidelity by choosing a random subspace, provided that we have sufficiently many terms in the decomposition. Again applying the inequality from above, we have
 \begin{equation}
-\chi_{\delta}\left(\ket{R^{\otimes t}}\right) = \left|\mathcal{L}\right| \leq 4 f_{\phi_{0}}^{-t}\delta^{-1}=O\left(f_{\phi_{0}}^{-t}\delta^{-1}\right).
+\chi_{\epsilon}\left(\ket{R^{\otimes t}}\right) = \left|\mathcal{L}\right| \leq 4 f_{\phi_{0}}^{-t}\epsilon^{-1}=O\left(f_{\phi_{0}}^{-t}\epsilon^{-1}\right),
 \label{eq:clifford_approx_rank}
 \end{equation}
+where the asymptotic scaling depends on the term $f_{\phi_{0}}$. Thus, we introduce the concept of stabilizer fidelity
+\begin{defn}[(Stabilizer Fidelity)]
+$F\left(\psi\right) = \max_{\phi \in\mathcal{S}_{n}} \left|\braket{\phi}{\psi}\right|^{2}$
+\label{def:stabilizer_fidelity}
+\end{defn}
+with the corollary that
+\begin{cor}
+The approximate stabilizer rank of a Clifford magic state 
+\[\chi_{\epsilon}\left(\ket{R^{\otimes t}}\right) = O\left(F^{-t}\left(R\right)\right).\]
+\end{cor}
+We refer to this method of generating an approximation stabilizer state decomposition as the `random codes' method, because it can be conceptualised as approximately encoding the state using a code-space of dimensionality $\left|\mathcal{L}\right|$.
 \subsubsection*{Sparsification}
-% Negativity-based sampling, proof by David
-% Gives a 1-norm close approximation
-% Introduce extent, mention intrduction by Bartosz Regula
-% Check if regula mentions faithfulness and other properties
+The method outlined above works by taking exact, even potentially `overcomplete' stabilizer state decompositions, and dropping terms to obtain an approximate decomposition with a given fidelity. This principle is similar to approximate classical simulation methods based on quasiprobability representations of quantum states~\cite{Pashayan2015}. In these models, the number of terms that must be sampled scales as the `negativity' of the state, given by the the one-norm of the coefficients with respect to the phase-space under consideration.\par
+It was shown by David Gosset that a similar strategy can be applied to stabilizer state decomposition~\cite{Bravyi2018}. Given any valid stabilizer state decomposition, we can sample terms at random using a probability distribution based on their coefficients to build an approximate decomposition. We can rewrite a given stabilizer state decomposition as
+\begin{equation}
+\ket{\psi}=\sum_{i}c_{i}\ket{\phi_{i}} = \sum_{i}\frac{\left|c_{i}\right|}{\norm{\va{c}}}\ket{w_{i}} = \sum_{i}p_{i}\ket{w_{i}}
+\end{equation}
+where $\ket{w_{i}}\equiv \frac{c_{i}}{\left|c_{i}\right|}\ket{\phi_{i}}$. The new coefficients $\frac{\left|c_{i}\right|}{\norm{\va{c}}}$ are positive, real-valued, and also have the property that $\sum_{i}p_{i}=1$. Thus, they define a probability distribution. Let $\ket{\omega}$ be one of the $\ket{w_{i}}$ states, sampled with probability $p_{i}$. It can be shown that$\mathbb{E}\left[\ket{\omega}\right]\propto \ket{\psi}$ and, by taking multiple samples $\ket{\omega_{i}}$, we can obtain an approximate state
+\begin{equation}
+\ket{\tilde{\psi}} = \frac{\norm{c}_{1}}{\chi_{\epsilon}}\sum_{i=1}^{\chi_{\epsilon}}\ket{\omega_{i}}\;:\;\norm{\ket{\tilde{\psi}}-\ket{\psi}} \leq \epsilon 
+\end{equation}
+with high-probability, provided that we set~\cite{Bravyi2018}
+\begin{equation}
+\chi_{\epsilon}\left(\ket{\psi}\right) = O\left(\norm{c}_{1}^{2}\epsilon^{-2}\right),
+\end{equation}
+Importantly, we note that this method guarantees an approximation that is $\epsilon$ close in the one-norm, as opposed to fidelity as in Eq.~\ref{eq:clifford_approx_rank}.\par
+Based on this approximation, we subsequently introduce the notion of `Stabilizer Extent':
+\begin{defn}[(Stabilizer Extent)]
+For a normalised quantum state $\ket{\psi}$, the stabilizer extent $\xi\left(\psi\right)$ is defined as the minimum value of $\norm{c}^{2}_{1}$ over all stabilizer state decompositions $\ket{\psi}=\sum_{i}c_{i}\phi_{i}$.
+\end{defn}
+The one-norm is a convex quantity, and thus we can be computed efficiently using convex optimisation techniques~\cite{Boyd2004}. However, as the search space scales with the number of stabilizer states, which in turn scales exponentially with the number of qubits, in practice extent is difficult to compute for more than a few qubits. An equivalent quantity to extent was also introduced in Section~5.4 of~\cite{Regula2018}, a general study of convex resource measures for quantum computing. It follows from~\cite{Regula2018} stabilizer extent is a faithful measure, such that $\xi\left(\psi\right)=1$ if and only if $\ket{\psi}$ is a stabilizer state.
 \subsubsection*{Stabilizer Fidelity}
-% In both cases, fidelity controls the scaling (for clifford magic states)
-% Do `entagled options' exist?
-% Not for single qubit states
-% Quote David's result
-\par
-\large{\itshape{Equatorial States}}
-% Way to consider extent of non-injectable states
-% Map to equator
-% Boudned through submultiplicativity
-\subsection{Connecting Stabilizer States and Clifford Gates}
-% Mention state-channel duality
-% Clifford decomposition <-> stabilizer state decomposition
-% Becomes convex minimizaiton over Clifford group
-% Can prove that for (diagonal) gates, one can be lifted directly to the other
+Interestingly, as a convex optimization problem, it is also possible to use the `dual' convex problem to find a lower bound on the stabilizer extent. The proof was given by Earl Campbell in Section~VI.A of~\cite{Bravyi2018}, but we quote the key result here, namely
+\begin{equation}
+\xi\left(\psi\right) \geq \frac{1}{F\left(\psi\right)},
+\label{eq:extent_fidelity_bound}
+\end{equation}
+where $F\left(\psi\right)$ is the stabilizer fidelity introduced in Definition~\ref{def:stabilizer_fidelity}. It can also be shown that this lower-bound is tight for injectable Clifford magic states~\cite{Bravyi2018}. Thus, despite the slightly different definition of approximation, the approximate stabilizer rank of Clifford magic states coincides under both the random codes and the sparsification methods.\par
+An important question is whether stabilizer extent is multiplicative. As extent is lower bounded by the stabilizer fidelity, we can thus ask if the stabilizer fidelity is multiplicative, namely
+\[F\left(\ket{\psi^{\otimes t}}\right) \overset{?}{=} F\left(\psi\right)^{t}\]
+This can also be expressed as asking if there exists some entangled stabilizer state $\ket{\varphi}$, such that
+\[\left|\braket{\varphi}{R^{\otimes t}}\right|>\left|\braket{\phi^{\otimes t}}{R^{\otimes t}}\right|=\left|\braket{\phi}{R}\right|^{t}.\]
+\begin{lem}
+For single qubit states $\ket{S}$, the stabilizer fidelity  of $t$ copies $F\left(S^{\otimes t}\right)=F\left(S\right)^{t}$
+\label{lem:single_qubit_multiplicative}
+\end{lem}
+\begin{proof}[Proof of Lemma~\ref{lem:single_qubit_multiplicative}]
+
+Consider a single qubit state $\ket{S}$. Using the Bloch-vector representation, we can write this state as $\ket{S}=\frac{1}{2}\left(1+\va{r}\cdot\va{P}\right)$, where $\va{P}=\left(X,Y,Z\right)$, and $\va{r}=\left(r_{x},r_{y},r_{z}\right)$ is the Bloch-vector with coefficients $r_{i}=\matrixel{S}{P_{i}}{S}$.
+We also consider a single qubit stabilizer state $\ket{P}$, with corresponding stabilizer group $\mathcal{S}_{\phi}=\{I, \pm P\}$, where $P\in \{X, Y, Z\}$.\par
+The fidelity between $\ket{S}$ and a single qubit stabilizer state can be written in terms of the stabilizer group as
+\begin{align*}
+\left|\braket{P}{S}\right|^{2}=\braket{S}{P}\braket{P}{S}&=\frac{1}{2} \bra{P}\left(I \pm P\right)\ket{S}\\
+&=\frac{1}{2}\left(1+\left|r_{P}\right|\right)
+\end{align*}
+where $r_{P}$ is the Bloch-vector coefficient associated with $P$, and we use the result that $\ketbra{\phi}=\frac{1}{2^{n}}\sum_{s\in\mathcal{S}_{\phi}}s$ for an $n$-qubit stabilizer state. Thus, the stabilizer fidelity of $\ket{S}$ is given by 
+\[F(S)=\frac{1}{2}\left(1+\max_{i}\left|r_{i}\right|\right).\]
+Let us assume throughout the following that 
+\[\left|r_{z}\right| \geq \left|r_{y}\right| \geq \left|r_{x}\right|.\]
+This assumption can be made without loss of generality, substituting $X$ or $Y$ for $Z$ through the following argument. We will also assume that $r_{z}>0$, otherwise the argument follows but replacing $Z$ with $-Z$. We define $\ket{\phi}$ to the be single qubit stabilizer state with maximum fidelity with $\ket{S}$.
+For $t$ copies, the stabilizer group of $\ket{\phi^{\otimes t}}=\{Z\left(\va{z}\right)\}$, where $\va{z}$ is a $t$-bit binary string and we employ the same notation for tensor products of Pauli operators as in Chapter~\ref{chap:stabilizers}. The fidelity of $\ket{\phi^{\otimes t}}$ with $\ket{S^{\otimes t}}$ is given by
+\begin{align}
+\left|\braket{\phi^{\otimes t}}{S^{\otimes t}}\right|^{2} &= \frac{1}{2^{t}}\sum_{\va{z}\in\mathbb{Z}_{2}^{t}}\matrixel{S^{\otimes t}}{Z\left(\va{z}\right)}{S^{\otimes t}}\nonumber\\
+&= \frac{1}{2^{t}}\left(\sum_{i=0}^{t}\binom{t}{i}\left|r_{z}\right|^{i}\right) \nonumber\\&=
+\frac{1}{2^{t}} \left( 1+t\left|r_{z}\right| + \sum_{i=2}^{t}\binom{t}{i}\left|r_{z}\right|^{i} \right)
+\label{eq:t_copy_fidelity}
+\end{align}
+where we have joined together the expectation values for elements of the group with equal numbers of Pauli $Z$ operators, and used the fact that $\left|r_{z}\right|\leq 1$.\par
+Assume now that stabilizer fidelity is multiplicative up to $t-1$ copies. We will prove $\nexists \ket{\varphi}$, a $t$ qubit stabilizer state, such that $\left|\braket{\varphi}{S^{\otimes t}}\right|^{2}> F\left(S\right)^{t}.$\par
+For a general $t$-qubit stabilizer state, we have the stabilizer group $\mathcal{S}_{\varphi}$, and the corresponding fidelity with $\ket{S^{\otimes t}}$ is given by
+\[\left|\braket{\varphi}{S^{\otimes t}}\right|^{2} = \frac{1}{2^{t}} \left( \sum{s\in\mathcal{S}_{\varphi}}\matrixel{S^{\otimes t}}{s}{S^{\otimes t}} \right).\]
+For a $t$-qubit Pauli operator $Q$, we define the weight $\left|Q\right|=\bigotimes_{i=1}^{t}P_{i}$ as the number of qubits where $P_{i}\neq I$~\cite{Gottesman1997}. Using the assumption above, we can write the expectation value of $Q$ on $\ket{S}$ in terms of the weight as
+\[\matrixel{S^{\otimes t}}{Q}{S^{\otimes t}} = \prod_{i=1}^{n}\matrixel{S}{P_{i}}{S}\leq \left|r_{z}\right|^{\left|Q\right|}\]
+and thus
+\[
+\left|\braket{\varphi}{S^{\otimes t}}\right|^{2} \leq \frac{1}{2^{t}} \left( \sum_{s\in\mathcal{S}{\varphi}} \left|r_{z}\right|^{\left|s\right|}\right).\]
+All $t$-qubit stabilizer states are equivalent to a graph state, up to a sequence of local Clifford operations. As this is a local circuit, the weight of the stabilizers is left unchanged, and thus we can characterize the weights of $\mathcal{S}_{\varphi}$ using the stabilizer group of a graph states.\par
+The stabilizer group of a graph state is generated from the underlying graph $G=\left(V,E\right)$. The $j$th generator is given by
+\[g_{j} = \bigotimes_{i=1}^{t}X^{\delta_{ij}} Z^{\mathbf{1}_{E}\left(i,j\right)}\]
+where $\mathbf{1}_{E}\left(i,j\right)$ is an indicator function that returns $1$ if qubits/vertices $i$ and $j$ are connected by an edge. A product of $m$ generators has weight $\geq m$, arising from the Pauli $X$ term acting on each qubit, and there are $\binom{t}{m}$ elements which are the product of $m$ generators. We can also limit ourselves to considering only fully-connected graphs, as otherwise the state $\ket{\varphi}$ is separable with respect to some bipartition, and thus 
+\[
+\left|\braket{\varphi}{S^{\otimes t}}\right|
+=\left|\braket{\varphi_{A}}{S^{\otimes \left|A\right|}}\right|
+\left|\braket{\varphi_{B}}{S^{\otimes \left|B\right|}}\right| \leq F\left(S\right)^{\left|A\right|}F\left(S\right)^{\left|B\right|}\]
+as stabilizer fidelity is multiplicative up to $t-1$ copies. Thus, every generator must have $\left|g_{j}\right| \geq 2$.\par
+Splitting up the sum, we thus have
+\begin{align}
+\left|\braket{\varphi}{S^{\otimes t}}\right|^{2} &\leq \frac{1}{2^{t}} \left(1 + \sum_{j}\left|r_{z}\right|^{\left|g_{j}\right|} + \sum_{s \in \mathcal{S}_{\varphi}\setminus \{I, g_{j}\}}\left|r_{z}\right|^{\left|s\right|}\right) \nonumber \\
+& \leq \frac{1}{2^{t}}\left(1+t\left|r_{z}\right|^{2} + \sum_{i=2}^{t}\binom{t}{i}\left|r_{z}\right|^{i}\right) \nonumber \\
+&\leq \frac{1}{2^{t}} \left( 1+t\left|r_{z}\right| + \sum_{i=2}^{t}\binom{t}{i}\left|r_{z}\right|^{i} \right),
+\label{eq:nexist_entangled_tqubit}
+\end{align}
+where in the final line, we have brought down the expression from Eq.~\ref{eq:t_copy_fidelity}.\par
+For $t=2$, we can verify explicitly that 
+\[\frac{1}{4}\left(1+2\left|r_{z}\right|^{2} + \left|r_{z}\right|^{2}\right) \leq \frac{1}{4}\left(1+2\left|r_{z}\right|+ \left|r_{z}\right|^{2}\right)\]
+for all $\left|r_{z}\right|\leq 1$. Thus, from Eq.~\ref{eq:nexist_entangled_tqubit} and using proof by induction, stabilizer fidelity is multiplicative for all single qubit states.
+\end{proof}
+It was subsequently shown by David Gosset that stabilizer fidelity is multiplicative for $1$, $2$ and $3$ qubit states, but that in fact for typical states with $n\geq 4$ qubits the stabilizer fidelity is not multiplicative~\cite{Bravyi2018}. This in turn suggests that in general, stabilizer extent is submultiplicative.
 \section{Discussion}\label{sec:srank_discussion}
 % Stabilizer Rank has proven difficult to study
-% Lower bounds are not forthcoming
-% Whole theory of `extent' is just an upper bound
-% Extent is hard to compute and likely hard to approximate
-% Quote BSS, mention equatorial one
-% Complexity theoretic bounds are loose
-% Mention open questions
+In this chapter, we have presented a number of results that extend our understanding of both exact and approximate stabilizer rank beyond just the `edge-type' family of single qubit magic states.\par
+In the case of exact stabilizer rank states, we focused on examining Conjecture~\ref{conj:magic_srank}, which asserts that the exact stabilizer rank of single-qubit states is smallest for the Clifford magic states. Explicit computational searches up to $3$ copies, and an upper bound based on groups of Clifford symmetries, both provide evidence in favor of this being true.
+However, for other families of states, stabilizer rank has proven difficult to quantify precisely. The performance of numeric searches breaks down as the number of qubits increases. However, we were able to provide explicit upper bounds for the stabilizer rank of up to $5$ copies of any quantum state, by considering the properties of the symmetric subspace.\par
+Nonetheless, our results would suggest that in general the stabilizer rank is smallest for Clifford magic states on any number of qubits, as both the $\ket{CS}$ and $\ket{CCZ}$ magic states have stabilizer ranks significantly smaller than either their computational basis expansion, or the upper bounds obtained from the symmetric subspace.\par
+It is also interesting to note that the $\ket{T}$, $\ket{CS}$ and $\ket{CCZ}$ magic states, all of which can be used to inject an operator from $\mathcal{C}_{3}$, also all have the same stabilizer rank. Given the properties of exact stabilizer rank discussed at the beginning of Section~\ref{sec:exact_results}, in particular invariance under Clifford unitaries, this equal stabilizer rank might appear to suggest that, for example, there exists some Clifford circuit $V$ and stabilizer states $\ket{\phi}$ such that $V\left(\ket{T}\otimes\ket{\phi}\right)=\ket{CCZ}$. This would in turn suggest that a $\ket{CCZ}$ gate can be realsied using just Clifford gates and a single $T$ gate. However, the best known unitary circuit for synthesising a $CCZ$ gate from Clifford+$T$ operations requires $7$ $T$-gates~\cite{Nielsen2000}.\par
+Smaller circuits, have also been shown to exist that allow a $CCZ$ gate to be synthesised using Clifford gates, $T$-gates, and Pauli measurements. Again, appealing to the properties of the exact stabilizer rank, we might expect that as $\chi\left(\ket{T^{\otimes 3}}\right)>\chi\left(\ket{CCZ}\right)$, we could find such a circuit with a $T$-count of $3$. However, the current optimal circuit know has a $T$-count of $4$~\cite{Jones2013}. Similar results exist for the $CS$ gate, for which the optimal circuit known requires $3$ $T$-gates.\par
+Additionally, there is evidence from alternative resource formulations of `magic' that these circuits are in fact optimal. For example, in the `Robustness of Magic' picture, it can be shown that $R\left(\ket{T^{\otimes 3}}\right)<R\left(\ket{CCZ}\right)<R\left(\ket{T^{\otimes 4}}\right)$~\cite{Howard2017}. It is also important to note that no circuits with smaller $T$-counts have been found since these circuits were first proposed, despite continued research into gate-synthesis by the community. This includes efforts employing computational searches~\cite{Heyfron2018}.\par
+This has important consequences for the interpretation of the exact stabilizer rank as a resource measure. In particular, it is clear that the exact stabilizer rank is not a useful quantifies of magic as it relates to problems of gate synthesis. While Clifford equivalent states naturally have the same stabilizer rank, equal stabilizer rank does not imply Clifford equivalence.\par
+However, this observation does have an important consequence for how we interpret other resource measures of magic. As previously mentioned, for example, the $\ket{CCZ}$ state has a greater robustness of magic than the $\ket{T}$. However, both states have equivalent stabilizer rank, and subsequently given an appropriate algorithm a circuit with either a single $CCZ$ or a single $T$ gate would be broadly equivalently difficult to simulate. Phrased another way, large `magic' does not guarantee that a circuit shows significant non-classical behaviour.
+% Approxiamte results:
+% Extended to many different families of state
+% Quote fidelities: Advantages to using decompositions instead of synthesis
+% Sparsification allows us to really broadly extend our understanding of approximate rank
+We also present results showing how to construct approximate stabilizer state decompositions for broad classes of states. This is especially true of the sparsification method and the associated quantity of stabilizer extent. As a convex resource measure~\cite{Regula2018}, it lends itself to easier explicit computation than the exact stabilizer rank, which as a form of sparse optimization is $\NP$-hard even non-withstanding the exponentially growing search space~\cite{Natarajan1995}. As mentioned previously, the number of stabilizer states grows exponentially with the number of qubits and so in practice extent is difficult to compute for more than a few qubits. However, in some cases stabilizer rank calculations can be sped up by taking into account features of the state like all-real amplitudes. Recent work by Gross et al.\ looked and optimizing a similar computation for Robustness of Magic, using symmetries in the Clifford group to significantly reduce the number of states to be considered~\cite{Gross2017}.\par
+As a convex measure, extent is also well behaved as a magic monotone~\cite{Regula2018}. For example, unlike in the case of the exact stabilizer rank, subsequent work has used the stabilizer extent to find lower bounds on the `non-Clifford' resources required for different quantum computations~\cite{Beverland2019}.\par
+From a simulation perspective, we can compare the impact of building direct stabilizer state decompositions by directly comparing the stabilizer fidelity of states. As quoted above, the current optimal $T$-counts known to be required for synthesing the $CS$ and $CCZ$ gates are $3$ and $4$, respectively. Comparing the stabilizer fidelities, we can show that
+\begin{equation}
+\begin{array}{l c r}
+F\left(T\right)^{-2}\approx 1.373< & F(CS)^{-1}=1.6 &< F(T)^{-3}\approx 1.608 \\
+F(T)^{-3}\approx 1.608< & F(CCZ)^{-1}\approx 1.778 &< F(T)^{-4}=1.884.
+\end{array}
+\label{eq:c3_resource_comparison}
+\end{equation}
+Asymptotically, these savings become significant. For example, a circuit built out of $40$ $CCZ$ gates would require $\sim 11\%$ of the resources compared to an equivalent circuit built in the Clifford+$T$ basis. At $80$ $CCZ$ gates, a direct decomposition needs just  $1.1\%$ of the terms that a synthesised decomposition would require. We also note that, like in the case of robustness, these inequalities support the claim that $3$ and $4$ T-gates is the optimum number required to synthesise $CS$ and $CCZ$.\par
+The comparison becomes even more significant if we consider resource states that could be used to realise gates from outside of the $3$rd level of the Clifford hierarchy. For example, consider a state
+\begin{equation}
+\ket{\theta}=\frac{1}{\sqrt{2}}\left(\ket{0}+e^{i\theta/2}\ket{1}\right).
+\label{eq:theta_state}
+\end{equation}
+These resource states can be used to realize single-qubit rotations around the Pauli $Z$ axis through an angle $\theta$. As previously discussed, such rotations can require up to $100$ $T$-gates to synthesize~\cite{Ross2014} as $\theta\rightarrow 0$. However, the stabilizer fidelity of $\ket{\theta}$ actually increases as $\theta$ gets smaller. In fact, any rotation smaller than a $T$ gate will require multiple $T$ gates to synthesize, but has a smaller approximate stabilizer rank. \par
+A caveat of this method is that to be used in a state-injection circuit, resource states like $\ket{\theta}$ require non-Clifford `correction operations'. In the approximate simulation case, however, we cannot post-select on the measurement gadgets to avoid these additional non-Clifford gates~\cite{Bravyi2016}. Thus, to be used in a simulation scheme, we need a different formulation than the PBC method discussed in Section~\ref{sec:decomposition_intro}. We will discuss the problem of applying the sparsification method to simulation in the following chapter.\par
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{cstar_blochsphere.png}
+\caption{Heatmap showing the inverse stabilizer fidelity, $F(\psi)^{-1}$, for all single-qubit states lying in a single quadrant of the Bloch sphere. We note that the state with the largest inverse fidelity, and thus largest stabilizer extent, is the face-type magic state. Figure taken from~\cite{Bravyi2018}.}
+\label{fig:fidelity_heatmap}
+\end{figure}
+% Note tension between the exact and approximate measures
+% E.g small angle rotations
+% Have a larger exact rank than magic states
+It is interesting to note that there is a tension between trying to minimize the exact or the approximate stabilizer rank. For example, consider the two classes of single-qubit magic state. While the face state has a smaller stabilizer fidelity that the edge-type states ---  in fact it has the smallest possible stabilizer fidelity, c.f.\ Fig~\ref{fig:fidelity_heatmap} --- both states have equivalent exact stabilizer rank. Alternatively, single-qubit states exponentially close to a stabilizer state will have a small approximate stabilizer rank, but have a larger exact stabilizer rank. In fact, for any single qubit state with stabilizer fidelity $\geq\frac{1}{\sqrt{2}}$, its approximate stabilizer rank will have an asymptotic scaling smaller than $2^{0.5t}$, the upper bound obtained from computational searches in Section~\ref{sec:exact_results}.\par
+% Generally we have been able to prove only upper bounds
+% Mention some effort by sergey bravyi but only valid for states w/ clifford symmetries
+% Most strategies focus on families of states with Clifford symmetries
+Finally, we note that all the results shown here serve only as upper bounds on the stabilizer rank. While stabilizer fidelity is capable of lower bounding the stabilizer extent, this is itself also an upper bound on the approximate stabilizer rank. Currently, the only lower bounds that have been explicitly proven apply to the case of the $\ket{T}$ state. It was argued in~\cite{Bravyi2015} that $\chi\left(\ket{H^{\otimes n}}\right)=\Omega\left(\sqrt{n}\right)$, based on constructing states with finite stabilizer rank but which require a large number of $T$ gates to create. In~\cite{Bravyi2018}, it was also shown that the approximate stabilizer rank $\chi_{\epsilon}\left(\ket{H^{\otimes n}}\right)=\Omega\left(F(H)^{-n}\epsilon^{-2}\right)$, but only under the assumption that the decomposition is built from the states $\ket{0}$ and $\ket{+}$, as used in the random codes construction.\par
+Part of this difficulty likely arises from the fact that, as a sparse optimization problem, even approximately computing the optimal stabilizer rank is $\NP$-hard~\cite{Natarajan1995}. Currently, the best explicit lower bound is a complexity theoretic argument. It was shown by Dalzell that for any classical simulation of a Clifford+$T$ circuit must have a runtime that scales asymptotically as $2^{\gamma t}$, where $\gamma > \frac{1}{128}$, otherwise the polynomial hierarchy would collapse to the third level~\cite{Dalzell2017}. This result acts as a lower-bound on the approximate stabilizer rank of the $\ket{T}$ magic states, and is significantly looser than the current best known decompositions with $\gamma\approx 0.23$. It is a open question if this complexity theoretic argument can be tightened.\par
+In the case of approximate stabilizer rank, we might also ask if alternative strategies for building decompositions could be yield a smaller approximate stabilizer rank.\par
+For example, inspired by the random codes method, we might consider using Schumacher compression to efficiently encode many copies of a resource state~\cite{Schumacher1995}. In~\cite{Bravyi2016}, the authors compared the Shannon entropy of the $\ket{H}$ state with the asymptotic $2^{0.23t}$ scaling obtained using random codes, showing that it outperforms Schumacher compression. Figure~\ref{fig:compression_comparison}, taken from~\cite{Bravyi2017}, shows a similar analysis comparing the Shannon entropy with the stabilizer extent for $\ket{\theta}$ states as a function of the angle $\theta$. We can see that in fact, at small angles, Schumacher compression can achieve a smaller decomposition than sparsification. However, over most of the parameter range, the difference between sparsification method performs significantly better.\par
+Alternatively, we could consider techniques that construct an approximate stabilizer state decomposition by discarding only the terms which contribute least to the overall decomposition. Indeed, an interesting feature of both the random codes and sparsification methods is that the resulting decompositions are uniform mixtures of the sampled stabilizer states.\par
+In the most general case, the simulation overhead achieved by discarding terms is related to the notion of $\epsilon$-sparsity, namely how many terms in the decomposition can be discarded while retaining an additive error $\epsilon$ in the output distribution~\cite{Pashayan2017}. The notion of $\epsilon$-sparsity is closely related to the smooth max entropy $H_{max}^{\epsilon}$, the logarithm of the number of terms with coefficients $\left|c_{i}\right|>\epsilon$. An ideal truncation method of this type would have approximate stabilizer rank $2^{H_{max}^{\epsilon}}$, but as previously stated computing optimal sparse decompositions of this type constitutes an $\NP$-hard problem.\par
+In some tensor network methods for classical simulation, such as \texttt{Rollright} and \texttt{qFlex}, the output state of the computation before measurement is broken up into a decomposition of largely independent states, which contribute roughly equally to the norm~\cite{Markov2018,Villalonga2018}. Thus, they can achieve an approximate fidelity $f$ by dropping all but a fraction $f$ of the states~\cite{Markov2018}. In practice, this method does slightly worse than the target fidelity due to small overlaps $\sim10^{-6}$ between states~\cite{Villalonga2018}, but the reduction in the number of terms achieved is significant.\par
+The overlap between general $n$-qubit stabilizer states, in contrast, varies significantly from $0$ to $2^{-s}\,:\,s\in\left[1,n\right]$. The sparsification method works around this, using the fact that sampling states according to $\frac{c_{j}}{\norm{\va{c}}_{1}}$, the expectation value 
+\[\mathbb{E}\left[\ket{\omega}\right]=\frac{\ket{\psi}}{\norm{c}},\]
+i.e.\ the sampled states have equal norm on average~\cite{Bravyi2018}. Additionally, grouping like terms, we can see that in the sampled state
+\[\mathbb{E}\left[\ket{\tilde{\psi}}\right]=\mathbb{E}\left[\frac{\norm{c}}{\chi_{\epsilon}}\sum_{i=1}^{\chi_{\epsilon}}\ket{\omega_{i}}\right] = \mathbb{E}\left[\norm{c}
+\sum_{j}\frac{\#\ket{w_{j}}}{\chi_{\epsilon}}\ket{w_{j}}\right]=\norm{c}\sum_{j}p_{j}\ket{w_{j}}.\]
+On average, then, building uniform decompositions in this way does effectively weight each stabilizer state according to its contribution to the decomposition. It might however be interesting to test alternative sampling strategies, such as sampling without replacement or excluding terms with a coefficient below some small threshold value.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Comparison.png}
+\caption{Graph comparing the Shannon entropy (blue) and stabilizer extent (red) of $\ket{\theta}$ states, defined in Eq.~\ref{eq:theta_state}, as a function of the angle $\ket{\theta}$.}
+\label{fig:compression_comparison}
+\end{figure}

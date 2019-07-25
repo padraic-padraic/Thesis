@@ -6,20 +6,43 @@
 % Build stabilizer decompositions, then simulate circuits efficiently for each term
 % Here, present methods for operating on the decompositions, for practical simulation
 \section{Introduction}
-% Can build simulators based on stabilizer decompositions
-% Need routines for maintaining the decomposition and then combining output efficiently
-% E.g. Stabilizer Frames method but, as discussed, leads to typcally larger decomposition
-% BSS/BG => Technqiues for computing output variables with stabilizer decompositions
-% Cf. Other classical simulators e.g. Tensor Networks & Rollright, current SotA
-% Mention connection to Quantum Development Tools => Circ, Qiskit, used in prototyping and verification
+% Focus on not asymptotic overhead, but implrementations of simulators
+Previously, we have discussed decompositions of quantum computations, where each individual term can be efficiently simulated classically. This connection to classical simulation gives an easy operational interpretation to these decompositions, and suggests a way of building a classical simulator along these lines. In this chapter, we will make this connection explicit, introducing methods that can be used to simulate universal quantum circuits, and discussing their implementations.\par
+% Use for benchmarking, verification, and prototyping and development
+As discussed, efficient classical simulation of quantum effects is broadly believed to be intractable. Nonetheless, classical simulations play an important role in the research and development of quantum technologies. In recent years, fas quantum hardware has continued to improve, an increasingly important role of simulations has been to support the transition and adoption of quantum technology. Providing classical simulators as a test bed enables the development of software engineering, protocols and applications that take into account non-classical features, even while access to actual quantum devices is still limited. \par
+For example, \texttt{SimulaQron} and \texttt{NetSquid} are classical simulations of quantum communications networks, developed as part of an effort to promote the development of practical quantum communications~\cite{Dahlberg2017,NetSquid}. These tools have been used to develop proposals for link layer protocols in quantum networks, which can then be tested in the lab~\cite{Dahlberg2019}.\par
+In the context of quantum computing, many classical simulators in use today form part of `Quantum Development Kits' (QDKs), software environments for the development of quantum software. These tools broadly follow a similar architecture to that of \texttt{ProjectQ}, described in~\cite{Haner2018}. Typically, the user-facing component is a `high-level' description of a quantum programme, either as an API or with a domain-specific language (DSL), which is agnostic to how it will be evaluated. These programmes can be built out of algorithms and meta-algorithms, such as the Variational Quantum Eigensolver; subroutines and operations, such as the quantum Fourier transform; or even individual gates. The resulting description of the programme can then be compiled to a quantum circuit, and either simulated clasically, or else dependent on requirements further compiled and dispatched to a quantum processor. Multiple such QDKs have been developed over the past 5 years, and a brief summary of the some of the available options is shown in Table~\ref{tab:qdks}.
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|}
+\toprule
+Framework & \makecell{High-level\\Description} & Classical Methods & Supported Hardware \\ \midrule
+Microsoft QDK~\cite{MicrosoftQDK} & \texttt{Q\#}~\cite{Svore2018} & State vector & None \\
+\texttt{ProjectQ}~\cite{Steiger2016} & DSL & State vector & IBMQ~\cite{IBMQ} \\
+\texttt{Qiskit}~\cite{Qiskit} & \makecell{QASM~\cite{Cross2017},\\ \texttt{Python} API} & Various & IBMQ~\cite{IBMQ}\\
+\texttt{Circ}~\cite{GoogleCirc} & \texttt{Python} API & \makecell{State vector,\\density matrix} & Bristlecone\footnote{These chips are not currently publicly accessible.}~\cite{CircAnnouncement}\\
+\texttt{Forest}~\cite{RigettiForest} & \makecell{Quil,\\ Python API~\cite{Smith2016}} & \makecell{State vector \\ density matrix} & Rigetti QPU~\cite{RigettiQPU}\\ \bottomrule
+\end{tabular}
+\caption{A non-exhaustive list of different quantum software frameworks or QDKs. We note that many of these frameworks have additional components aimed at supporting application development that are not mentioned here.}
+\label{tab:qdks}
+\end{table}
+% Qiskit, Circ etc use statvector methods
+In practice, most of the QDKs mentioned above make use of what could be described as `textbook' classical simulations of quantum computing, where a circuit is simulated by matrix multiplication of the unitary associated with each gate, acting on either a state-vector or a density matrix description~\cite{Nielsen2000}.
+% Limited to 30 qubits on typical laptops, already 0.5PB at 45 qubits
+% used mostly for small scale proptyping
+% Optimised examples like QX, qHipster aimed at optimizing the peformance above just naive matrix multiplication
+% Mention the other role, of verification and benchmarking
+% Other simulators usually special purpose, optimised to do better to fit this role
+% Tensor network methods used to push simulations above 45 qubits
+% E.g rollright, google method, optimised around 2D connectivity
+% Big simulations with hundreds of T gates and 72 qubits
+% Finally mention other methods under consideration e.q. JKU, novel approach
+% Also CV sims, clifford sims, error tracking etc =? more domain specific, here we want to talk universal simulation
 \section{Results}
 % Begin by discussing the simulator
 \subsection{Methods for Manipulating Stabilizer Decompositions}
 \subsubsection*{Building Decompositions}
+\large{\itshape{The Sum-over-Cliffords picture}}\par
 \subsubsection*{Output Variables}
-% Implement an optimised version of Norm Estimation
-% Compute Individual Ampluitudes approximately
-% Can be extended to a Monte Carlo Method
 \subsubsection*{Implementation and Parallelization}
 % Extend the simulators of Chapter 2 w/ wrapper
 % Swappable CH/DCH methids
@@ -28,7 +51,7 @@
 % Distributable w/ MPI
 % Requires some synchronisation, especially for sampling
 \par
-\large{\itshape{Integration with \texttt{Qiskit-Aer}}}
+\large{\itshape{Integration with \texttt{Qiskit-Aer}}\par
 % Also possible to integrate this runner w/ Qiskit Aer
 % Circuits parsed by qiskit, build decomposition and then do measurements w/ MC
 % Includes support for Noise sampling w/ naive method
