@@ -1,7 +1,7 @@
 % !TEX root = ../Main.tex
 
 \chapter{Stabilizer Decompositions of Quantum States}\label{chap:stabrank}
-\section{Introduction}\label{sec:decomposition_intro}
+\section{Introduction}\label{sec:srank_intro}
 %Connect back to `resource theory' ideas
 %Expand circuit/circuit state in terms of a free resource, here stabilizers
 In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this section, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
@@ -33,7 +33,7 @@ $
 $
 \end{subfigure}
 }
-\caption{Figure illustrating two equivalent forms of a small circuit built form the Clifford + $T$ gate set. The lower circuit is obtained from the former by replacing each $T$ gate with a teleportation or `state-injection' gadget that consumes one magic state$\ket{H}=\cos{\frac{\pi}{8}}\ket{0}+\sin{\frac{\pi}{8}}\ket{1}$. This performs a $T$ gate (up to a measurement controlled correction operation $C$ which is a Clifford gate)~\cite{Gottesman1999}.}
+\caption{Figure illustrating two equivalent forms of a small circuit built form the Clifford + $T$ gate set. The lower circuit is obtained from the former by replacing each $T$ gate with a teleportation or `state-injection' gadget that consumes one magic state$\ket{H}=\cos{\frac{\pi}{8}}\ket{0}+\sin{\frac{\pi}{8}}\ket{1}$. This performs a $T$ gate (up to a measurement controlled correction operation $C$ which is a Clifford gate)~\cite{Gottesman1999}.}\label{fig:t_inject}
 \end{figure}
 By replacing each $T$ gate in a Clifford+$T$ circuit with a state-injection gadget~\cite{Bravyi2005}, we instead end up with a circuit built exclusively from Clifford gates and Pauli measurements, acting on $n$ qubits in a computational basis state, and $t$ qubits in a non-stabilizer state. Once in this form, we can convert the circuit to a PBC~\cite{Bravyi2015,Yoganathan2019}.\par
 In the following discussion, we assume that the only intermediate measurements in the circuit arise from the state-injection gadgets. Circuits with clasically controlled gates condition on intermediate measurements are called `adaptive'. We note that the PBC construction works for both adaptive and non-adaptive circuits, so this assumption can be made without loss of generality~\cite{Bravyi2015,Yoganathan2019}.\par
@@ -414,7 +414,7 @@ U\equiv \ketbra{0}\otimes I+\ketbra{1}\otimes C \implies U\ket{+^{\otimes n}}\pr
 \end{equation}
 which is a stabilizer state decomposition with $\chi=2$ as $C$ is a Clifford operator, and thus $C\ket{+^{\otimes n-1}}$ is a stabilizer state.\par
 However, here we show that this method does not always produce optimal stabilizer state decompositions. For example, consider the $\ket{F}$ state. A single copy has Clifford symmetry group $\{I, F, F^{2}\}$, which has no non-trivial subgroups. This would suggest $\chi\left(\ket{F}\right)\leq 3$, which is larger than just the computational basis bound.\par
-For two copies, $|ket{F^{\otimes 2}}$ has the 9-element symmetry group
+For two copies, $\ket{F^{\otimes 2}}$ has the 9-element symmetry group
 \begin{equation}
 \{I,FI, IF, F^{2}I, IF^{2}, FF, F^{2}F, FF^{2}, F^{2}F^{2}\},
 \label{eq:f2_symmetry_group}

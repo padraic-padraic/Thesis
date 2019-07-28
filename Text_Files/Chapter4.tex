@@ -1,7 +1,6 @@
 % !TEX root = ../Main.tex
 
-\chapter[Simulating Quantum Circuits with Stabilizer Rank]{Simulating Quantum Circuits with the\\ Stabilizer Rank Method}
-\label{chap:simulator}
+\chapter[Simulating Quantum Circuits with Stabilizer Rank]{Simulating Quantum Circuits with the\\ Stabilizer Rank Method}\label{chap:simulator}
 % Look at combining the previous two chapters
 % Build stabilizer decompositions, then simulate circuits efficiently for each term
 % Here, present methods for operating on the decompositions, for practical simulation
@@ -15,34 +14,47 @@ In the context of quantum computing, many classical simulators in use today form
 \begin{table}[H]
 \begin{tabular}{|l|c|c|c|}
 \toprule
-Framework & \makecell{High-level\\Description} & Classical Methods & Supported Hardware \\ \midrule
-Microsoft QDK~\cite{MicrosoftQDK} & \texttt{Q\#}~\cite{Svore2018} & State vector & None \\
-\texttt{ProjectQ}~\cite{Steiger2016} & DSL & State vector & IBMQ~\cite{IBMQ} \\
-\texttt{Qiskit}~\cite{Qiskit} & \makecell{QASM~\cite{Cross2017},\\ \texttt{Python} API} & Various & IBMQ~\cite{IBMQ}\\
-\texttt{Circ}~\cite{GoogleCirc} & \texttt{Python} API & \makecell{State vector,\\density matrix} & Bristlecone\footnote{These chips are not currently publicly accessible.}~\cite{CircAnnouncement}\\
+Framework & \makecell{High-level\\Description} & \makecell{Classical\\ Methods} & \makecell{Supported\\ Hardware} \\ \midrule
+Microsoft QDK~\cite{MicrosoftQDK} & \texttt{Q\#}~\cite{Svore2018} & State vector & None \\\midrule
+\texttt{ProjectQ}~\cite{Steiger2016} & DSL & State vector & IBMQ~\cite{IBMQ} \\\midrule
+\texttt{Qiskit}~\cite{Qiskit} & \makecell{QASM~\cite{Cross2017},\\ \texttt{Python} API} & Various & IBMQ~\cite{IBMQ}\\\midrule
+\texttt{Circ}~\cite{GoogleCirc} & \texttt{Python} API & \makecell{State vector,\\density matrix} & Bristlecone\footnote{These chips are not currently publicly accessible.}~\cite{CircAnnouncement}\\\midrule
 \texttt{Forest}~\cite{RigettiForest} & \makecell{Quil,\\ Python API~\cite{Smith2016}} & \makecell{State vector \\ density matrix} & Rigetti QPU~\cite{RigettiQPU}\\ \bottomrule
 \end{tabular}
-\caption{A non-exhaustive list of different quantum software frameworks or QDKs. We note that many of these frameworks have additional components aimed at supporting application development that are not mentioned here.}
-\label{tab:qdks}
+\caption{A non-exhaustive list of different quantum software frameworks or QDKs. We note that many of these frameworks have additional components aimed at supporting application development that are not mentioned here.}\label{tab:qdks}
 \end{table}
 % Qiskit, Circ etc use statvector methods
-In practice, most of the QDKs mentioned above make use of what could be described as `textbook' classical simulations of quantum computing, where a circuit is simulated by matrix multiplication of the unitary associated with each gate, acting on either a state-vector or a density matrix description~\cite{Nielsen2000}.
-% Limited to 30 qubits on typical laptops, already 0.5PB at 45 qubits
-% used mostly for small scale proptyping
-% Optimised examples like QX, qHipster aimed at optimizing the peformance above just naive matrix multiplication
+In practice, most of the QDKs mentioned above make use of what could be described as `textbook' classical simulations of quantum computing, where a circuit is simulated by matrix multiplication of the unitary associated with each gate, acting on either a state-vector or a density matrix description~\cite{Nielsen2000}.\par
+These simulators have the advantage that they are relatively straightforward to implement, and can leverage mature computational libraries for matrix maths such as \texttt{Numpy}~\cite{Numpy}. Probabilities in the computational basis can also be trivially obtained, either by reading off the right diagonal entry in the density matrix or computing the absolute value squared of the corresponding amplitude in a state-vector. Noise in these models is also relatively straightforward to model, either by using a stochastic noise model inserting extra operators into the circuit in the state-vector case, or else applying Kraus operators directly in the density matrix case~\cite{Nielsen2000}.\par
+However, the main drawback to these simulators is their spatial complexity. A state-vector requires $2^{n}$ complex numbers to define, and a density matrix requires up to $2^{2n}$, where $n$ is the number of qubits. As each complex number requires two $64$-bit floating point numbers to specify, the memory requirements can quickly approach the limits of personal computing. A simulation on $30$ qubits requires $16$GB of memory, and up to $45$ qubits this requires $0.5$PB~\cite{Haner2016}. The current top-ranked supercomputer in the world has access to $2.7$PB of memory, meaning it could simulate up to $47$ qubits using these methods~\cite{Top500}.\par
+These classical representations also have a significant temporal overhead. In the most straightforward implementation, applying gates requires multiplying $2^{n}\times 2^{n}$ matrices. These updates require time $2^{2n}$ in the state-vector case, and $2^{4.746n}$ for density matrices. In practice though, significant optimizations are possible that can make state-vector simulators reasonably performant at accessible sizes. For example, the $2^{n}\times 2^{n}$ matrices representing single qubit gates are sparse, with the vast  majority of entries being $0$. Other optimizations that have been applied include parallelising single-qubit gate updates~\cite{Smelyanskiy2016,Khammassi2017,Smelyanskiy2016,QiskitAer}, optimising permutation operations such as CNOT and Pauli $X$~\cite{Khammassi2017}, replacing certain arithmetic operations with classical equivalents~\cite{Haner2016}, and accelerating algorithms using parallel execution via \texttt{OpenMP}, \texttt{MPI} or GPUs~\cite{Jones2018,Smelyanskiy2016,Khammassi2017,QiskitAer}.\par
 % Mention the other role, of verification and benchmarking
+In practice, this limit of approximately $30$ qubits when simulating circuits with personal computers roughly corresponds to the kind of quantum programmes that can be run on current publicly accessible devices, which have anywhere from $5$-$20$ qubits~\cite{IBMQ,RigettiQPU}. However, with continued development of quantum hardware into the 50--72 qubit range~\cite{IBM50,GoogleBristlecone}, classical simulations need to be pushed further, to continue in their other role in the verification and benchmarking of quantum devices.\par
+Given the expected intractability of classical simulations at large enough system sizes, the question of verifying quantum computations without simulation constitutes a separate branch of research based on the idea of `interactive proofs'~\cite{Aharonov2017,Mahadev2018}. Nonetheless, classical simulations offer a unique opportunity in verification as at any point the simulation can be paused and the system state inspected. Large-scale classical simulations also provide a performance baseline, as part of attempts to establish Quantum Supremacy.\par
 % Other simulators usually special purpose, optimised to do better to fit this role
-% Tensor network methods used to push simulations above 45 qubits
-% E.g rollright, google method, optimised around 2D connectivity
-% Big simulations with hundreds of T gates and 72 qubits
-% Finally mention other methods under consideration e.q. JKU, novel approach
-% Also CV sims, clifford sims, error tracking etc =? more domain specific, here we want to talk universal simulation
+Recent work has focused on tensor-network methods in particular to push classical simulations up past $45$ qubits, and have achieved some of the largest scale classical simulations to date~\cite{Pendault2017,Chen2018,Chen2018b,Markov2018,Villalonga2019}. Tensor networks are undirected graphs, where tensors represent input and output states, and quantum gates, and edges represent qubit wires~\cite{Boixo2017}. Tensors are combined or contracted by summing over shared indices, with a runtime that scales as the product of the dimensions of the indices to be contracted. For fixed input and output states $x$ and $y$, contracting the entire network results in a rank-0 tensor or scalar value which corresponds to the amplitude $\matrixel{x}{u}{y}$~\cite{Markov2005}.\par
+These papers on large classical simulations focus on on simulating quantum circuits on grids of qubits with local connectivity. This restriction is motivated by the designs of current quantum processors, and also allows for specific optimizations that reduce the temporal complexity of the simulation. State of the art methods typically split this grid into sub-blocks, which are locally contracted leaving only connections between blocks~\cite{Pendault2017,Chen2018b,Markov2018,Villalonga2018}. The remaining $s$ contractions are then `sliced', fixed to one of $2^{s}$ values and then contracted fully~\cite{Pendault2017}. This has a natural operational interpretation in terms of a sum-over-paths expansion~\cite{Markov2018}, and has the advantage that the contractions within blocks can be parallelised.\par
+These methods all achieve runtimes that scale as $\max \left[ 2^{dl}, 2^{n}\right]$, where $l$ is the length of the longest edge of the grid~\cite{Markov2005}. They also have exponential spatial requirements, though these are reduced compared to a state-vector method by virtue of tensor slicing. Through application of supercomputing resources, these methods have simulated random universal circuits of up to depth $40$ on $72$ qubits~\cite{Villalonga2018}, depth $35$ on $100$ qubits~\cite{Chen2018}, and depth $24$ on $121$ qubits~\cite{Villalonga2019}.\par
+Because this generated of quantum hardware aims to  maximize qubit count, it will not employ full error-correction routines. As a result, noise is a significant factor in the system, and limits the depth of circuits that can be run. We refer to this regime of quantum computing as `Noisy Intermediate Scale Quantum' or NISQ~\cite{Preskill2018}. Thus, much like system size for the state-vector simulator, the exponential simulation overhead in the depth does not render the simulations intractable. In fact, simulators can benefit from the increased noise level, by dropping terms from the simulation and reducing the overall computational time required by a constant factor, as discussed in Section~\ref{sec:srank_discussion}.
 \section{Results}
-% Begin by discussing the simulator
+In the rest of this chapter, we will discuss a distinct method for simulating universal quantum circuits, based on stabilizer state decompositions. We will present simulation results for several types of quantum circuit, and argue that this method has a great potential for simulating circuits on current and near-term quantum hardware.\par
 \subsection{Methods for Manipulating Stabilizer Decompositions}
+At a high level, simulating a quantum circuit $U$ using a decomposition into efficiently simulable terms requires two main stems. Firstly, we need to build a representation of the circuit state $U\ket{x}$ for an input state $\ket{x}$, which is itself part of our efficiently representable set of states. Then, we need a routine for computing output variables from the distribution, either computing explicit probabilities if we interested in strong simulation, or else sampling from the output distribution if we are interested in weak simulation.\par
+In the following, we will use $\mathtt{U}$ to denote a classical description of the quantum circuit $U$. We store $\mathtt{U}$ as a sequence of gates, where each gate includes its label, e.g.\ `H', and the labels of the qubits it acts on.\par
 \subsubsection*{Building Decompositions}
+The main method for constructing a stabilizer state decomposition, given a description of a quantum circuit $U$, is the PBC method introduced in~\cite{Bravyi2015} and~\cite{Bravyi2016}, and outlined previously in Section~\ref{sec:srank_intro}. We will review the method briefly here, with a focus on implementation in software. \par
+The first step in applying the PBC method is to walk through the circuit $\texttt{U}$, and replacing each non-Clifford gate with an appropriate magic state and state-injection gadget, such as the example shown in Figure~\ref{fig:t_inject}. We note that this requires a library of gadgets for implementing different gates.\par
+% Construct the clifford circuit
+% Discuss sampling measurement outcomes
+% Then decompose each magic state using random codes
 \large{\itshape{The Sum-over-Cliffords picture}}\par
+% Alternatively; connection between clifford decompositions and SS decompositions
+% Introduce idea of extent for unitaries
+% Leads to sparsifiable stabilzier state decomposition
+% We walk through the circuit, each time we hit a non-Clifford, sample a branch and continue
 \subsubsection*{Output Variables}
+\large{\itshape{Norm Estimation}}\par
+\large{\itshape{Metropolis Estimation}}\par
 \subsubsection*{Implementation and Parallelization}
 % Extend the simulators of Chapter 2 w/ wrapper
 % Swappable CH/DCH methids
