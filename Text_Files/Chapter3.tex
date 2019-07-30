@@ -6,7 +6,7 @@
 %Expand circuit/circuit state in terms of a free resource, here stabilizers
 In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section\textbf{Please insert your reference later}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this section, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Bravyi2015,Yoganathan2019}.\par
 This model forms the basis for the definition of Stabilizer Rank, a quantity which tries to relate the computational power of non-stabilizer states to the task of classical simulation. This chapter will be focused on extending the stabilizer rank method, whereas the following chapter will focus on its implementation for the task of classical simulation.
-\subsection{Pauli Based Computations}
+\subsection{Pauli Based Computations}\label{sec:pbc}
 A Pauli Based Computation (PBC) is a measurement-based model of quantum computing, whereby a computation is realised by applying a sequence of Pauli measurements to a set of non-stabilizer magic states, and post-processing of the measurement outcomes. In general, this sequence will be `adaptive', and the choice of measurement operator will depend on the outcome of previous measurements.\par
 It is well known that quantum circuits built out of Clifford gates and the $T$ gate are universal for quantum computation~\cite{Bravyi2005}. Thus, any arbitrary computation $U$ acting on a computational input state can be expressed as a circuit with $m$ Clifford operations and $t$ $T$ gates.\par
 \begin{figure}[t]
@@ -47,7 +47,7 @@ A PBC $\mathcal{C}$, obtained from some Clifford + $T$ circuit $U$, can be said 
 \label{eq:pbc_strongsim}
 \end{equation}
 where we reweight the probability to account for the fact that each of the $2^{t}$ different outcomes on the state-injection gadgets is equiprobable.
-\subsection{Stabilizer State Decompositions}
+\subsection{Stabilizer State Decompositions}\label{sec:pbc_decomposition}
 In the PBC model of quantum computation, the role of non-stabilizer states as a resource for quantum computation is made explicit. It is also clear that the PBC would require exponential time to simulate clasically, as Pauli expectation values on non-stabilizer states cannot in general be efficiently computed~\cite{Gottesman1998b}.\par
 In the context of resource theories for quantum computation, we can consider studying quantum computations by decomposing computations in terms of the `free' set of operations. This is what Bravyi, Smith \& Smolin did when considering stabilizer state decompositions of magic states. We define a stabilizer state decomposition of a general state $\ket{\psi}$ as
 \begin{equation}
@@ -332,8 +332,8 @@ The results of computational searches, and the proof for the decomposition of th
             $\text{dim}\left(\text{Sym}_{n,t}\right)$ & 3 & 4 & 5 & 6 \\
             $\chi\left(\ket{T,F}\right)$ & 2 & 3 & 4 & 6 \\ \hline
         \end{tabular}
+        \vspace{1cm}
     \end{subtable}
-    \vspace{1cm}
     \begin{subtable}[t]{0.48\textwidth}
     \centering
         \begin{tabular}{|l|c|c|c|}
@@ -631,7 +631,7 @@ The comparison becomes even more significant if we consider resource states that
 \label{eq:theta_state}
 \end{equation}
 These resource states can be used to realize single-qubit rotations around the Pauli $Z$ axis through an angle $\theta$. As previously discussed, such rotations can require up to $100$ $T$-gates to synthesize~\cite{Ross2014} as $\theta\rightarrow 0$. However, the stabilizer fidelity of $\ket{\theta}$ actually increases as $\theta$ gets smaller. In fact, any rotation smaller than a $T$ gate will require multiple $T$ gates to synthesize, but has a smaller approximate stabilizer rank. \par
-A caveat of this method is that to be used in a state-injection circuit, resource states like $\ket{\theta}$ require non-Clifford `correction operations'. In the approximate simulation case, however, we cannot post-select on the measurement gadgets to avoid these additional non-Clifford gates~\cite{Bravyi2016}. Thus, to be used in a simulation scheme, we need a different formulation than the PBC method discussed in Section~\ref{sec:decomposition_intro}. We will discuss the problem of applying the sparsification method to simulation in the following chapter.\par
+A caveat of this method is that to be used in a state-injection circuit, resource states like $\ket{\theta}$ require non-Clifford `correction operations'. In the approximate simulation case, however, we cannot post-select on the measurement gadgets to avoid these additional non-Clifford gates~\cite{Bravyi2016}. Thus, to be used in a simulation scheme, we need a different formulation than the PBC method discussed in Section~\ref{sec:pbc}. We will discuss the problem of applying the sparsification method to simulation in the following chapter.\par
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{cstar_blochsphere.png}

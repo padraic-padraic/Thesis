@@ -41,19 +41,167 @@ In the rest of this chapter, we will discuss a distinct method for simulating un
 \subsection{Methods for Manipulating Stabilizer Decompositions}
 At a high level, simulating a quantum circuit $U$ using a decomposition into efficiently simulable terms requires two main stems. Firstly, we need to build a representation of the circuit state $U\ket{x}$ for an input state $\ket{x}$, which is itself part of our efficiently representable set of states. Then, we need a routine for computing output variables from the distribution, either computing explicit probabilities if we interested in strong simulation, or else sampling from the output distribution if we are interested in weak simulation.\par
 In the following, we will use $\mathtt{U}$ to denote a classical description of the quantum circuit $U$. We store $\mathtt{U}$ as a sequence of gates, where each gate includes its label, e.g.\ `H', and the labels of the qubits it acts on.\par
+Stabilizer states will be encoded classically using either the CH or the DCH representations, introduced in Chapter~\ref{chap:stabilizers}.
 \subsubsection*{Building Decompositions}
-The main method for constructing a stabilizer state decomposition, given a description of a quantum circuit $U$, is the PBC method introduced in~\cite{Bravyi2015} and~\cite{Bravyi2016}, and outlined previously in Section~\ref{sec:srank_intro}. We will review the method briefly here, with a focus on implementation in software. \par
-The first step in applying the PBC method is to walk through the circuit $\texttt{U}$, and replacing each non-Clifford gate with an appropriate magic state and state-injection gadget, such as the example shown in Figure~\ref{fig:t_inject}. We note that this requires a library of gadgets for implementing different gates.\par
-% Construct the clifford circuit
-% Discuss sampling measurement outcomes
-% Then decompose each magic state using random codes
+The main method for constructing a stabilizer state decomposition, given a description of a quantum circuit $U$, is the PBC method introduced in~\cite{Bravyi2015} and~\cite{Bravyi2016}, and outlined previously in Sections~\ref{sec:pbc} and~\ref{sec:pbc_decomposition}. We will review the method briefly here, with a focus on implementation in software. \par
+Implementing a PBC requires rewriting $U$ as an equivalent Clifford circuit $V$. We achieve this by walking through the circuit $\texttt{U}$, and replacing each of the $m$ non-Clifford gate with an appropriate magic state or states, and state-injection gadget, such as the example shown in Figure~\ref{fig:t_inject}. We note that this requires a library of known gadgets for implementing different gates. The result is a new circuit $U'$, acting on $n$ qubits and $m$ magic states.\par
+State-injection gadgets include additional, measurement controlled `correction' operations. By post-selecting on these measurement-outcomes, we can expand out $U'$ as a sum of different Clifford circuits $V_{y}$
+\[U\ket{x} = \sum_{y}\matrixel{y}{V_{y}}{x\otimes \psi} \]
+where $y$ is the post-selection string with length $O(m)$, and $\ket{\psi}$ is the joint state of all the magic states.\par
+It was shown in~\cite{Bravyi2016} that given some approximate stabilizer state decomposition of the magic states $\ket{\tilde{\psi}}$, we can construct a PBC to sample from the output distribution of the circuit by sampling the post-selection string at random. Thus, for each gadget, we sample the measurement outcomes appropriately to build-up the Clifford circuit $\mathtt{V}$.\par
+As previously discussed, when injecting a gate $U$ the correction operation has the form $UPU^{\dagger}$ for some Pauli operator $P$. If $U\in\mathcal{C}_{3}$, then by definition $UPU^{\dagger}$ is a Clifford operator and we are done. Otherwise, we will need to introduce additional layers of state-injection until we build an all-Clifford circuit $\mathtt{V}$.\par
+Finally, we need to construct an approximate stabilizer state decomposition for the magic states $\ket{\psi}$. In general, $\ket{\psi}$ will be a tensor-product of different `species' of magic state, and so we build the full approximation using the multiplicative upper bound
+\[\chi_{\epsilon}\left(\ket{\psi}\right) = \chi_{\epsilon}\left(\ket{T}^{\# T}\right)\,\chi_{\epsilon}\left(\ket{CCX}^{\# CCX}\right)\,\chi_{\epsilon}\left(\ket{\theta}^{\#\theta}\right)\cdots\]
+For Clifford magic states, we can make use of the random codes construction. Otherwise, we can use sparsification. We note that this again implies a library of best-known decomposition strategies for each magic-state we introduce.\par
+Overall then, the gadgetization method takes as input a classical description of an $n$-qubit circuit $\mathtt{U}$ and target error $\epsilon$, and returns a new description of a Clifford circuit $\mathtt{V}$ acting on $n$ qubits and $m$ magic states, the corresponding post-selection string $\va{y}$, and an approximate stabilizer state decomposition $\mathtt{\ket{\tilde{\psi}}}$. A pseudo-code description of this method is given in Algorithm~\ref{alg:gadgetize_decomposition}.\par
 \large{\itshape{The Sum-over-Cliffords picture}}\par
-% Alternatively; connection between clifford decompositions and SS decompositions
-% Introduce idea of extent for unitaries
-% Leads to sparsifiable stabilzier state decomposition
-% We walk through the circuit, each time we hit a non-Clifford, sample a branch and continue
+The PBC model has an interesting feature where the number of qubits in the stabilizer state expansion depends only on the magic states, and not on the number of qubits in the circuit. Stabilizer circuits are efficient to simulate in terms of the number of qubits, but the $O(n^{3})$ overhead is still considered significant in practice. Thus, if there are fewer magic states, the PBC can reduce the number of variables in the simulation. But, in general, universal quantum computations have a number of gates that scales as $\poly\left(n\right)$, and gadgetization will result in more qubits.\par
+An alternative strategy for building stabilizer state decompositions makes use of the equivalence between stabilizer circuits and stabilizer states. If we consider a Clifford gate decomposition $Q=\sum_{i}\alpha_{i}V_{i}$, then the action of $Q$ on a stabilizer state results in a stabilizer state decomposition
+\begin{equation}
+Q\ket{\phi} = \sum_{i}\alpha_{i}V_{i}\ket{\phi} = \sum_{i}\alpha_{i}\ket{\phi_{i}},
+\end{equation}
+which we can then turn into an approximation stabilizer state decomposition with sparsification, giving a decomposition with a rank $O(\norm{\va{\alpha}}^{2})$.\par
+From this, we can define a notion of `extent' for a unitary
+\begin{equation}
+\xi\left(Q\right) = \min_{V}\norm{\va{\alpha}}^{2} \;:\;Q=\sum_{i}\alpha_{i}V_{i}.
+\end{equation}
+For example, considering single-qubit rotations in around the $Z$ axis of a Bloch sphere with $\theta\in[0,\pi/2$, we can expand them into two Clifford branches
+\begin{equation}
+R_{Z}\left(\theta\right) = \left(\cos{\frac{\theta}{2}}-\sin{\frac{\theta}{2}}\right)I + \mathe^{-\mathi\pi/4}\sqrt{2}\sin{\frac{\theta}{2}}S,
+\label{eq:rotation_expansion}
+\end{equation}
+with corresponding extent $\xi\left(R\left(\theta\right)\right)=\left(\cos{\frac{\theta}{2}}+\tan{\frac{\pi}{8}}\sin{\frac{\theta}{2}}\right)^{2}$~\cite{Bravyi2018}. Similar results can be found for all $Z$ rotations, where we slightly adjust the phase and the Clifford operations on each branch.\par
+This expansion corresponds with the stabilizer extent of the $\ket{T}$ state by setting $\theta=\frac{\pi}{4}$. In fact, it was shown by Earl Campbell that for injectable Clifford magic states, such as $\ket{T}$ and $\ket{CCZ}$, that the extent-optimal stabilizer state decomposition can be used to `lift' a Clifford gate expansion of the corresponding unitary (i.e.\ $T$ and $CCZ$), that is also optimal~\cite{Bravyi2018}.\par
+Using submultiplicativty, we can thus upper-bound the stabilizer extent of the circuit $U$ as
+\begin{equation}
+\xi\left(U\right) = \prod_{i=1}^{m}\xi\left(U_{i}\right)
+\end{equation}
+for each non-Clifford gate $U_{i}$. We can then build up a term in the stabilizer state decomposition by iterating through $\mathtt{U}$. If the gate is Pauli or Clifford, we just apply it and update the state. Otherwise, for each non-Clifford gate $U_{i}$ we sample a branch from the Clifford expansion with $p_{i,j}=\frac{\left|\alpha_{i,j}\right|}{\norm{\va{\alpha_{i}}}}$ as in the sparsification method, and apply the corresponding Clifford gate $V_{i,j}$. We can repeat this $O(\xi\left(U\right))$ times, to produce a stabilizer state decomposition of the $U\ket{x}$. This algorithm is outined in Algorithm~\ref{alg:soc_decomposition}.\par
+\begin{algorithm}[p]
+\begin{algorithmic}
+\Require{Known set of gadgets for non-Clifford gates.}
+\Function{GadgetDecomposition}{$\mathtt{U}, \epsilon$}
+    \State{ $\mathtt{V}\gets \emptyset$ \Comment{Output Clifford circuit}}
+    \State{ $\ket{\psi}\gets \emptyset$ \Comment{Magic states}}
+    \For{$\mathtt{U_{i}}\in \mathtt{U}$}
+        \If{$U_{i} \notin \mathcal{C}_{2}$}
+            \State{ Sample a measurement outcome $z$}
+            \State{ $\mathtt{V}\gets \mathtt{V}\cap\mathtt{G}\cap\mathtt{V}_{z}$} \Comment{$\mathtt{G}$ is the gadget for $U_{i}$.}
+            \State{ $\ket{\psi}\gets\ket{\psi}\otimes \psi_{G}$ \Comment{Magic state associated with $\mathtt{G}$}}
+        \Else
+            \State{ $\mathtt{V} \gets \mathtt{V}\cap \mathtt{U_{i}}$}
+        \EndIf
+    \EndFor
+    \State{ Reorder qubits in $\mathtt{V},\ket{\psi}$ to join common species of magic state}
+    \State{ $\ket{\tilde{\psi}}=\emptyset$}
+    \For{$\ket{\psi_{U_{j}}^{\otimes \# U_{j}}}\in\ket{\psi}$}
+        \State{ $\ket{\tilde{\psi}}\gets \ket{\tilde{\psi}}\otimes \ket{\tilde{\psi_{U_{j}}}}$ \Comment{Rank is set by $\epsilon$.}}
+    \EndFor
+    \State{ \Return{$\mathtt{V}$, $\ket{\tilde{\psi}}$}}
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode description of the computational routine for construction a stabilizer state decomposition of a quantum circuit using state-injection gadgets.}\label{alg:gadgetize_decomposition}
+\end{algorithm}
+\begin{algorithm}[p]
+\begin{algorithmic}
+\Require{Clifford decompositions of non-Clifford gates.}
+\Function{SumOverCliffordDecomposition}{$\mathtt{U}, \epsilon, \ket{x}$}
+    \State{$\ket{\tilde{\psi}} = \emptyset$}
+    \State{$\xi\gets$ \Call{ComputeExtent}{$\mathtt{U}$}}
+    \State{$i\gets 0$}
+    \While{$i<\chi_{\epsilon}= O\left(\xi \epsilon^{-2}\right)$}
+        \State{$\ket{\phi} \gets\ket{x}$}
+        \State{$c\gets 1$}
+        \For{$U_{i}\in\mathtt{U}$}
+            \If{$U_{i}\notin \mathcal{C}_{2}$}
+                \State{Sample Clifford branch $j$ of gate $U_{i}$}
+                \State{$\ket{\phi}\gets V_{i,j}\ket{\phi}$}
+                \State{$c\gets \frac{\alpha_{i,j}}{\left|\alpha_{i,j}\right|}\, c$}
+            \Else
+                \State{$\ket{\phi}\gets U_{i}\ket{\phi}$}
+            \EndIf
+        \EndFor
+        \State{$\ket{\tilde{\psi}}\gets \ket{\tilde{\psi}}+c\ket{\phi}$}
+        \State{$i\gets i+1$}
+    \EndWhile
+    \State{\Return $\ket{\tilde{\psi}}$}
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode description of building stabilizer state decompositions in the sum-over-Cliffords picture.}\label{alg:soc_decomposition}
+\end{algorithm}
+\begin{algorithm}[p]
+\begin{algorithmic}
+\Require{$L$, number of samples to take, $n$, number of qubits, $\Pi$, Pauli projector}
+\Function{NormEstimation}{$\Pi$, $\ket{\tilde{\psi}}$}
+    \State{$\va{\eta} \gets \{\eta_{i}=0\}$}
+    \State{$\{\ket{\eta_{i}}\}\gets $\Call{RandomEquatorialState}{n}}
+    \For{$\alpha_{i},\;\ket{\phi_{i}}\in\ket{\tilde{\phi}}$}
+        \State{$\Gamma\gets 1$}
+        \For{$P\in\Pi$}
+            \State{$\Gamma_{P},\ket{\phi_{i}} \gets$\Call{MeasurePauli}{$P$,$\ket{\phi}}$}
+            \If{$\Gamma_{P}=0$}
+                \State{$\Gamma\gets 0$, Break loop}
+            \EndIf
+            \State{$\Gamma\gets\Gamma\,\Gamma_{P}$}
+        \EndFor
+        \If{$\Gamma \neq 0$}
+            \For{$\ket{\eta_{i}}\in \{\ket{\eta_{i}}\}$}
+                \State{$\eta_{i}\gets \Gamma\,\alpha_{i}\,\braket{\eta_{i}}{\phi_{i}}$}
+            \EndFor
+        \EndIf
+    \EndFor
+    \State{\Return{$\frac{2^{n}}{L}\sum_{i}\left|\eta_{i}\right|^{2}$}}
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode outline of the Norm Estimation routine for computing expectation values of Pauli projectors.}\label{alg:norm_estimation}
+\end{algorithm}
+\begin{algorithm}
+\begin{algorithmic}
+\Require{$n$, number of qubits}
+\Function{MetropolisSampling}{$\ket{\tilde{\psi}}$, $m$}
+\State{$\va{x}\gets $ Random initial $n$-bit binary string}
+\State{$p_{x}\gets \left|\sum_{i}\alpha_{i}\braket{x}{\phi_{i}}\right|^{2}$}
+\For{$j\in [1,\dots,n]$}
+    \State{$j\gets$ Random integer $\in [1,\dots,n]$}
+    \State{$\va{x}' \gets \va{x}\oplus \va{e}_{j}$}
+    \State{$p_{x'}\gets \left|\sum_{i}\alpha_{i}\braket{x'}{\phi_{i}}\right|^{2}$}
+    \If {$p_{x}=0\vee p_{x'}=0$}
+        \State{$x\gets x'$, $p_{x}\gets p_{x'}$}
+    \Else
+        \State{Generate $r\in[0,1)$ uniformly at random}
+        \If{$r<\frac{p_{x}}{p_{x'}}$}
+            \State{$x\gets x'$, $p_{x}\gets p_{x'}$}
+        \EndIf
+    \EndIf
+\EndFor
+\State{\Return{$\va{x}$}}
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode description of the Metropolis-style Monte Carlo method for sampling a computational basis string $x$ from the output distribution of a stabilizer state decomposition.}\label{alg:metropolis}
+\end{algorithm}
 \subsubsection*{Output Variables}
+There are two main methods for computing output variables from a given stabilizer state decomposition. The first is the `norm estimation' routine, introduced in~\cite{Bravyi2016} and refined in~\cite{Bravyi2018}. Norm estimation can be used to compute measurement probabilities, and also to sample as described in Section~\ref{sec:pbc_decomposition}. The second is a Metropolis-style Monte Carlo method, which can be used to return samples in the computational basis. Both methods were developed by Sergey Bravyi, and we introduce them here with a view to their implementation. The two methods are also outlined in Algorithms~\ref{alg:norm_estimation} and~\ref{alg:metropolis}, respectively.\par
 \large{\itshape{Norm Estimation}}\par
+This routine allows us to quickly compute an approximation to $\norm{\psi}$. Importantly, given a projector $\Pi$, we can compute the probability of that outcome as
+\begin{equation}
+p\left(\Pi\right) = \frac{\norm{\Pi \psi}^{2}}{\norm{\psi}^{2}}.
+\end{equation}
+In particular, it is possible to show that if we generate equatorial stabilizer states $\ket{\eta}$ uniformly at random, then the random variable $\eta\equiv 2^{n/2}\left|\braket{\eta}{\psi}\right|$ has the property that
+\[
+\begin{array}{l r}
+\mathbb{E}\left(\eta^{2}\right) = \norm{\psi}^{2} & \mathbb{E}\left(\eta^{4}\right) \leq 2\norm{\psi}^{4}
+\end{array}
+\]
+and thus, the average inner product of $\ket{\psi}$ with equatorial stabilizer states is the norm, with variance at most $\norm{\psi}^{4}$~\cite{Bravyi2018}.\par
+The number of samples we need depends on the accuracy desired. It can be shown that given an estimate 
+\[\bar{\eta}=\frac{1}{L}\sum_{i}\eta_{i}^{2}\]
+then $\bar{\eta}$ approximates $\norm{\psi}$ to within multiplicative error $\epsilon$ with probability $\frac{3}{4}$ if $L=4\epsilon^{-2}$~\cite{Bravyi2018}. We can of course increase this probability to $1-\delta$ by taking $\log{\delta^{-1}}$ estimates of $\bar{\eta}$.\par
+In Section~\ref{sec:ch_dch_methods}, we introduced an algorithm for computing inner products between stabilizer states $\ket{\phi}$ and equatorial stabilizer states. This method has computational complexity $O(n^{3})$. Thus, given a stabilizer state decomposition $\ket{\tilde{\psi}}$, we can use compute $\norm{\tilde{\psi}}$ in time $O(L\chi n^{3})$, where $L$ is the number of samples of $\eta$.\par
+As part of the sampling routine described in Section~\ref{sec:pbc_decomposition}, we want to compute marginal probabilities $P\left(x_{1},x_{2},\dots x_{j}\right)$ for some $j$-bits. These marginals correspond to fixing $j$ qubits, and projecting the rest onto a $2^{n-j}$ dimensional codespace, generated by $j$ Pauli operators~\cite{Bravyi2016}. This codespace can be generated by $j$ Pauli operators, giving
+\[\Pi = \prod_{i=1}^{j}\frac{1}{2}\left(I+P_{i}\right)\]
+where $P_{i}$ are $n$ qubit Pauli operators. We can thus apply this projector by measuring each of the Pauli generators in turn. Recall that each Pauli measurement takes time $O(n^{2})$, (c.f.~\ref{sec:dch_ch_methods}) and thus computing $\norm{\Pi\tilde{\psi}}^{2}$ also has runtime $O\left(L\chi n^{3}\right)$.\par
+To avoid accumulation of errors, each marginal probability needs to be computed with multiplicative error $O(w^{-1})$ when sampling from $w$ output bits. Using the bound on the approximation accuracy above, this implies $L=O(w^{2})$. As there are $w$ marginals to compute, sampling with the norm estimation method thus takes time $O(\chi n^{3}w^{3})$.\par
+In the gadgetized picture, we can employ norm estimation by first setting the measurement projector $\Pi$, and then updating it to obtain the corresponding PBC $\Pi_{s}$ by conjugating the projector with the Clifford circuit $\mathtt{V_{y}}$. These Pauli updates can be computed efficiently classically, using similar update rules as for a stabilizer tableau~\cite{Aaronson2004}. Otherwise, for decompositions obtained using the sum-over-Cliffords method, no further preprocessing is required.\par
 \large{\itshape{Metropolis Estimation}}\par
 \subsubsection*{Implementation and Parallelization}
 % Extend the simulators of Chapter 2 w/ wrapper
