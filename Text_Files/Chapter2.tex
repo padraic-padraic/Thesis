@@ -1069,7 +1069,7 @@ We also present data for routines specific to the DCH and CH routines. In partic
 \end{scaletikzpicturetowidth}
 \label{fig:measurement_comparison}
 \end{figure}
-\section{Discussion}
+\section{Discussion}\label{sec:stabilizer_discussion}
 In this chapter, we have introduced two new representations for simulating stabilizer circuits, including their implementation in software, and presented data evaluating their performance against previous methods.\par
 In particular, we make use of bitpacking techniques to try and further improve their runtime. Figure~\ref{fig:affine_timings} introduced results comparing a bitpacked simulator with a prior \texttt{MATLAB} implementation. In general, we see a broad speedup over the \texttt{MATLAB} version across the full parameter range, though the exact degree of this speedup decreases with increasing $n$. The main exception is the \texttt{Extend} routine, where we observe the \texttt{C++} implementation scaling roughly quadratically with the input size, whereas the \texttt{MATLAB} version exhibits a closer to linear scaling.\par
 One possible explanation for this effect is an unfortunate side-effect of the use of MEX files, namely that the \texttt{C++} version additionally needs to convert the MATLAB data into a \text{C++} data-structure. This adds an additional $O(n^{2})$ overhead to the runtime of the \texttt{C++} simulator. Otherwise as coded, the \texttt{Extend} algorithm has only $O(n)$ steps. In more complex functions like measurement, \texttt{Shrink} and inner products, which have run-times $10-100$ times longer than \texttt{Extend}, this effect is less significant, but nonetheless likely contributes to the steeper gradient of the \texttt{C++} scalings.\par

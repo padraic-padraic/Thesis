@@ -1,0 +1,34 @@
+% This file was created by matplotlib2tikz v0.7.4.
+\begin{tikzpicture}
+
+\begin{axis}[
+colorbar,
+colorbar style={ylabel={Speedup}, yticklabels={a,$1e^{-6}$,$1e^{-4}$,$1e^{-2}$,$1e^{2}$,$1e^{4}$,$\infty$}},
+colormap={mymap}{[1pt]
+  rgb(0pt)=(0,0,0.3);
+  rgb(1pt)=(0,0,1);
+  rgb(2pt)=(1,1,1);
+  rgb(3pt)=(1,0,0);
+  rgb(4pt)=(0.5,0,0)
+},
+point meta max=1,
+point meta min=0,
+tick align=outside,
+tick pos=left,
+x grid style={white!69.01960784313725!black},
+xlabel={Number of Qubits},
+xmin=-0.5, xmax=15.5,
+xtick style={color=black},
+xtick={0,2,4,6,8,10,12,14},
+xticklabels={6,10,14,18,22,26,30,34},
+y grid style={white!69.01960784313725!black},
+ylabel={Non-Clifford Gate Count},
+ymin=-0.5, ymax=15.5,
+ytick style={color=black},
+ytick={0,2,4,6,8,10,12,14},
+yticklabels={6,8,10,12,14,16,18,20}
+]
+\addplot graphics [includegraphics cmd=\pgfimage,xmin=-0.5, xmax=15.5, ymin=15.5, ymax=-0.5] {Figures/QiskitRace/comparison-000.png};
+\end{axis}
+
+\end{tikzpicture}
