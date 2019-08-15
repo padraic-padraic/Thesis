@@ -531,6 +531,11 @@ Based on this approximation, we subsequently introduce the notion of `Stabilizer
 \begin{defn}[(Stabilizer Extent)]
 For a normalised quantum state $\ket{\psi}$, the stabilizer extent $\xi\left(\psi\right)$ is defined as the minimum value of $\norm{c}^{2}_{1}$ over all stabilizer state decompositions $\ket{\psi}=\sum_{i}c_{i}\phi_{i}$.
 \end{defn}
+Thus, we approximate stabilizer rank of a sparsified decomposition scales as
+\begin{equation}
+\chi_{\epsilon}\left(\psi\right)=\lceil \xi\left(\psi\right)\epsilon^{-2}\rceil.
+\label{eq:extent_srank}
+\end{equation}
 The one-norm is a convex quantity, and thus we can be computed efficiently using convex optimisation techniques~\cite{Boyd2004}. However, as the search space scales with the number of stabilizer states, which in turn scales exponentially with the number of qubits, in practice extent is difficult to compute for more than a few qubits. An equivalent quantity to extent was also introduced in Section~5.4 of~\cite{Regula2018}, a general study of convex resource measures for quantum computing. It follows from~\cite{Regula2018} stabilizer extent is a faithful measure, such that $\xi\left(\psi\right)=1$ if and only if $\ket{\psi}$ is a stabilizer state.
 \subsubsection*{Stabilizer Fidelity}
 Interestingly, as a convex optimization problem, it is also possible to use the `dual' convex problem to find a lower bound on the stabilizer extent. The proof was given by Earl Campbell in Section~VI.A of~\cite{Bravyi2018}, but we quote the key result here, namely

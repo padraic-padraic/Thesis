@@ -1,0 +1,129 @@
+% This file was created by matplotlib2tikz v0.7.4.
+\begin{tikzpicture}[scale=\tikzscale]
+
+\definecolor{color0}{rgb}{0.12156862745098,0.466666666666667,0.705882352941177}
+\definecolor{color1}{rgb}{1,0.498039215686275,0.0549019607843137}
+\definecolor{color2}{rgb}{0.172549019607843,0.627450980392157,0.172549019607843}
+
+\begin{axis}[
+legend cell align={left},
+legend style={at={(0.03,0.97)}, anchor=north west, draw=white!80.0!black},
+tick align=outside,
+tick pos=left,
+x grid style={white!69.01960784313725!black},
+xlabel={Depth},
+xmin=3.5, xmax=36.5,
+xtick style={color=black},
+y grid style={white!69.01960784313725!black},
+ylabel={T Count},
+ymin=0.75, ymax=248.25,
+ytick style={color=black}
+]
+\addplot [semithick, color0]
+table {%
+5 12
+6 15
+7 20
+8 26
+9 27
+10 30
+11 34
+12 40
+13 42
+14 45
+15 50
+16 56
+17 57
+18 60
+19 64
+20 70
+21 72
+22 75
+23 80
+24 86
+25 87
+26 90
+27 94
+28 100
+29 102
+30 105
+31 110
+32 116
+33 117
+34 120
+35 124
+};
+\addlegendentry{$4\times 5$ Lattice}
+\addplot [semithick, color1]
+table {%
+5 14
+6 18
+7 24
+8 30
+9 32
+10 34
+11 38
+12 47
+13 48
+14 52
+15 58
+16 64
+17 66
+18 68
+19 72
+20 81
+21 82
+22 86
+23 92
+24 98
+25 100
+26 102
+27 106
+28 115
+29 116
+30 120
+31 126
+32 132
+33 134
+34 136
+35 140
+};
+\addlegendentry{$4\times 6$ Lattice}
+\addplot [semithick, color2]
+table {%
+5 25
+6 33
+7 41
+8 49
+9 53
+10 57
+11 66
+12 75
+13 82
+14 90
+15 98
+16 106
+17 110
+18 114
+19 123
+20 132
+21 139
+22 147
+23 155
+24 163
+25 167
+26 171
+27 180
+28 189
+29 196
+30 204
+31 212
+32 220
+33 224
+34 228
+35 237
+};
+\addlegendentry{$6\times 6$ Lattice}
+\end{axis}
+
+\end{tikzpicture}
