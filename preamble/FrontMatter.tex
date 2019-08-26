@@ -19,35 +19,12 @@ We approach the problem by considering classical simulations of stabilizer circu
 \end{abstract}
 
 \begin{impactstatement}
-	UCL theses now have to include an impact statement. \textit{(I think for REF reasons?)} The following text is the description from the guide linked from the formatting and submission website of what that involves. (Link to the guide: {\scriptsize \url{http://www.grad.ucl.ac.uk/essinfo/docs/Impact-Statement-Guidance-Notes-for-Research-Students-and-Supervisors.pdf}})
-
-\begin{quote}
-The statement should describe, in no more than 500 words, how the expertise, knowledge, analysis,
-discovery or insight presented in your thesis could be put to a beneficial use. Consider benefits both
-inside and outside academia and the ways in which these benefits could be brought about.
-
-The benefits inside academia could be to the discipline and future scholarship, research methods or
-methodology, the curriculum; they might be within your research area and potentially within other
-research areas.
-
-The benefits outside academia could occur to commercial activity, social enterprise, professional
-practice, clinical use, public health, public policy design, public service delivery, laws, public
-discourse, culture, the quality of the environment or quality of life.
-
-The impact could occur locally, regionally, nationally or internationally, to individuals, communities or
-organisations and could be immediate or occur incrementally, in the context of a broader field of
-research, over many years, decades or longer.
-
-Impact could be brought about through disseminating outputs (either in scholarly journals or
-elsewhere such as specialist or mainstream media), education, public engagement, translational
-research, commercial and social enterprise activity, engaging with public policy makers and public
-service delivery practitioners, influencing ministers, collaborating with academics and non-academics
-etc.
-
-Further information including a searchable list of hundreds of examples of UCL impact outside of
-academia please see \url{https://www.ucl.ac.uk/impact/}. For thousands more examples, please see
-\url{http://results.ref.ac.uk/Results/SelectUoa}.
-\end{quote}
+This thesis is focused on classical simulation of quantum computing, an important tool both for understanding the theoretical separation between quantum and classical computations, and for developing quantum software in an era where access to actual hardware is still significantly limited.\par
+The impact of this thesis is to significantly extend the notion of stabilizer rank, a classical description of quantum systems that has received considerable interest in the community. As part of this, we introduce a novel method for simulating quantum circuits. This method enables simulations of near-term quantum computations on much larger system sizes than previous publicly available tools. For example, we demonstrate simulations of the Quantum Approximate Optimization Algorithm on $50$ qubits, using a personal computer.\par
+We have developed open-source software implementations of our work, enabling researchers in academia and industry to apply our methods to simulate quantum computations. We have also integrated the work with IBM's Qiskit framework~\cite{Qiskit}, making the benefits of our method immediately available to the large international community of quantum software developers already experimenting with the platform, including enthusiasts and educators.\par
+Our work has been widely disseminated through the arXiv, has been cited $16$ times, and was the third highest-rated paper for 2018 on Sci-Rate, an open-access community for discussion and recommendation of preprints\footnote{\url{https://scirate.com/?date=2019-01-01&range=365}}. It has since been published in Quantum, a high-quality open access journal run by members of the quantum information community, and subsequent papers have been published building on our results~\cite{Qassim2019,Yifei2019}.\par
+As well as simulations of universal quantum circuits, we developed two novel methods for simulating a common class of quantum circuit called stabilizer circuits. Our software implementations show generally better performance than current popular methods, and are available to the community through open-source.\footnote{\url{https://github.com/padraic-padraic/StabilizerSim}}\par
+Our results on the stabilizer rank also impact attempts in the community to understand non-stabilizer states as a `resource' for quantum advantage over classical computations. The exact origins of quantum speedup are still not entirely understood, and our results on both exact and approximate stabilizer rank decompositions have consequences for the design of quantum algorithms and quantum computing architectures. For example, the quantity of stabilizer extent introduced in Chapter 3 has since been applied to the problem of synthesising quantum gates from a limited gate-set~\cite{Beverland2019}.
 \end{impactstatement}
 
 \begin{acknowledgements}
