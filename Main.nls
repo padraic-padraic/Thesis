@@ -1,0 +1,24 @@
+
+\begin{thenomenclature} 
+\nomgroup{Symbols}
+  \item [{$n$}]\begingroup Number of qubits in a given quantum circuit or computation.\nomeqref {0}\nompageref{12}
+  \item [{$\omega$}]\begingroup The $8$th root of unity, $\omega=\frac{1+\mathi}{\sqrt{2}}$.\nomeqref {0}\nompageref{12}
+  \item [{$\mathbb{Z}_{n}$}]\begingroup The space of all positive integers modulo $n$.\nomeqref {0}\nompageref{12}
+  \item [{$\va{x}$}]\begingroup A vector quantity, typically a binary vector.\nomeqref {0}\nompageref{12}
+  \item [{$\va{e}_{i}$}]\begingroup A binary vector that is all-zero except for entry $x_{i}$.\nomeqref {0}\nompageref{12}
+  \item [{$\ket{\va{x}}$}]\begingroup A computational basis state defined by the binary vector $\va{x}$.\nomeqref {0}\nompageref{12}
+  \item [{$\ket{\psi}$}]\begingroup An arbitrary quantum state.\nomeqref {0}\nompageref{12}
+  \item [{$\ket{\phi},\ket{\varphi}$}]\begingroup A stabilizer state.\nomeqref {0}\nompageref{12}
+  \item [{$U$}]\begingroup An arbitrary unitary operator.\nomeqref {0}\nompageref{12}
+  \item [{$V$}]\begingroup An arbitrary operator belonging to the Clifford group.\nomeqref {0}\nompageref{12}
+  \item [{$\mathcal{P}_{n}$}]\begingroup The $n$-qubit Pauli group\nomeqref {0}\nompageref{12}
+  \item [{$\mathcal{C}_{j}$}]\begingroup The set of unitaries belonging to level $j$ of the Clifford hierarchy. Also a group for $j\leq 3$.\nomeqref {0}\nompageref{12}
+  \item [{$p_{U}\left(\va{x}\right)$}]\begingroup The probability associated with the basis state $\va{x}$ in the state $U\ket{\va{0}}$.\nomeqref {0}\nompageref{12}
+  \item [{$\chi$}]\begingroup The stabilizer rank, the rank of a stabilizer state decomposition. Typically, this refers to an exact decomposition.\nomeqref {0}\nompageref{12}
+  \item [{$\chi_{\epsilon}$}]\begingroup The rank of an aproxiamate stabilizer state decomposition with maximum imprecision $\epsilon$.\nomeqref {0}\nompageref{12}
+  \item [{$\xi\left(\psi\right)$}]\begingroup The stabilizer extent of a state $\ket{\psi}$.\nomeqref {0}\nompageref{12}
+  \item [{$O(g\left(n\right))$}]\begingroup An asymptotic scaling bounded above by $k g\left(n\right)$ for some constant $k>0$\nomeqref {0}\nompageref{12}
+  \item [{$\Theta(g\left(n\right))$}]\begingroup An asymptotic scaling bounded above by $k_{1} g\left(n\right)$ and below by $k_{2}g\left(n\right)$ for some constants $k_{1,2}>0$\nomeqref {0}\nompageref{12}
+  \item [{$\Omega(g\left(n\right))$}]\begingroup An asymptotic scaling that grows larger than $k g\left(n\right)$ for some constant $k>0$ and some value of $n$.\nomeqref {0}\nompageref{12}
+
+\end{thenomenclature}

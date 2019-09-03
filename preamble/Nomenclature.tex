@@ -1,10 +1,26 @@
 % !TEX root = ../Main.tex
 
 \renewcommand{\nomname}{List of Symbols}
-\renewcommand{\nompreamble}{The next list describes several symbols that will be later used within the body of the document.
-If not using \texttt{latexmk}, will need to run code \texttt{makeindex Main.nlo -s nomencl.ist -o Main.nls}.
-In any case, compile twice 
+\renewcommand{\nompreamble}{The following is a list of some common symbols and notations used in this thesis.
+\par
+We also make us of common abbreviations for computational complexity classes, which we denote in bold-faced type e.g. $\P$
 }
 
-\nomenclature{$c$}{Speed of light in a vacuum inertial frame}
-\nomenclature{$\hbar$}{Reduced Planck constant}
+\nomenclature[01]{$n$}{Number of qubits in a given quantum circuit or computation.}
+\nomenclature[02]{$\omega$}{The $8$th root of unity, $\omega=\frac{1+\mathi}{\sqrt{2}}$.}
+\nomenclature[03]{$\mathbb{Z}_{n}$}{The space of all positive integers modulo $n$.}
+\nomenclature[04]{$\va{x}$}{A vector quantity, typically a binary vector.}
+\nomenclature[05]{$\va{e}_{i}$}{A binary vector that is all-zero except for entry $x_{i}$.}
+\nomenclature[06]{$\ket{\va{x}}$}{A computational basis state defined by the binary vector $\va{x}$.}
+\nomenclature[07]{$\ket{\psi}$}{An arbitrary quantum state.}
+\nomenclature[08]{$\ket{\phi},\ket{\varphi}$}{A stabilizer state.}
+\nomenclature[09]{$U$}{An arbitrary unitary operator.}
+\nomenclature[10]{$V$}{An arbitrary operator belonging to the Clifford group.}
+\nomenclature[11]{$\mathcal{P}_{n}$}{The $n$-qubit Pauli group}
+\nomenclature[12]{$\mathcal{C}_{j}$}{The set of unitaries belonging to level $j$ of the Clifford hierarchy. Also a group for $j\leq 3$.}
+\nomenclature[13]{$p_{U}\left(\va{x}\right)$}{The probability associated with the basis state $\va{x}$ in the state $U\ket{\va{0}}$.}
+\nomenclature[14]{$\chi$}{The stabilizer rank, the rank of a stabilizer state decomposition. Typically, this refers to an exact decomposition.}
+\nomenclature[15]{$\chi_{\epsilon}$}{The rank of an aproxiamate stabilizer state decomposition with maximum imprecision $\epsilon$.}
+\nomenclature[16]{$\xi\left(\psi\right)$}{The stabilizer extent of a state $\ket{\psi}$.}
+\nomenclature[17]{$O(g\left(n\right))$}{An asymptotic scaling bounded above by $k g\left(n\right)$ for some constant $k>0$}\nomenclature[18]{$\Theta(g\left(n\right))$}{An asymptotic scaling bounded above by $k_{1} g\left(n\right)$ and below by $k_{2}g\left(n\right)$ for some constants $k_{1,2}>0$}
+\nomenclature[19]{$\Omega(g\left(n\right))$}{An asymptotic scaling that grows larger than $k g\left(n\right)$ for some constant $k>0$ and some value of $n$.}
