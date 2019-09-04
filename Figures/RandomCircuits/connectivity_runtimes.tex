@@ -1,0 +1,85 @@
+% This file was created by matplotlib2tikz v0.7.4.
+\begin{tikzpicture}[scale=\tikzscale]
+
+\definecolor{color0}{rgb}{0.12156862745098,0.466666666666667,0.705882352941177}
+\definecolor{color1}{rgb}{1,0.498039215686275,0.0549019607843137}
+\definecolor{color2}{rgb}{0.172549019607843,0.627450980392157,0.172549019607843}
+\definecolor{color3}{rgb}{0.83921568627451,0.152941176470588,0.156862745098039}
+\definecolor{color4}{rgb}{0.580392156862745,0.403921568627451,0.741176470588235}
+
+\begin{axis}[
+legend cell align={left},
+legend style={at={(0.97,0.03)}, anchor=south east, draw=white!80.0!black},
+tick align=outside,
+tick pos=left,
+x grid style={white!69.01960784313725!black},
+xlabel={Depth},
+xmin=-0.25, xmax=5.25,
+xtick style={color=black},
+xtick={0,1,2,3,4,5},
+xtick={0,1,2,3,4,5},
+xtick={0,1,2,3,4,5},
+xtick={0,1,2,3,4,5},
+xtick={0,1,2,3,4,5},
+xticklabels={15,16,17,18,19,20},
+xticklabels={15,16,17,18,19,20},
+xticklabels={15,16,17,18,19,20},
+xticklabels={15,16,17,18,19,20},
+xticklabels={15,16,17,18,19,20},
+y grid style={white!69.01960784313725!black},
+ylabel={\(\displaystyle \log\left(Runtime\right) / \mathrm{s}\)},
+ymin=0.363130221521114, ymax=3.72472943130366,
+ytick style={color=black}
+]
+\addplot [semithick, color0]
+table {%
+0 1.26771720183888
+1 1.24952969386276
+2 1.73504019993999
+3 2.71531938212346
+4 2.83401580034407
+5 3.00703836837681
+};
+\addlegendentry{1D Lattice}
+\addplot [semithick, color1]
+table {%
+0 1.7051515576823
+1 2.50880420552012
+2 2.78954937220292
+3 3.01124733228216
+4 3.57192946722263
+};
+\addlegendentry{2D Lattice}
+\addplot [semithick, color2]
+table {%
+0 0.552158746058691
+1 0.594605626692709
+2 0.591426339519745
+3 0.516418303424242
+4 0.516515684668665
+5 0.515930185602138
+};
+\addlegendentry{All-to-all, $f=0.1$}
+\addplot [semithick, color3]
+table {%
+0 1.11742669115717
+1 1.22320773022208
+2 1.8626259658962
+3 2.52949022405648
+4 3.3042978983862
+5 3.54087391268012
+};
+\addlegendentry{All-to-all, $f=0.25$}
+\addplot [semithick, color4]
+table {%
+0 0.526917522546732
+1 0.516845622338074
+2 0.544084936465085
+3 0.554911308636691
+4 0.564957873019669
+5 0.540637374923804
+};
+\addlegendentry{All-to-all, $f=0.5$}
+\end{axis}
+
+\end{tikzpicture}

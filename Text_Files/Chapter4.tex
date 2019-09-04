@@ -483,7 +483,7 @@ Previous work has described two distinct rules for placing single-qubit gates. I
 }}
 \caption{Circuit diagram showing $3$ layers of the random circuit applied to a $5$-qubit, $1$D lattice. Each dashed line represents the end of a single layer.}\label{fig:random_1d_circ}
 \end{figure}
-We examined the performance and resource requirements of the stabilizer rank method for HOG, sampling $1000000$ amplitudes in the computational basis from the output distribution of Google circuits. We first consider how the runtime and requirements scale as a function of the circuit depth and the precision $\epsilon$, for a $4\times 5$ qubit grid, for $d\in [10, 20]$. We then pick a precision value $\epsilon=0.995$, comparable to that used in~\cite{Villalonga2018}, and explore how the runtime varies with depth for each connectivity pattern, for depth $d\in[15,25]$.\par
+We examined the performance and resource requirements of the stabilizer rank method for HOG, sampling $1000000$ amplitudes in the computational basis from the output distribution of Google circuits. We first consider how the runtime and requirements scale as a function of the circuit depth and the precision $\epsilon$, for a $4\times 5$ qubit grid, for $d\in [10, 20]$. We then pick a precision value $\epsilon=0.995$, comparable to that used in~\cite{Villalonga2018}, and explore how the runtime varies with depth for each connectivity pattern, for depth $d\in[15,20]$.\par
 Circuits were generated using custom \texttt{C++} code, and interfaced with Python using \texttt{Pybind}. The resulting circuits were then convert to a \texttt{Qobj}, and run with our simulator as part of \texttt{Qiskit-Aer}. All simulations were run on UCL's Myriad computing cluster, with $2.3\mathrm{GHz}$ processors. The $4\times5$ qubit simulations were run with $36$ parallel workers and $32\mathrm{GB}$ of RAM.\ Due to scheduling restrictions on the cluster, the simulations for differing connectivities were run with $28$ parallel workers, and $28\mathrm{GB}$ of RAM.
 \begin{figure}[H]
 \centering
@@ -513,19 +513,19 @@ Circuits were generated using custom \texttt{C++} code, and interfaced with Pyth
 \caption{Plot showing the maximum circuit extent that can be simulated for different system sizes, assuming access to $192\mathrm{GB}$ of RAM.}\label{fig:max_extent_bar}
 \end{subfigure}
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[p]
 \centering
-\begin{scaletikzpicturetowidth}{0.75\textwidth}
+\begin{scaletikzpicturetowidth}{0.8\textwidth}
 \input{Figures/RandomCircuits/epsilon_runtimes}
 \end{scaletikzpicturetowidth}
 \caption{Average time required in seconds to take $1000000$ samples from the output distribution of a Google circuit, for different values of the precision $\epsilon$. Also shown is the corresponding $T$ count of the circuit.}\label{fig:precision_runtimes}
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[p]
 \centering
-% \begin{scaletikzpicturetowidth}{0.75\textwidth}
-% \input{Figures/RandomCircuits/epsilon_runtimes}
-% \end{scaletikzpicturetowidth}
-\caption{Average time required in seconds to take $1000000$ samples from the output distribution of $1$, $2$ and $3$D versions of a Google circuit. We also consider circuits with All-to-All connectivity, for different fractions of $CZ$ gates $f$.}\label{fig:connectivity_runtimes}
+\begin{scaletikzpicturetowidth}{0.7\textwidth}
+\input{Figures/RandomCircuits/connectivity_runtimes}
+\end{scaletikzpicturetowidth}
+\caption{Average time required in seconds to take $1000000$ samples from the output distribution of $1$, $2$ and $3$D versions of a Google circuit. We also consider circuits with All-to-All connectivity, for different fractions of $CZ$ gates $f$. No data is available for the $2$D lattice with depth $20$ due to memory requirements.}\label{fig:connectivity_runtimes}
 \end{figure}
 \section{Discussion}
 % Significant Advantages over BG16, and other `general purpise' simulators
