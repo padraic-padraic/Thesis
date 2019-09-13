@@ -5,7 +5,7 @@
   \item [{$\omega$}]\begingroup The $8$th root of unity, $\omega=\frac{1+\mathi}{\sqrt{2}}$.\nomeqref {0}\nompageref{12}
   \item [{$\mathbb{Z}_{n}$}]\begingroup The space of all positive integers modulo $n$.\nomeqref {0}\nompageref{12}
   \item [{$\va{x}$}]\begingroup A vector quantity, typically a binary vector.\nomeqref {0}\nompageref{12}
-  \item [{$\va{e}_{i}$}]\begingroup A binary vector that is all-zero except for entry $x_{i}$.\nomeqref {0}\nompageref{12}
+  \item [{$\va{e}_{i}$}]\begingroup A binary vector that is all-zero except for the $i$th entry.\nomeqref {0}\nompageref{12}
   \item [{$\ket{\va{x}}$}]\begingroup A computational basis state defined by the binary vector $\va{x}$.\nomeqref {0}\nompageref{12}
   \item [{$\ket{\psi}$}]\begingroup An arbitrary quantum state.\nomeqref {0}\nompageref{12}
   \item [{$\ket{\phi},\ket{\varphi}$}]\begingroup A stabilizer state.\nomeqref {0}\nompageref{12}
