@@ -7,7 +7,7 @@
 In the previous chapter, we discussed in detail efficient simulations of stabilizer circuits. Recalling the discussion in Section~\ref{sec:intro_efficient_simulations}, this classical simulability in turn implies that non-stabilizer states are a resource for quantum computation. In this section, we will introduce a particular model of quantum computation that makes explicit the computational role of `magic' states, Pauli Based Computation~\cite{Yoganathan2019,Bravyi2015}.\par
 This model forms the basis for the definition of `Stabilizer Rank', a quantity which tries to relate the computational power of non-stabilizer states to the task of classical simulation. This chapter will be focused on extending stabilizer rank decompositions, whereas the following chapter will focus on implementing classical simulations based on these decompositions.
 \subsection{Pauli Based Computations}\label{sec:pbc}
-A Pauli Based Computation (PBC) is a measurement-based model of quantum computing, whereby a computation is realised by applying a sequence of Pauli measurements to a set of non-stabilizer magic states, and post-processing of the measurement outcomes. In general, this sequence will be `adaptive': the choice of measurement operator will depend on the outcome of previous measurements.\par
+A Pauli Based Computation (PBC) is a measurement-based model of quantum computing, whereby a computation is realised by applying a sequence of Pauli measurements to a set of non-stabilizer magic states, and post-processing of the measurement outcomes~\cite{Bravyi2015}. In general, this sequence will be `adaptive': the choice of measurement operator will depend on the outcome of previous measurements.\par
 It is well known that quantum circuits built out of Clifford gates and the $T$ gate are universal for quantum computation~\cite{Bravyi2005}. Thus, any arbitrary computation $U$ acting on a computational input state can be expressed as a circuit with $m$ Clifford operations and $t$ $T$ gates.\par
 \begin{figure}[t]
 \centering
@@ -87,7 +87,7 @@ In general, this will require up to $4^{m}$ stabilizer states for each $m$-qubit
 \[T\equiv \begin{pmatrix}1 & 0 \\ 0 & \frac{1}{\sqrt{2}}(1+i)\end{pmatrix} = \frac{\sqrt{2}+\mathi}{\sqrt{2}}I-\frac{\mathi}{\sqrt{2}}Z \]
 and thus this extension of the CHP method requires $2^{t}$ stabilizer states for $t$ $T$ gates.\par
 A different method was also proposed by Garcia et al., which they call stabilizer frames~\cite{Garcia2015}. These are stabilizer state decompositions built out of so-called `co-factors', made from post-selecting the results of single qubit computational basis measurements. For example, the action of a controlled-$S$ gate can be expanded into two stabilizer state terms, by post-selecting on the control bit being $\ket{0}$ or $\ket{1}$. For the $T$ gate, stabilizer frames similarly require a number of terms that that scales as $2^{t}$.
-\subsubsection*{Norm Estimation and Approximate Decompositions}
+\subsubsection{Norm Estimation and Approximate Decompositions}
 The stabilizer rank method as introduced in~\cite{Bravyi2015} already compares favourably to similar methods of simulating quantum circuits through stabilizer state decompositions. However, the method was further refined in a successive paper, which extended its results to the case of approximate simulation~\cite{Bravyi2016}.\par
 The first development of~\cite{Bravyi2016} was an algorithm for estimating the norm of states, that can be used to optimize the computation of Pauli expectation values on stabilizer state decompositions. A detailed discussion of this norm estimation routine will be given in Chapter~\ref{chap:simulator}. Importantly however, this method allows Pauli expectation values to be approximated to within $\epsilon$ relative error, with a runtime that scales as $O(\chi t^{3}\epsilon^{-2})$, a quadratic reduction in terms of the stabilizer rank~\cite{Bravyi2016}.\par
 The second component was a method for constructing approximate stabilizer state decompositions
@@ -163,7 +163,7 @@ We further examined the stabilizer rank for different quantum states by extendin
 \includegraphics[width=0.5\textwidth]{octahedron.png}
 \caption{Diagram showing the location of single-qubit stabilizer states and magic states on the Bloch sphere. Single qubit Clifford gates act as the symmetry group of an octahedron in the Bloch sphere, who's vertices are the individual stabilizer states. `Edge' and `face' magic states are named for their positions relative to this octahedron. Based on diagrams given in from~\cite{Bravyi2005}.}
 \end{figure}
-\subsubsection*{Computational Searches for Decompositions}
+\subsubsection{Computational Searches for Decompositions}
 We employ a combination of brute force and random walk searches for stabilizer state decompositions to establish the stabilizer rank of different families of quantum states, using a custom program developed in Python.\par
 To test a candidate decomposition of $\chi$ stabilizer states $\Phi=\{\ket{\phi_{i}}\}$, we compute the projector on to the subspace generated by the states $\Pi_{\Phi}$, and the compute the projection of the target state into this subspace $\norm{\Pi_{\Phi}\ket{\psi}}$. If the norm is equal to $1$, then the state lies within this subspace and we terminate the search.\par
 Given a collection of $\chi$ stabilizer states, we can build their projector by first constructing a $2^{n}\times \chi$ matrix $A$, where each column is one of the $\chi$ stabilizer states. We then apply the QR decomposition, a standard linear algebra technique, to compute $\chi$ orthogonal basis-vectors for the subspace spanned by these stabilizer states. Given the column matrix $Q$ built from these orthogonal basis-vectors, we then have $\Pi_{\Phi}\equiv Q\,Q^{\dagger}$. This was implemented using the \texttt{Numpy} library, with additional optimization provided by using the \texttt{Numba} Just-In-Time compiler~\cite{Numpy,Numba}.\par
@@ -252,7 +252,7 @@ To quickly generate random stabilizer states then, we generate a random $n \time
 To generate a complete library of stabilizer states, first recall that Pauli operators in a stabilizer group have only phase of $\pm 1$. For a stabilizer group with $n$ generators, there are thus $2^{n}$ possible combinations of phase for each generator, each of which correspond to a given stabilizer state. We can thus focus on generating just the $N_{\phi}/2^{n}$ stabilizer groups with all positive phase.\par
 We begin by generating all $2^{2n}-1$ possible binary strings, which correspond to all possible choices of Pauli operator. We ignore the all-zero string, as this corresponds to the identity operator which cannot generate a stabilizer group. Then, for all $\binom{2^{2n}-1}{n}$ possible combinations of $n$ strings, we build the stabilizer tableau and convert it to canonical form. If it is not full rank, or corresponds to a tableau already found, we discard it. Otherwise we store the tableau. We terminate after generating $N_{\phi}/2^{n}$ groups. For each group then, we test all $2^{n}$ possible phase combinations, and then compute the stabilizer state as described above. This process was computationally intensive, but overall we were able to generate a library of stabilizer states on up to $4$ qubits.\par
 Both the random stabilizer state generation and the deterministic stabilizer state generation were implemented in Python. Stabilizer tableau were stored as bitpacked \texttt{Numpy} arrays. Computing the corresponding Pauli projector and stabilizer state made use of \texttt{Numpy} linear algebra routines, including the optimised eigensovler for hermitian matrices, with additional optimization using \texttt{Numba}~\cite{Numpy,Numba}.
-\subsubsection*{Results of Computational Searches}
+\subsubsection{Results of Computational Searches}
 We extend the computational searches for copies of single-qubit magic states up to $n=10$, and give explicit results for the face-type magic states. We used brute force searches for $n\leq 3$ qubits. Otherwise, we made use of random walk searches. 
 \par
 For all values of $n$ tested, the edge and face type magic states had the same observed stabilizer rank. Despite extending the range of the numeric search, however, above $n=6$ copies, we found no decomposition smaller than the submultiplicative bound. Thus, the asymptotic scaling shown in~\cite{Bravyi2015} remains the best result known for single-qubit magic states..\par
@@ -320,7 +320,7 @@ For $t\leq 3$, this claim follows from the property that stabilizer states form 
 \end{equation}
 a superposition of $t$ copies of all $n$-qubit stabilizer states is proportional to the projector onto the symmetric subspace.\par
 From this, we can conclude that $\text{Span}\left(\left\{\ket{\phi_{i}^{\otimes t}}\right\}\right)\subseteq \Pi_{\text{Sym}_{n,t}}$. We can thus find a minimal spanning set of vectors $\{\ket{\phi_{j}^{\otimes t}}\}$ such that $\text{Span}\left(\{\ket{\phi_{j}^{\otimes t}}\}\right)=\text{Sym}_{n,t}$, and $\left|\{\ket{\phi_{j}^{\otimes t}}\}\right|=\text{dim}\left(\text{Sym}_{n,t}\right)$, completing the claim for $t\leq 3$. In~\cite{Bravyi2018}, we present a proof by Earl Campbell that also extends this result up to $t=5$ using the fact that stabilizer states are `almost' a projective $4$-design~\cite{Zhu2016}.
-\subsubsection*{Clifford Symmetries}
+\subsubsection{Clifford Symmetries}
 The results of computational searches, and the proof for the decomposition of the symmetric subspace, are consistent with Conjecture~\ref{conj:magic_srank}. In Table~\ref{tab:srank_tables}, we compare the bounds for the symmetric subspace with the stabilizer rank decompositions found for different magic states, and show that in general the magic states exhibit a smaller stabilizer rank.\par
 \begin{table}[H]
 \centering
@@ -426,7 +426,7 @@ Similarly, for the $\ket{F^{\otimes 2}}$ state, we obtain an order $18$ Clifford
 \subsection{Approximate Stabilizer Rank}\label{sec:approx_results}
 % Outline rough idea of taking decomposition and approximating it
 In this section, we show how to construct approximate stabilizer state decompositions for Clifford magic states, and more generally. Both methods start with an exact stabilizer state decomposition, which is not required to be optimal, and show how to construct an approximate decomposition by discarding terms.
-\subsubsection*{Clifford Magic States}
+\subsubsection{Clifford Magic States}
 A method for constructing approximate stabilizer state decompositions of the $\ket{H}$ magic state was described in~\cite{Bravyi2016}. Here, we outline their argument, showing how it can naturally be extended to any Clifford magic state, such as $\ket{F}$ or $\ket{CCZ}$.\par
 The authors begin by considering an exact stabilizer state decomposition of $\ket{H^{\otimes t}}$ in terms of the states $\ket{0}$ and $\ket{+}$.
 \begin{equation}
@@ -497,7 +497,7 @@ then the corresponding subspace state $\ket{\mathcal{L'}}$ achieves a fidelity
 &\geq \frac{1}{\left(1+\frac{\epsilon}{2}\right)^{2}} \approx 1 - \epsilon.
 \label{eq:clifford_fidelity}
 \end{align}
-We can thus generate an approximate stabilizer state decomposition that is $\epsilon$ close in fidelity by choosing a random subspace, provided that we have sufficiently many terms in the decomposition. Again applying the inequality from above, we have
+We can thus generate an approximate stabilizer state decomposition that is $\epsilon$-close in fidelity by choosing a random subspace, provided that we have sufficiently many terms in the decomposition. Again applying the inequality from above, we have
 \begin{equation}
 \chi_{\epsilon}\left(\ket{R^{\otimes t}}\right) = \left|\mathcal{L}\right| \leq 4 f_{\phi_{0}}^{-t}\epsilon^{-1}=O\left(f_{\phi_{0}}^{-t}\epsilon^{-1}\right),
 \label{eq:clifford_approx_rank}
@@ -513,7 +513,7 @@ The approximate stabilizer rank of a Clifford magic state
 \[\chi_{\epsilon}\left(\ket{R^{\otimes t}}\right) = O\left(F\left(R\right)^{-t}\right).\]
 \end{cor}
 We refer to this method of generating an approximation stabilizer state decomposition as the `random codes' method, because it can be conceptualised as approximately encoding the state using a code-space of dimensionality $\left|\mathcal{L}\right|$.
-\subsubsection*{Sparsification}
+\subsubsection{Sparsification}
 The method outlined above works by taking exact, even potentially `overcomplete' stabilizer state decompositions, and dropping terms to obtain an approximate decomposition with a given fidelity. This principle is similar to approximate classical simulation methods based on quasiprobability representations of quantum states~\cite{Pashayan2015}. In these models, the number of terms that must be sampled scales as the `negativity' of the state, given by the the one-norm of the coefficients with respect to the phase-space under consideration.\par
 It was shown by David Gosset that a similar strategy can be applied to stabilizer state decomposition~\cite{Bravyi2018}. Given any valid stabilizer state decomposition, we can sample terms at random using a probability distribution based on their coefficients to build an approximate decomposition. We can rewrite a given stabilizer state decomposition as
 \begin{equation}
@@ -538,7 +538,7 @@ Thus, we approximate stabilizer rank of a sparsified decomposition scales as
 \label{eq:extent_srank}
 \end{equation}
 The one-norm is a convex quantity, and thus we can be computed efficiently using convex optimisation techniques~\cite{Boyd2004}. However, as the search space scales with the number of stabilizer states, which in turn scales exponentially with the number of qubits, in practice extent is difficult to compute for more than a few qubits. An equivalent quantity to extent was also introduced in Section~5.4 of~\cite{Regula2018}, a general study of convex resource measures for quantum computing. It follows from~\cite{Regula2018} that stabilizer extent is a faithful measure, such that $\xi\left(\psi\right)=1$ if and only if $\ket{\psi}$ is a stabilizer state.
-\subsubsection*{Stabilizer Fidelity}
+\subsubsection{Stabilizer Fidelity}
 Interestingly, as a convex optimization problem, it is also possible to use the `dual' convex problem to find a lower bound on the stabilizer extent. The proof was given by Earl Campbell in Section~VI.A of~\cite{Bravyi2018}, but we quote the key result here, namely
 \begin{equation}
 \xi\left(\psi\right) \geq \frac{1}{F\left(\psi\right)},
